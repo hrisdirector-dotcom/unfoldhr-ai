@@ -26,7 +26,10 @@ export default function HomePage({ setPage }: HomePageProps) {
     <div className="bg-card">
       {/* HERO */}
       <section className="min-h-screen flex items-center px-6 md:px-14 pt-36 pb-24 relative overflow-hidden bg-background">
-        <div className="dot-grid absolute inset-0 opacity-50 pointer-events-none" />
+        <div className="absolute inset-0 pointer-events-none">
+          <img src={heroBg} alt="" className="w-full h-full object-cover opacity-[0.12]" />
+        </div>
+        <div className="dot-grid absolute inset-0 opacity-30 pointer-events-none" />
         <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 55% 60% at 75% 50%, hsl(var(--blue-soft)) 0%, transparent 70%)" }} />
         <div className="relative max-w-3xl">
           <RevealDiv>
