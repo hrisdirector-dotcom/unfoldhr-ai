@@ -1,4 +1,5 @@
 import { useState } from "react";
+import heroBg from "@/assets/hero-bg.jpg";
 import { MODULES } from "@/data/modules";
 import { ModuleCard } from "@/components/ModuleCard";
 import { ModuleDrawer } from "@/components/ModuleDrawer";
