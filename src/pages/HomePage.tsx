@@ -20,7 +20,14 @@ const PATHS = [
 export default function HomePage({ setPage }: HomePageProps) {
   const [activeMod, setActiveMod] = useState<Module | null>(null);
   const [toast, setToast] = useState("");
+  const [scrollY, setScrollY] = useState(0);
   const showToast = (msg: string) => { setToast(msg); setTimeout(() => setToast(""), 5000); };
+
+  useEffect(() => {
+    const handleScroll = () => setScrollY(window.scrollY);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <div className="bg-card">
