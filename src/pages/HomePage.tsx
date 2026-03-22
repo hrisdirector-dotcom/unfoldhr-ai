@@ -33,7 +33,10 @@ export default function HomePage({ setPage }: HomePageProps) {
     <div className="bg-card">
       {/* HERO */}
       <section className="min-h-screen flex items-center px-6 md:px-14 pt-36 pb-24 relative overflow-hidden bg-background">
-        <div className="absolute inset-0 pointer-events-none">
+        <div
+          className="absolute inset-0 pointer-events-none will-change-transform"
+          style={{ transform: `translateY(${scrollY * 0.3}px) scale(1.15)` }}
+        >
           <img src={heroBg} alt="" className="w-full h-full object-cover opacity-[0.12]" />
         </div>
         <div className="dot-grid absolute inset-0 opacity-30 pointer-events-none" />
