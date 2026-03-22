@@ -7,15 +7,24 @@ import ContactPage from "@/pages/ContactPage";
 import AuthPage from "@/pages/AuthPage";
 import DashboardPage from "@/pages/DashboardPage";
 import AdminPage from "@/pages/AdminPage";
+import ExplainersPage from "@/pages/ExplainersPage";
 
 type User = { email: string; role: string } | null;
 
 const Index = () => {
   const [page, setPage] = useState("home");
   const [currentUser, setCurrentUser] = useState<User>(null);
+  const [explainerModuleId, setExplainerModuleId] = useState<string | undefined>();
 
   const navigateTo = (p: string) => {
     setPage(p);
+    if (p !== "explainers") setExplainerModuleId(undefined);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const navigateToExplainer = (moduleId: string) => {
+    setExplainerModuleId(moduleId);
+    setPage("explainers");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -33,6 +42,7 @@ const Index = () => {
       <UnfoldNav page={page} setPage={navigateTo} currentUser={currentUser} />
 
       {page === "home" && <HomePage setPage={navigateTo} />}
+      {page === "explainers" && <ExplainersPage initialModuleId={explainerModuleId} />}
       {page === "about" && <AboutPage />}
       {page === "integrations" && <IntegrationsPage />}
       {page === "contact" && <ContactPage />}

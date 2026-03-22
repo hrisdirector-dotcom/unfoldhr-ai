@@ -10,6 +10,7 @@ interface NavProps {
 
 const NAV_LINKS: [string, string][] = [
   ["home", "Platform"],
+  ["explainers", "Explainers"],
   ["integrations", "Integrations"],
   ["about", "About"],
   ["contact", "Contact"],
