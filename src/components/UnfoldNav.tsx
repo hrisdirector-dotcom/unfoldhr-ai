@@ -100,7 +100,7 @@ export function UnfoldNav({ page, setPage, currentUser }: NavProps) {
 
       {/* Mobile menu overlay */}
       {mobileOpen && (
-        <div className="fixed inset-0 z-40 pt-[72px] bg-card/98 backdrop-blur-md animate-fade-in">
+        <div className="fixed inset-0 z-40 pt-[72px] bg-card backdrop-blur-md animate-fade-in">
           <div className="flex flex-col p-6 gap-2">
             {NAV_LINKS.map(([p, label]) => (
               <button
