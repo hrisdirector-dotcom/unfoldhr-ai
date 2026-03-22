@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import heroBg from "@/assets/hero-bg.jpg";
 import { MODULES } from "@/data/modules";
 import { ModuleCard } from "@/components/ModuleCard";
@@ -20,13 +20,23 @@ const PATHS = [
 export default function HomePage({ setPage }: HomePageProps) {
   const [activeMod, setActiveMod] = useState<Module | null>(null);
   const [toast, setToast] = useState("");
+  const [scrollY, setScrollY] = useState(0);
   const showToast = (msg: string) => { setToast(msg); setTimeout(() => setToast(""), 5000); };
+
+  useEffect(() => {
+    const handleScroll = () => setScrollY(window.scrollY);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <div className="bg-card">
       {/* HERO */}
       <section className="min-h-screen flex items-center px-6 md:px-14 pt-36 pb-24 relative overflow-hidden bg-background">
-        <div className="absolute inset-0 pointer-events-none">
+        <div
+          className="absolute inset-0 pointer-events-none will-change-transform"
+          style={{ transform: `translateY(${scrollY * 0.3}px) scale(1.15)` }}
+        >
           <img src={heroBg} alt="" className="w-full h-full object-cover opacity-[0.12]" />
         </div>
         <div className="dot-grid absolute inset-0 opacity-30 pointer-events-none" />
