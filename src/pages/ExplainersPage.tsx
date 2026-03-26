@@ -3,6 +3,7 @@ import { EXPLAINERS } from "@/data/explainers";
 import { ExplainerPlayer } from "@/components/ExplainerPlayer";
 import { RevealDiv } from "@/components/RevealDiv";
 import type { Explainer } from "@/data/explainers";
+import { getTrainingModuleById } from "@/data/trainingModules";
 
 interface ExplainersPageProps {
   initialModuleId?: string;
@@ -14,7 +15,16 @@ export default function ExplainersPage({ initialModuleId }: ExplainersPageProps)
   );
 
   if (active) {
-    return <ExplainerPlayer explainer={active} onBack={() => setActive(null)} />;
+  const trainingModule = getTrainingModuleById(active.id);
+
+  return (
+    <ExplainerPlayer
+      explainer={active}
+      trainingModule={trainingModule}
+      onBack={() => setActive(null)}
+    />
+  );
+}
   }
 
   const levelColor = (level: string) =>

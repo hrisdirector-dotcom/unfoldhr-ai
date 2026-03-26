@@ -1,9 +1,13 @@
+import TrainingModuleDetail from "@/components/TrainingModuleDetail";
+import type { TrainingModule } from "@/data/trainingModules";
 import { useState, useEffect, useRef } from "react";
 import { RevealDiv } from "./RevealDiv";
 import type { Explainer } from "@/data/explainers";
-
+import TrainingModuleDetail from "@/components/TrainingModuleDetail";
+import type { TrainingModule } from "@/data/trainingModules";
 interface ExplainerPlayerProps {
   explainer: Explainer;
+  trainingModule?: TrainingModule;
   onBack: () => void;
 }
 
@@ -13,7 +17,11 @@ function useTypingEffect(lines: string[], active: boolean, speed = 30) {
   const [done, setDone] = useState(false);
 
   useEffect(() => {
-    if (!active) { setDisplayed([]); setDone(false); return; }
+    if (!active) {
+      setDisplayed([]);
+      setDone(false);
+      return;
+    }
     let cancelled = false;
     const result: string[] = [];
     let lineIdx = 0;
@@ -21,7 +29,10 @@ function useTypingEffect(lines: string[], active: boolean, speed = 30) {
 
     const tick = () => {
       if (cancelled) return;
-      if (lineIdx >= lines.length) { setDone(true); return; }
+      if (lineIdx >= lines.length) {
+        setDone(true);
+        return;
+      }
       const line = lines[lineIdx];
       if (charIdx <= line.length) {
         result[lineIdx] = line.slice(0, charIdx);
@@ -35,13 +46,15 @@ function useTypingEffect(lines: string[], active: boolean, speed = 30) {
       }
     };
     setTimeout(tick, 600);
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [active, lines, speed]);
 
   return { displayed, done };
 }
 
-export function ExplainerPlayer({ explainer: e, onBack }: ExplainerPlayerProps) {
+export function ExplainerPlayer({ explainer: e, trainingModule, onBack }: ExplainerPlayerProps) {
   const [activeSection, setActiveSection] = useState(0);
   const [terminalActive, setTerminalActive] = useState(false);
   const termRef = useRef<HTMLDivElement>(null);
@@ -54,11 +67,12 @@ export function ExplainerPlayer({ explainer: e, onBack }: ExplainerPlayerProps) 
 
   const sections = ["Problem", "How It Works", "Steps", "Live Demo", "Results"];
 
-  const levelColor = e.level === "Beginner"
-    ? "bg-emerald-50 text-emerald-700"
-    : e.level === "Intermediate"
-    ? "bg-accent text-accent-foreground"
-    : "bg-orange-50 text-orange-600";
+  const levelColor =
+    e.level === "Beginner"
+      ? "bg-emerald-50 text-emerald-700"
+      : e.level === "Intermediate"
+        ? "bg-accent text-accent-foreground"
+        : "bg-orange-50 text-orange-600";
 
   return (
     <div className="min-h-screen bg-background pt-24 pb-16">
@@ -76,17 +90,15 @@ export function ExplainerPlayer({ explainer: e, onBack }: ExplainerPlayerProps) 
             <span className="text-xs font-bold uppercase tracking-[2px] text-primary bg-accent px-3 py-1 rounded-md">
               Module {e.modNum}
             </span>
-            <span className={`text-xs font-semibold px-2.5 py-1 rounded-md ${levelColor}`}>
-              {e.level}
+            <span className={`text-xs font-semibold px-2.5 py-1 rounded-md ${levelColor}`}>{e.level}</span>
+            <span className="text-xs text-muted-foreground">
+              {e.duration} · {e.tools}
             </span>
-            <span className="text-xs text-muted-foreground">{e.duration} · {e.tools}</span>
           </div>
           <h1 className="font-display text-3xl md:text-5xl text-foreground mb-3 leading-tight whitespace-pre-line">
             {e.h1}
           </h1>
-          <p className="text-base md:text-lg text-muted-foreground max-w-2xl leading-relaxed mb-8">
-            {e.sub}
-          </p>
+          <p className="text-base md:text-lg text-muted-foreground max-w-2xl leading-relaxed mb-8">{e.sub}</p>
         </RevealDiv>
 
         {/* Section nav */}
@@ -94,7 +106,10 @@ export function ExplainerPlayer({ explainer: e, onBack }: ExplainerPlayerProps) 
           {sections.map((s, i) => (
             <button
               key={s}
-              onClick={() => { setActiveSection(i); if (i === 3) setTerminalActive(true); }}
+              onClick={() => {
+                setActiveSection(i);
+                if (i === 3) setTerminalActive(true);
+              }}
               className={`px-4 py-2 text-sm font-semibold rounded-lg border-none cursor-pointer whitespace-nowrap transition-colors ${
                 activeSection === i
                   ? "bg-foreground text-background"
@@ -116,7 +131,10 @@ export function ExplainerPlayer({ explainer: e, onBack }: ExplainerPlayerProps) 
             <p className="text-muted-foreground text-base leading-relaxed mb-8 max-w-2xl">{e.s1p}</p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {e.problemCards.map((c, i) => (
-                <div key={i} className="bg-card border border-border rounded-xl p-5 hover:border-blue-mid transition-colors">
+                <div
+                  key={i}
+                  className="bg-card border border-border rounded-xl p-5 hover:border-blue-mid transition-colors"
+                >
                   <span className="text-2xl mb-3 block">{c.ico}</span>
                   <h3 className="font-display text-base text-foreground mb-2">{c.h}</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed mb-3">{c.p}</p>
@@ -143,11 +161,11 @@ export function ExplainerPlayer({ explainer: e, onBack }: ExplainerPlayerProps) 
                     <div className="text-xs text-muted-foreground mt-1">{n.sub}</div>
                   </div>
                   {i < e.nodes.length - 1 && (
-                    <div className="hidden md:block absolute -right-3 top-1/2 -translate-y-1/2 text-muted-foreground text-lg">→</div>
+                    <div className="hidden md:block absolute -right-3 top-1/2 -translate-y-1/2 text-muted-foreground text-lg">
+                      →
+                    </div>
                   )}
-                  {i < e.nodes.length - 1 && (
-                    <div className="md:hidden text-muted-foreground text-lg my-1">↓</div>
-                  )}
+                  {i < e.nodes.length - 1 && <div className="md:hidden text-muted-foreground text-lg my-1">↓</div>}
                 </div>
               ))}
             </div>
@@ -168,7 +186,9 @@ export function ExplainerPlayer({ explainer: e, onBack }: ExplainerPlayerProps) 
                     <h3 className="font-display text-lg text-foreground mb-2">{s.h}</h3>
                     <p className="text-sm text-muted-foreground leading-relaxed mb-3">{s.p}</p>
                     <div className="bg-foreground/5 border border-border rounded-lg p-4">
-                      <pre className="text-xs text-foreground font-mono whitespace-pre-wrap leading-relaxed">{s.code}</pre>
+                      <pre className="text-xs text-foreground font-mono whitespace-pre-wrap leading-relaxed">
+                        {s.code}
+                      </pre>
                     </div>
                   </div>
                 </div>
@@ -191,9 +211,12 @@ export function ExplainerPlayer({ explainer: e, onBack }: ExplainerPlayerProps) 
                 </div>
                 <div className="p-4">
                   {e.promptLines.map((line, i) => (
-                    <div key={i} className={`text-sm font-mono leading-relaxed ${
-                      line.startsWith("//") ? "text-muted-foreground" : "text-foreground"
-                    }`}>
+                    <div
+                      key={i}
+                      className={`text-sm font-mono leading-relaxed ${
+                        line.startsWith("//") ? "text-muted-foreground" : "text-foreground"
+                      }`}
+                    >
                       {line}
                     </div>
                   ))}
@@ -212,13 +235,20 @@ export function ExplainerPlayer({ explainer: e, onBack }: ExplainerPlayerProps) 
                 </div>
                 <div ref={termRef} className="p-4 max-h-80 overflow-y-auto">
                   {termLines.map((line, i) => (
-                    <div key={i} className={`text-xs font-mono leading-relaxed ${
-                      line.startsWith("✓") ? "text-emerald-400"
-                      : line.startsWith("⚠") ? "text-amber-400"
-                      : line.startsWith("→") ? "text-blue-300"
-                      : line.startsWith("##") ? "text-white font-bold"
-                      : "text-white/70"
-                    }`}>
+                    <div
+                      key={i}
+                      className={`text-xs font-mono leading-relaxed ${
+                        line.startsWith("✓")
+                          ? "text-emerald-400"
+                          : line.startsWith("⚠")
+                            ? "text-amber-400"
+                            : line.startsWith("→")
+                              ? "text-blue-300"
+                              : line.startsWith("##")
+                                ? "text-white font-bold"
+                                : "text-white/70"
+                      }`}
+                    >
                       {line || "\u00A0"}
                     </div>
                   ))}
@@ -265,7 +295,9 @@ export function ExplainerPlayer({ explainer: e, onBack }: ExplainerPlayerProps) 
       {/* Bottom nav */}
       <div className="max-w-4xl mx-auto px-4 md:px-8 mt-12 flex justify-between">
         <button
-          onClick={() => { setActiveSection(Math.max(0, activeSection - 1)); }}
+          onClick={() => {
+            setActiveSection(Math.max(0, activeSection - 1));
+          }}
           disabled={activeSection === 0}
           className="px-5 py-2.5 text-sm font-semibold rounded-lg cursor-pointer border border-border bg-card text-foreground hover:bg-muted transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
         >
