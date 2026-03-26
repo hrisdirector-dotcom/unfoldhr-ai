@@ -17,14 +17,13 @@ export default function ExplainersPage({ initialModuleId }: ExplainersPageProps)
   if (active) {
   const trainingModule = getTrainingModuleById(active.id);
 
-  return (
-    <ExplainerPlayer
-      explainer={active}
-      trainingModule={trainingModule}
-      onBack={() => setActive(null)}
-    />
-  );
-}
+    return (
+      <ExplainerPlayer
+        explainer={active}
+        trainingModule={trainingModule}
+        onBack={() => setActive(null)}
+      />
+    );
   }
 
   const levelColor = (level: string) =>
