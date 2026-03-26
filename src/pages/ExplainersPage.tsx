@@ -1,261 +1,77 @@
-import { useEffect, useMemo, useState } from "react";
-import {
-  trainingModules,
-  getTrainingModuleById,
-  type TrainingModule,
-} from "@/data/trainingModules";
+import { useState } from "react";
+import { EXPLAINERS } from "@/data/explainers";
+import { ExplainerPlayer } from "@/components/ExplainerPlayer";
+import { RevealDiv } from "@/components/RevealDiv";
+import type { Explainer } from "@/data/explainers";
 
-type ExplainersPageProps = {
+interface ExplainersPageProps {
   initialModuleId?: string;
-};
+}
 
-const SectionCard = ({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) => (
-  <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
-    <h3 className="mb-4 text-lg font-semibold text-foreground">{title}</h3>
-    <div>{children}</div>
-  </div>
-);
-
-const BulletList = ({ items }: { items: string[] }) => (
-  <ul className="space-y-2">
-    {items.map((item) => (
-      <li key={item} className="flex items-start gap-2 text-sm text-muted-foreground">
-        <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
-        {item}
-      </li>
-    ))}
-  </ul>
-);
-
-const ExplainersPage = ({ initialModuleId }: ExplainersPageProps) => {
-  const defaultModule = useMemo(() => {
-    return (
-      (initialModuleId && getTrainingModuleById(initialModuleId)) ||
-      trainingModules[0]
-    );
-  }, [initialModuleId]);
-
-  const [selectedModuleId, setSelectedModuleId] = useState(
-    defaultModule.id
+export default function ExplainersPage({ initialModuleId }: ExplainersPageProps) {
+  const [active, setActive] = useState<Explainer | null>(
+    initialModuleId ? EXPLAINERS.find(e => e.id === initialModuleId) || null : null
   );
 
-  useEffect(() => {
-    if (initialModuleId && getTrainingModuleById(initialModuleId)) {
-      setSelectedModuleId(initialModuleId);
-    }
-  }, [initialModuleId]);
+  if (active) {
+    return <ExplainerPlayer explainer={active} onBack={() => setActive(null)} />;
+  }
 
-  const selectedModule =
-    getTrainingModuleById(selectedModuleId) || trainingModules[0];
+  const levelColor = (level: string) =>
+    level === "Beginner"
+      ? "bg-emerald-50 text-emerald-700"
+      : level === "Intermediate"
+      ? "bg-accent text-accent-foreground"
+      : "bg-orange-50 text-orange-600";
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="mb-10">
-          <p className="mb-2 text-sm font-medium uppercase tracking-wider text-primary">
-            Training Modules
-          </p>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            {selectedModule.title}
+    <div className="min-h-screen bg-background pt-32 pb-24 px-4 md:px-14">
+      <div className="max-w-5xl mx-auto">
+        <RevealDiv>
+          <span className="inline-block text-xs font-bold uppercase tracking-[3px] text-primary mb-4">
+            Animated Explainers
+          </span>
+          <h1 className="font-display text-3xl md:text-5xl text-foreground mb-3">
+            See every module in action
           </h1>
-          <p className="mt-3 max-w-3xl text-muted-foreground">
-            {selectedModule.objective}
+          <p className="text-muted-foreground text-lg max-w-2xl mb-12 leading-relaxed">
+            12 interactive walkthroughs showing exactly how each AI agent works — from the problem it solves to live prompt output.
           </p>
+        </RevealDiv>
 
-          <div className="mt-4 flex flex-wrap gap-2">
-            <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-              Category: {selectedModule.category}
-            </span>
-            <span className="rounded-full bg-accent px-3 py-1 text-xs font-medium text-accent-foreground">
-              Level: {selectedModule.level}
-            </span>
-            <span className="rounded-full bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
-              Duration: {selectedModule.duration}
-            </span>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[280px_1fr]">
-          {/* Sidebar */}
-          <div className="space-y-3">
-            <h2 className="mb-2 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-              Available Modules
-            </h2>
-            <div className="space-y-2">
-              {trainingModules.map((module) => {
-                const isActive = module.id === selectedModule.id;
-                return (
-                  <button
-                    key={module.id}
-                    onClick={() => setSelectedModuleId(module.id)}
-                    className={`w-full rounded-xl px-4 py-3 text-left transition ${
-                      isActive
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-muted text-foreground hover:bg-accent hover:text-accent-foreground"
-                    }`}
-                  >
-                    <p className="text-sm font-medium">{module.title}</p>
-                    <p className="mt-0.5 text-xs opacity-70">
-                      {module.level} • {module.duration}
-                    </p>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Main content */}
-          <div className="space-y-8">
-            <SectionCard title="The Challenge">
-              <BulletList items={selectedModule.audience} />
-            </SectionCard>
-
-            <SectionCard title="The Challenge">
-              <p className="text-sm text-muted-foreground">{selectedModule.challenge}</p>
-            </SectionCard>
-
-            {selectedModule.positioning && (
-              <SectionCard title="Positioning">
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="rounded-xl bg-muted p-4">
-                    <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-primary">AI</p>
-                    <p className="text-sm text-muted-foreground">{selectedModule.positioning.ai}</p>
-                  </div>
-                  <div className="rounded-xl bg-muted p-4">
-                    <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-primary">
-                      Agents
-                    </p>
-                    <p className="text-sm text-muted-foreground">{selectedModule.positioning.agents}</p>
-                  </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {EXPLAINERS.map((e, i) => (
+            <RevealDiv key={e.id} delay={i * 0.04}>
+              <button
+                onClick={() => setActive(e)}
+                className="w-full text-left bg-card border border-border rounded-xl p-5 cursor-pointer hover:border-blue-mid hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/10 transition-all duration-300 group"
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-xs font-bold text-muted-foreground tracking-wider">
+                    MODULE {e.modNum}
+                  </span>
+                  <span className={`text-xs font-semibold px-2 py-0.5 rounded-md ${levelColor(e.level)}`}>
+                    {e.level}
+                  </span>
                 </div>
-              </SectionCard>
-            )}
-
-            <div className="grid gap-8 sm:grid-cols-2">
-              <SectionCard title="What AI Can Do">
-                <BulletList items={selectedModule.whatAiCanDo} />
-              </SectionCard>
-
-              <SectionCard title="What AI Should Not Do">
-                <BulletList items={selectedModule.whatAiShouldNotDo} />
-              </SectionCard>
-            </div>
-
-            <SectionCard title="Core Use Case">
-              <BulletList items={selectedModule.coreUseCase.scenarios} />
-            </SectionCard>
-
-            <SectionCard title="How to Ask">
-              <p className="text-sm text-muted-foreground">{selectedModule.howToAsk}</p>
-              <div className="mt-4 rounded-xl bg-muted p-4">
-                <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-primary">Framework</p>
-                <p className="text-sm font-medium text-foreground">{selectedModule.promptFramework}</p>
-              </div>
-            </SectionCard>
-
-            <SectionCard title="Example Prompt">
-              <pre className="whitespace-pre-wrap rounded-xl bg-muted p-4 text-sm text-muted-foreground">
-                {selectedModule.examplePrompt}
-              </pre>
-            </SectionCard>
-
-            <SectionCard title="Exercise">
-              <div className="space-y-4">
-                <div className="flex items-center gap-4">
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Exercise Type</p>
-                    <p className="text-sm font-medium text-foreground">{selectedModule.exercise.type}</p>
-                  </div>
-                </div>
-
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Summary</p>
-                  <p className="text-sm text-muted-foreground">{selectedModule.exercise.summary}</p>
-                </div>
-
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Raw Input</p>
-                  <div className="mt-1 rounded-xl bg-muted p-4">
-                    <p className="text-sm italic text-muted-foreground">{selectedModule.exercise.rawInput}</p>
-                  </div>
-                </div>
-
-                <div>
-                  <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Learner Tasks
-                  </p>
-                  <BulletList items={selectedModule.exercise.learnerTasks} />
-                </div>
-              </div>
-            </SectionCard>
-
-            <SectionCard title="Output Template">
-              <BulletList items={selectedModule.outputTemplate} />
-            </SectionCard>
-
-            <SectionCard title={selectedModule.leaderLayer.title}>
-              <BulletList items={selectedModule.leaderLayer.points} />
-            </SectionCard>
-
-            <SectionCard title="Bridge to Agents">
-              <p className="text-sm text-muted-foreground">{selectedModule.bridgeToAgents.summary}</p>
-              <div className="mt-4">
-                <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Example Workflow
+                <h3 className="font-display text-base text-foreground mb-2 leading-snug">
+                  {e.modTitle}
+                </h3>
+                <p className="text-sm text-muted-foreground leading-relaxed mb-3 line-clamp-2">
+                  {e.sub}
                 </p>
-                <BulletList items={selectedModule.bridgeToAgents.exampleWorkflow} />
-              </div>
-            </SectionCard>
-
-            <SectionCard title="Video">
-              <div className="grid gap-4 sm:grid-cols-3">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Title</p>
-                  <p className="text-sm font-medium text-foreground">
-                    {selectedModule.video.title}
-                  </p>
+                <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                  <span>▶ {e.duration}</span>
+                  <span>· {e.tools}</span>
                 </div>
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Duration</p>
-                  <p className="text-sm font-medium text-foreground">
-                    {selectedModule.video.duration}
-                  </p>
+                <div className="mt-3 text-sm font-semibold text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                  Watch explainer →
                 </div>
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Next Module</p>
-                  <p className="text-sm font-medium text-foreground">
-                    {selectedModule.video.nextModule}
-                  </p>
-                </div>
-              </div>
-
-              <div className="mt-4">
-                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Tone</p>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {selectedModule.video.tone.map((tone) => (
-                    <span key={tone} className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-                      {tone}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </SectionCard>
-
-            <SectionCard title="Downloadable Assets">
-              <BulletList items={selectedModule.downloadableAssets} />
-            </SectionCard>
-          </div>
+              </button>
+            </RevealDiv>
+          ))}
         </div>
       </div>
     </div>
   );
-};
-
-export default ExplainersPage;
+}
