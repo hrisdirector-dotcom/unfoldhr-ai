@@ -3,8 +3,6 @@ import type { TrainingModule } from "@/data/trainingModules";
 import { useState, useEffect, useRef } from "react";
 import { RevealDiv } from "./RevealDiv";
 import type { Explainer } from "@/data/explainers";
-import TrainingModuleDetail from "@/components/TrainingModuleDetail";
-import type { TrainingModule } from "@/data/trainingModules";
 interface ExplainerPlayerProps {
   explainer: Explainer;
   trainingModule?: TrainingModule;
