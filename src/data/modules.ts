@@ -299,7 +299,7 @@ export const MODULES: Module[] = [
     id: "employee-relations", icon: "🤝", iconBg: "#eef2ff",
     title: "Employee Relations Case Mgmt",
     desc: "Build triage agents that classify ER cases, route to the right partner, surface precedent docs, and track resolution.",
-    level: "adv", levelLabel: "Advanced", lessons: 8, duration: "3.5h",
+    level: "adv", levelLabel: "Advanced", lessons: 7, duration: "3.5h",
     tools: ["HR Acuity", "Dovetail", "ServiceNow HR", "Workday Case Mgmt"],
     curriculum: [
       { phase: "Foundations", duration: "40 min", lessons: [
