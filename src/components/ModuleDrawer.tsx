@@ -145,7 +145,7 @@ export function ModuleDrawer({ mod, onClose, onToast }: DrawerProps) {
             <div>
               <h3 className="font-display text-lg text-foreground mb-2">Request a Build — {mod.title}</h3>
               <p className="text-sm text-muted-foreground mb-5 leading-relaxed">
-                Tell us your specific workflow challenge. We'll scope, build, and deploy a production-ready agent — typically delivered in 2–4 weeks.
+                Tell us your specific workflow challenge. We'll scope, advise, and work with you to deploy a production-ready agent — typically delivered in 2–4 weeks.
               </p>
               <div className="space-y-4">
                 {[["Work Email", "email", "jane@company.com"], ["Company & Role", "text", "Acme Corp — VP People Ops"]].map(([lbl, type, ph]) => (
