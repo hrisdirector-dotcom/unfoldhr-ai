@@ -36,12 +36,11 @@ export const MODULES: Module[] = [
     id: "workforce-planning", icon: "🏗️", iconBg: "#eef4f0",
     title: "Workforce Planning & Headcount",
     desc: "Build AI agents that draft headcount proposals, model org scenarios, and translate business plans into people strategies.",
-    level: "int", levelLabel: "Intermediate", lessons: 8, duration: "3.5h",
+    level: "int", levelLabel: "Intermediate", lessons: 7, duration: "3.5h",
     tools: ["Anaplan", "Planful", "Pigment", "Workday HCM"],
     curriculum: [
       { phase: "Foundations", duration: "45 min", lessons: [
         { name: "What is a Workforce Planning Agent?", type: "▶", dur: "12 min", free: true },
-        { name: "Understanding headcount data models", type: "📄", dur: "18 min", free: true },
         { name: "Connecting to Anaplan / Planful APIs", type: "⚙️", dur: "15 min", free: false }
       ]},
       { phase: "Building the Agent", duration: "90 min", lessons: [
@@ -64,12 +63,11 @@ export const MODULES: Module[] = [
     id: "employee-listening", icon: "💬", iconBg: "#eef2ff",
     title: "Employee Listening & Engagement",
     desc: "Automate survey analysis, sentiment tagging, and action-plan generation from Glint, Qualtrics, or Lattice pulse data.",
-    level: "beg", levelLabel: "Beginner", lessons: 7, duration: "3h",
+    level: "beg", levelLabel: "Beginner", lessons: 6, duration: "3h",
     tools: ["Glint", "Qualtrics", "Lattice", "Workday Peakon"],
     curriculum: [
       { phase: "Foundations", duration: "40 min", lessons: [
         { name: "How engagement surveys generate agent opportunities", type: "▶", dur: "14 min", free: true },
-        { name: "Understanding Glint / Qualtrics exports", type: "📄", dur: "12 min", free: true },
         { name: "Intro to sentiment classification with AI", type: "💬", dur: "14 min", free: false }
       ]},
       { phase: "Building the Agent", duration: "80 min", lessons: [
@@ -92,11 +90,10 @@ export const MODULES: Module[] = [
     id: "learning-development", icon: "🎓", iconBg: "#fff8ee",
     title: "Learning & Development (LMS)",
     desc: "Create agents that curate learning paths, identify skill gaps, and recommend content based on role, level, or business need.",
-    level: "int", levelLabel: "Intermediate", lessons: 9, duration: "4h",
+    level: "int", levelLabel: "Intermediate", lessons: 8, duration: "4h",
     tools: ["Cornerstone", "360Learning", "Docebo", "Workday Learning"],
     curriculum: [
       { phase: "Foundations", duration: "50 min", lessons: [
-        { name: "LMS architecture & data models", type: "📄", dur: "16 min", free: true },
         { name: "Mapping skills frameworks to content libraries", type: "▶", dur: "18 min", free: true },
         { name: "Connecting to Cornerstone / Docebo APIs", type: "⚙️", dur: "16 min", free: false }
       ]},
@@ -120,11 +117,10 @@ export const MODULES: Module[] = [
     id: "performance-management", icon: "🎯", iconBg: "#eef4f0",
     title: "Performance Management",
     desc: "Build agents to draft reviews, flag stale goals, generate coaching nudges, and surface calibration anomalies.",
-    level: "adv", levelLabel: "Advanced", lessons: 10, duration: "4.5h",
+    level: "adv", levelLabel: "Advanced", lessons: 9, duration: "4.5h",
     tools: ["Betterworks", "Leapsome", "15Five", "Lattice"],
     curriculum: [
       { phase: "Foundations", duration: "45 min", lessons: [
-        { name: "Performance cycle anatomy & data flows", type: "📄", dur: "15 min", free: true },
         { name: "Understanding rating distributions", type: "▶", dur: "16 min", free: true },
         { name: "Betterworks / Lattice API primer", type: "⚙️", dur: "14 min", free: false }
       ]},
@@ -149,11 +145,10 @@ export const MODULES: Module[] = [
     id: "recruiting-ats", icon: "🔍", iconBg: "#eef2ff",
     title: "Recruiting & ATS",
     desc: "Automate candidate screening summaries, outreach personalization, pipeline status reporting, and interview prep briefs.",
-    level: "beg", levelLabel: "Beginner", lessons: 7, duration: "3h",
+    level: "beg", levelLabel: "Beginner", lessons: 6, duration: "3h",
     tools: ["Greenhouse", "Lever", "Ashby", "Workday Recruiting"],
     curriculum: [
       { phase: "Foundations", duration: "35 min", lessons: [
-        { name: "ATS data models & pipeline stages", type: "📄", dur: "12 min", free: true },
         { name: "Where AI adds value in recruiting", type: "▶", dur: "12 min", free: true },
         { name: "Greenhouse & Lever API setup", type: "⚙️", dur: "11 min", free: false }
       ]},
@@ -176,11 +171,10 @@ export const MODULES: Module[] = [
     id: "onboarding", icon: "🚀", iconBg: "#fff8ee",
     title: "Onboarding Automation",
     desc: "Design multi-step agents handling checklists, buddy matching, IT provisioning reminders, and 30-60-90 day check-ins.",
-    level: "beg", levelLabel: "Beginner", lessons: 6, duration: "2.5h",
+    level: "beg", levelLabel: "Beginner", lessons: 5, duration: "2.5h",
     tools: ["Enboarder", "Sapling", "Talmundo", "Workday"],
     curriculum: [
       { phase: "Foundations", duration: "30 min", lessons: [
-        { name: "Onboarding process mapping for agent design", type: "📄", dur: "14 min", free: true },
         { name: "Cross-functional dependencies: IT, payroll, facilities", type: "▶", dur: "16 min", free: true }
       ]},
       { phase: "Building the Agent", duration: "80 min", lessons: [
@@ -202,11 +196,10 @@ export const MODULES: Module[] = [
     id: "compliance", icon: "⚖️", iconBg: "#eef4f0",
     title: "Compliance & Policy Management",
     desc: "Build agents that monitor policy gaps, surface regulatory updates, and auto-draft acknowledgment workflows.",
-    level: "adv", levelLabel: "Advanced", lessons: 8, duration: "3.5h",
+    level: "adv", levelLabel: "Advanced", lessons: 7, duration: "3.5h",
     tools: ["Navex", "PolicyStat", "Ethena", "DocuSign"],
     curriculum: [
       { phase: "Foundations", duration: "40 min", lessons: [
-        { name: "HR compliance risk landscape", type: "📄", dur: "14 min", free: true },
         { name: "Policy lifecycle: creation → attestation", type: "▶", dur: "14 min", free: true },
         { name: "Navex & PolicyStat API integration", type: "⚙️", dur: "12 min", free: false }
       ]},
@@ -229,11 +222,10 @@ export const MODULES: Module[] = [
     id: "comp-benchmarking", icon: "💰", iconBg: "#eef2ff",
     title: "Job Architecture & Comp Benchmarking",
     desc: "Create agents that match roles to market data, flag out-of-band offers, and auto-draft job level frameworks.",
-    level: "adv", levelLabel: "Advanced", lessons: 9, duration: "4h",
+    level: "adv", levelLabel: "Advanced", lessons: 8, duration: "4h",
     tools: ["Radford/Aon", "Mercer", "Pave", "Workday Comp"],
     curriculum: [
       { phase: "Foundations", duration: "50 min", lessons: [
-        { name: "Job architecture fundamentals: levels, families, tracks", type: "📄", dur: "18 min", free: true },
         { name: "Salary survey methodology & market positioning", type: "▶", dur: "18 min", free: true },
         { name: "Connecting to Radford / Pave APIs", type: "⚙️", dur: "14 min", free: false }
       ]},
@@ -257,11 +249,10 @@ export const MODULES: Module[] = [
     id: "dei-analytics", icon: "📊", iconBg: "#fff8ee",
     title: "DEI Analytics & Reporting",
     desc: "Build agents that surface representation gaps, auto-generate board-ready reports, and track goal progress.",
-    level: "int", levelLabel: "Intermediate", lessons: 7, duration: "3h",
+    level: "int", levelLabel: "Intermediate", lessons: 6, duration: "3h",
     tools: ["Visier", "Dandi", "Included", "Workday People Analytics"],
     curriculum: [
       { phase: "Foundations", duration: "35 min", lessons: [
-        { name: "DEI metrics framework & legal guardrails", type: "📄", dur: "16 min", free: true },
         { name: "Representation vs. equity vs. inclusion: what to measure", type: "▶", dur: "19 min", free: true }
       ]},
       { phase: "Building the Agent", duration: "85 min", lessons: [
@@ -283,11 +274,10 @@ export const MODULES: Module[] = [
     id: "document-generation", icon: "📄", iconBg: "#eef4f0",
     title: "Document & Offer Letter Generation",
     desc: "Automate offer letter drafting, addendum generation, document routing, and e-signature triggers.",
-    level: "beg", levelLabel: "Beginner", lessons: 6, duration: "2.5h",
+    level: "beg", levelLabel: "Beginner", lessons: 5, duration: "2.5h",
     tools: ["DocuSign CLM", "PandaDoc", "Ironclad", "Workday"],
     curriculum: [
       { phase: "Foundations", duration: "30 min", lessons: [
-        { name: "HR document taxonomy & compliance requirements", type: "📄", dur: "14 min", free: true },
         { name: "Offer letter anatomy: required vs. optional elements", type: "▶", dur: "16 min", free: true }
       ]},
       { phase: "Building the Agent", duration: "75 min", lessons: [
@@ -309,11 +299,10 @@ export const MODULES: Module[] = [
     id: "employee-relations", icon: "🤝", iconBg: "#eef2ff",
     title: "Employee Relations Case Mgmt",
     desc: "Build triage agents that classify ER cases, route to the right partner, surface precedent docs, and track resolution.",
-    level: "adv", levelLabel: "Advanced", lessons: 8, duration: "3.5h",
+    level: "adv", levelLabel: "Advanced", lessons: 7, duration: "3.5h",
     tools: ["HR Acuity", "Dovetail", "ServiceNow HR", "Workday Case Mgmt"],
     curriculum: [
       { phase: "Foundations", duration: "40 min", lessons: [
-        { name: "ER case taxonomy: types, severity, jurisdiction", type: "📄", dur: "16 min", free: true },
         { name: "Privilege, confidentiality & documentation guardrails", type: "▶", dur: "24 min", free: true }
       ]},
       { phase: "Building the Agent", duration: "100 min", lessons: [
@@ -335,11 +324,10 @@ export const MODULES: Module[] = [
     id: "benefits-admin", icon: "🏥", iconBg: "#fff8ee",
     title: "Benefits Administration",
     desc: "Create open enrollment assistants, coverage comparison agents, life-event automation, and ticket deflection bots.",
-    level: "int", levelLabel: "Intermediate", lessons: 7, duration: "3h",
+    level: "int", levelLabel: "Intermediate", lessons: 6, duration: "3h",
     tools: ["Benefitfocus", "PlanSource", "Workday Benefits", "bswift"],
     curriculum: [
       { phase: "Foundations", duration: "35 min", lessons: [
-        { name: "Benefits plan taxonomy: medical, dental, 401k, ancillary", type: "📄", dur: "16 min", free: true },
         { name: "Open enrollment cycle & life event triggers", type: "▶", dur: "19 min", free: true }
       ]},
       { phase: "Building the Agent", duration: "85 min", lessons: [
