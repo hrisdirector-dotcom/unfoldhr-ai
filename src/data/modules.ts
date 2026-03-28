@@ -249,7 +249,7 @@ export const MODULES: Module[] = [
     id: "dei-analytics", icon: "📊", iconBg: "#fff8ee",
     title: "DEI Analytics & Reporting",
     desc: "Build agents that surface representation gaps, auto-generate board-ready reports, and track goal progress.",
-    level: "int", levelLabel: "Intermediate", lessons: 7, duration: "3h",
+    level: "int", levelLabel: "Intermediate", lessons: 6, duration: "3h",
     tools: ["Visier", "Dandi", "Included", "Workday People Analytics"],
     curriculum: [
       { phase: "Foundations", duration: "35 min", lessons: [
