@@ -1,5 +1,5 @@
 export const MODULE_VIDEOS: Record<string, string> = {
-  "workforce-planning": "https://app.heygen.com/embeds/88dfcf20-7f18-4b88-9a1b-a62eaced49b4",
+  "workforce-planning": "https://app.heygen.com/embeds/208f449126e5447a91f69b5ebab59a97",
   "employee-listening": "https://app.heygen.com/embeds/34fced82-4fdf-4af3-9305-70fd5e2a0005",
   "learning-development": "https://app.heygen.com/embeds/c34d1ef3-0c2f-4761-9060-c5e9ac949199",
   "performance-management": "https://app.heygen.com/embeds/ef1135eb-7c1e-4416-af72-17410870a9ee",
