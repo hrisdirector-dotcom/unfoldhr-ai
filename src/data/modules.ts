@@ -274,7 +274,7 @@ export const MODULES: Module[] = [
     id: "document-generation", icon: "📄", iconBg: "#eef4f0",
     title: "Document & Offer Letter Generation",
     desc: "Automate offer letter drafting, addendum generation, document routing, and e-signature triggers.",
-    level: "beg", levelLabel: "Beginner", lessons: 6, duration: "2.5h",
+    level: "beg", levelLabel: "Beginner", lessons: 5, duration: "2.5h",
     tools: ["DocuSign CLM", "PandaDoc", "Ironclad", "Workday"],
     curriculum: [
       { phase: "Foundations", duration: "30 min", lessons: [
