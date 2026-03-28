@@ -33,23 +33,51 @@ export default function ContactPage() {
             >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-muted-foreground mb-1.5 uppercase tracking-wider">Name</label>
-                  <input name="name" required className="w-full bg-card border border-border rounded-lg px-4 py-3 text-sm text-foreground outline-none focus:border-primary transition-colors" />
+                  <label className="block text-xs font-bold text-muted-foreground mb-1.5 uppercase tracking-wider">
+                    Name
+                  </label>
+                  <input
+                    name="name"
+                    required
+                    className="w-full bg-card border border-border rounded-lg px-4 py-3 text-sm text-foreground outline-none focus:border-primary transition-colors"
+                  />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-muted-foreground mb-1.5 uppercase tracking-wider">Email</label>
-                  <input name="email" type="email" required className="w-full bg-card border border-border rounded-lg px-4 py-3 text-sm text-foreground outline-none focus:border-primary transition-colors" />
+                  <label className="block text-xs font-bold text-muted-foreground mb-1.5 uppercase tracking-wider">
+                    Email
+                  </label>
+                  <input
+                    name="email"
+                    type="email"
+                    required
+                    className="w-full bg-card border border-border rounded-lg px-4 py-3 text-sm text-foreground outline-none focus:border-primary transition-colors"
+                  />
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-bold text-muted-foreground mb-1.5 uppercase tracking-wider">Company</label>
-                <input name="company" className="w-full bg-card border border-border rounded-lg px-4 py-3 text-sm text-foreground outline-none focus:border-primary transition-colors" />
+                <label className="block text-xs font-bold text-muted-foreground mb-1.5 uppercase tracking-wider">
+                  Company
+                </label>
+                <input
+                  name="company"
+                  className="w-full bg-card border border-border rounded-lg px-4 py-3 text-sm text-foreground outline-none focus:border-primary transition-colors"
+                />
               </div>
               <div>
-                <label className="block text-xs font-bold text-muted-foreground mb-1.5 uppercase tracking-wider">Message</label>
-                <textarea name="message" rows={5} required className="w-full bg-card border border-border rounded-lg px-4 py-3 text-sm text-foreground outline-none focus:border-primary transition-colors resize-none" />
+                <label className="block text-xs font-bold text-muted-foreground mb-1.5 uppercase tracking-wider">
+                  Message
+                </label>
+                <textarea
+                  name="message"
+                  rows={5}
+                  required
+                  className="w-full bg-card border border-border rounded-lg px-4 py-3 text-sm text-foreground outline-none focus:border-primary transition-colors resize-none"
+                />
               </div>
-              <button type="submit" className="w-full py-3.5 rounded-lg bg-foreground text-background font-bold text-sm border-none cursor-pointer hover:bg-primary transition-colors">
+              <button
+                type="submit"
+                className="w-full py-3.5 rounded-lg bg-foreground text-background font-bold text-sm border-none cursor-pointer hover:bg-primary transition-colors"
+              >
                 Send Message →
               </button>
             </form>
