@@ -28,7 +28,6 @@ export default function ContactPage() {
             <form
               action="https://formspree.io/f/xwvrjodw"
               method="POST"
-              onSubmit={() => setSubmitted(true)}
               className="bg-background border border-border rounded-2xl p-8 md:p-10 space-y-5"
             >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
