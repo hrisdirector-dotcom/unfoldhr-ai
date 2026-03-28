@@ -226,7 +226,6 @@ export const MODULES: Module[] = [
     tools: ["Radford/Aon", "Mercer", "Pave", "Workday Comp"],
     curriculum: [
       { phase: "Foundations", duration: "50 min", lessons: [
-        { name: "Job architecture fundamentals: levels, families, tracks", type: "📄", dur: "18 min", free: true },
         { name: "Salary survey methodology & market positioning", type: "▶", dur: "18 min", free: true },
         { name: "Connecting to Radford / Pave APIs", type: "⚙️", dur: "14 min", free: false }
       ]},
