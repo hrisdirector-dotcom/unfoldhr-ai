@@ -68,7 +68,6 @@ export const MODULES: Module[] = [
     curriculum: [
       { phase: "Foundations", duration: "40 min", lessons: [
         { name: "How engagement surveys generate agent opportunities", type: "▶", dur: "14 min", free: true },
-        { name: "Understanding Glint / Qualtrics exports", type: "📄", dur: "12 min", free: true },
         { name: "Intro to sentiment classification with AI", type: "💬", dur: "14 min", free: false }
       ]},
       { phase: "Building the Agent", duration: "80 min", lessons: [
