@@ -14,7 +14,7 @@ export default function RequestBuildPage() {
     const formData = new FormData(form);
 
     try {
-      const response = await fetch("https://formspree.io/f/xwvrjodw", {
+      const response = await fetch("https://formspree.io/f/f/xojpjonl", {
         method: "POST",
         body: formData,
         headers: {
