@@ -165,12 +165,6 @@ export function ModuleDrawer({ mod, onClose, onToast }: DrawerProps) {
                   Submit Build Request →
                 </button>
               </div>
-              <div className="mt-6 text-xs text-muted-foreground font-bold uppercase tracking-widest mb-3">Tools Covered</div>
-              <div className="flex flex-wrap gap-1.5">
-                {mod.tools.map(t => (
-                  <span key={t} className="text-xs px-2.5 py-1 rounded bg-muted border border-border text-muted-foreground">{t}</span>
-                ))}
-              </div>
             </div>
           )}
         </div>
