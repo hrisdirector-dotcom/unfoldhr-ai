@@ -200,7 +200,6 @@ export const MODULES: Module[] = [
     tools: ["Navex", "PolicyStat", "Ethena", "DocuSign"],
     curriculum: [
       { phase: "Foundations", duration: "40 min", lessons: [
-        { name: "HR compliance risk landscape", type: "📄", dur: "14 min", free: true },
         { name: "Policy lifecycle: creation → attestation", type: "▶", dur: "14 min", free: true },
         { name: "Navex & PolicyStat API integration", type: "⚙️", dur: "12 min", free: false }
       ]},
