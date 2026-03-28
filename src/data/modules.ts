@@ -253,7 +253,6 @@ export const MODULES: Module[] = [
     tools: ["Visier", "Dandi", "Included", "Workday People Analytics"],
     curriculum: [
       { phase: "Foundations", duration: "35 min", lessons: [
-        { name: "DEI metrics framework & legal guardrails", type: "📄", dur: "16 min", free: true },
         { name: "Representation vs. equity vs. inclusion: what to measure", type: "▶", dur: "19 min", free: true }
       ]},
       { phase: "Building the Agent", duration: "85 min", lessons: [
