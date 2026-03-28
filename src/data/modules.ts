@@ -278,7 +278,6 @@ export const MODULES: Module[] = [
     tools: ["DocuSign CLM", "PandaDoc", "Ironclad", "Workday"],
     curriculum: [
       { phase: "Foundations", duration: "30 min", lessons: [
-        { name: "HR document taxonomy & compliance requirements", type: "📄", dur: "14 min", free: true },
         { name: "Offer letter anatomy: required vs. optional elements", type: "▶", dur: "16 min", free: true }
       ]},
       { phase: "Building the Agent", duration: "75 min", lessons: [
