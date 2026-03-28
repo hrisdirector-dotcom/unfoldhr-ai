@@ -3,6 +3,38 @@ import { RevealDiv } from "@/components/RevealDiv";
 
 export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setSubmitting(true);
+    setError("");
+
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+
+    try {
+      const response = await fetch("https://formspree.io/f/xwvrjodw", {
+        method: "POST",
+        body: formData,
+        headers: {
+          Accept: "application/json",
+        },
+      });
+
+      if (response.ok) {
+        setSubmitted(true);
+        form.reset();
+      } else {
+        setError("Submission failed. Please try again.");
+      }
+    } catch {
+      setError("Submission failed. Please check your connection and try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   return (
     <div className="bg-card pt-32 pb-24">
@@ -22,12 +54,11 @@ export default function ContactPage() {
             <div className="bg-background border border-border rounded-2xl p-10 text-center">
               <div className="text-4xl mb-4">✓</div>
               <h2 className="font-display text-2xl text-foreground mb-2">Message sent</h2>
-              <p className="text-muted-foreground">We'll get back to you within 24 hours.</p>
+              <p className="text-muted-foreground">We’ll be in contact within 48 hours.</p>
             </div>
           ) : (
             <form
-              action="https://formspree.io/f/xwvrjodw"
-              method="POST"
+              onSubmit={handleSubmit}
               className="bg-background border border-border rounded-2xl p-8 md:p-10 space-y-5"
             >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -53,6 +84,7 @@ export default function ContactPage() {
                   />
                 </div>
               </div>
+
               <div>
                 <label className="block text-xs font-bold text-muted-foreground mb-1.5 uppercase tracking-wider">
                   Company
@@ -62,6 +94,7 @@ export default function ContactPage() {
                   className="w-full bg-card border border-border rounded-lg px-4 py-3 text-sm text-foreground outline-none focus:border-primary transition-colors"
                 />
               </div>
+
               <div>
                 <label className="block text-xs font-bold text-muted-foreground mb-1.5 uppercase tracking-wider">
                   Message
@@ -73,11 +106,15 @@ export default function ContactPage() {
                   className="w-full bg-card border border-border rounded-lg px-4 py-3 text-sm text-foreground outline-none focus:border-primary transition-colors resize-none"
                 />
               </div>
+
+              {error && <p className="text-sm text-red-600">{error}</p>}
+
               <button
                 type="submit"
-                className="w-full py-3.5 rounded-lg bg-foreground text-background font-bold text-sm border-none cursor-pointer hover:bg-primary transition-colors"
+                disabled={submitting}
+                className="w-full py-3.5 rounded-lg bg-foreground text-background font-bold text-sm border-none cursor-pointer hover:bg-primary transition-colors disabled:opacity-60"
               >
-                Send Message →
+                {submitting ? "Sending..." : "Send Message →"}
               </button>
             </form>
           )}
