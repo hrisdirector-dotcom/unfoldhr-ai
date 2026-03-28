@@ -90,7 +90,7 @@ export const MODULES: Module[] = [
     id: "learning-development", icon: "🎓", iconBg: "#fff8ee",
     title: "Learning & Development (LMS)",
     desc: "Create agents that curate learning paths, identify skill gaps, and recommend content based on role, level, or business need.",
-    level: "int", levelLabel: "Intermediate", lessons: 9, duration: "4h",
+    level: "int", levelLabel: "Intermediate", lessons: 8, duration: "4h",
     tools: ["Cornerstone", "360Learning", "Docebo", "Workday Learning"],
     curriculum: [
       { phase: "Foundations", duration: "50 min", lessons: [
