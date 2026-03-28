@@ -145,7 +145,7 @@ export const MODULES: Module[] = [
     id: "recruiting-ats", icon: "🔍", iconBg: "#eef2ff",
     title: "Recruiting & ATS",
     desc: "Automate candidate screening summaries, outreach personalization, pipeline status reporting, and interview prep briefs.",
-    level: "beg", levelLabel: "Beginner", lessons: 7, duration: "3h",
+    level: "beg", levelLabel: "Beginner", lessons: 6, duration: "3h",
     tools: ["Greenhouse", "Lever", "Ashby", "Workday Recruiting"],
     curriculum: [
       { phase: "Foundations", duration: "35 min", lessons: [
