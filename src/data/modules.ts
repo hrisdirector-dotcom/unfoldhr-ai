@@ -117,7 +117,7 @@ export const MODULES: Module[] = [
     id: "performance-management", icon: "🎯", iconBg: "#eef4f0",
     title: "Performance Management",
     desc: "Build agents to draft reviews, flag stale goals, generate coaching nudges, and surface calibration anomalies.",
-    level: "adv", levelLabel: "Advanced", lessons: 10, duration: "4.5h",
+    level: "adv", levelLabel: "Advanced", lessons: 9, duration: "4.5h",
     tools: ["Betterworks", "Leapsome", "15Five", "Lattice"],
     curriculum: [
       { phase: "Foundations", duration: "45 min", lessons: [
