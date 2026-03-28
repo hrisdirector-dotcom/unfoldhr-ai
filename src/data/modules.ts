@@ -196,7 +196,7 @@ export const MODULES: Module[] = [
     id: "compliance", icon: "⚖️", iconBg: "#eef4f0",
     title: "Compliance & Policy Management",
     desc: "Build agents that monitor policy gaps, surface regulatory updates, and auto-draft acknowledgment workflows.",
-    level: "adv", levelLabel: "Advanced", lessons: 8, duration: "3.5h",
+    level: "adv", levelLabel: "Advanced", lessons: 7, duration: "3.5h",
     tools: ["Navex", "PolicyStat", "Ethena", "DocuSign"],
     curriculum: [
       { phase: "Foundations", duration: "40 min", lessons: [
