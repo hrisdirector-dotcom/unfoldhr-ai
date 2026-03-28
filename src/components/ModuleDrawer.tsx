@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { LevelBadge } from "./LevelBadge";
+import ModuleVideoEmbed from "@/components/ModuleVideoEmbed";
+import { getModuleVideoById } from "@/data/moduleVideos";
 import type { Module } from "@/data/modules";
 
 interface DrawerProps {
@@ -56,6 +58,9 @@ export function ModuleDrawer({ mod, onClose, onToast }: DrawerProps) {
             ✕
           </button>
         </div>
+
+        {/* Video Embed */}
+        <ModuleVideoEmbed url={getModuleVideoById(mod.id)} title={mod.title} />
 
         {/* Tabs */}
         <div className="flex border-b border-border">
