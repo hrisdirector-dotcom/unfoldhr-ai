@@ -171,7 +171,7 @@ export const MODULES: Module[] = [
     id: "onboarding", icon: "🚀", iconBg: "#fff8ee",
     title: "Onboarding Automation",
     desc: "Design multi-step agents handling checklists, buddy matching, IT provisioning reminders, and 30-60-90 day check-ins.",
-    level: "beg", levelLabel: "Beginner", lessons: 6, duration: "2.5h",
+    level: "beg", levelLabel: "Beginner", lessons: 5, duration: "2.5h",
     tools: ["Enboarder", "Sapling", "Talmundo", "Workday"],
     curriculum: [
       { phase: "Foundations", duration: "30 min", lessons: [
