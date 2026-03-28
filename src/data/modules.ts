@@ -36,7 +36,7 @@ export const MODULES: Module[] = [
     id: "workforce-planning", icon: "🏗️", iconBg: "#eef4f0",
     title: "Workforce Planning & Headcount",
     desc: "Build AI agents that draft headcount proposals, model org scenarios, and translate business plans into people strategies.",
-    level: "int", levelLabel: "Intermediate", lessons: 8, duration: "3.5h",
+    level: "int", levelLabel: "Intermediate", lessons: 7, duration: "3.5h",
     tools: ["Anaplan", "Planful", "Pigment", "Workday HCM"],
     curriculum: [
       { phase: "Foundations", duration: "45 min", lessons: [
