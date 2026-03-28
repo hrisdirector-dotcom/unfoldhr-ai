@@ -328,7 +328,6 @@ export const MODULES: Module[] = [
     tools: ["Benefitfocus", "PlanSource", "Workday Benefits", "bswift"],
     curriculum: [
       { phase: "Foundations", duration: "35 min", lessons: [
-        { name: "Benefits plan taxonomy: medical, dental, 401k, ancillary", type: "📄", dur: "16 min", free: true },
         { name: "Open enrollment cycle & life event triggers", type: "▶", dur: "19 min", free: true }
       ]},
       { phase: "Building the Agent", duration: "85 min", lessons: [
