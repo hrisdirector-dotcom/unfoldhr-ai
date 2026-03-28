@@ -94,7 +94,6 @@ export const MODULES: Module[] = [
     tools: ["Cornerstone", "360Learning", "Docebo", "Workday Learning"],
     curriculum: [
       { phase: "Foundations", duration: "50 min", lessons: [
-        { name: "LMS architecture & data models", type: "📄", dur: "16 min", free: true },
         { name: "Mapping skills frameworks to content libraries", type: "▶", dur: "18 min", free: true },
         { name: "Connecting to Cornerstone / Docebo APIs", type: "⚙️", dur: "16 min", free: false }
       ]},
