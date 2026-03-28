@@ -59,6 +59,9 @@ export function ModuleDrawer({ mod, onClose, onToast }: DrawerProps) {
           </button>
         </div>
 
+        {/* Video Embed */}
+        <ModuleVideoEmbed url={getModuleVideoById(mod.id)} title={mod.title} />
+
         {/* Tabs */}
         <div className="flex border-b border-border">
           {([["curriculum", "📚 Curriculum"], ["prompts", "💬 Prompt Library"], ["build", "⚡ Request Build"]] as const).map(([key, label]) => (
