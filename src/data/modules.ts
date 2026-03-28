@@ -41,7 +41,6 @@ export const MODULES: Module[] = [
     curriculum: [
       { phase: "Foundations", duration: "45 min", lessons: [
         { name: "What is a Workforce Planning Agent?", type: "▶", dur: "12 min", free: true },
-        { name: "Understanding headcount data models", type: "📄", dur: "18 min", free: true },
         { name: "Connecting to Anaplan / Planful APIs", type: "⚙️", dur: "15 min", free: false }
       ]},
       { phase: "Building the Agent", duration: "90 min", lessons: [
