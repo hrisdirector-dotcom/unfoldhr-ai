@@ -324,7 +324,7 @@ export const MODULES: Module[] = [
     id: "benefits-admin", icon: "🏥", iconBg: "#fff8ee",
     title: "Benefits Administration",
     desc: "Create open enrollment assistants, coverage comparison agents, life-event automation, and ticket deflection bots.",
-    level: "int", levelLabel: "Intermediate", lessons: 7, duration: "3h",
+    level: "int", levelLabel: "Intermediate", lessons: 6, duration: "3h",
     tools: ["Benefitfocus", "PlanSource", "Workday Benefits", "bswift"],
     curriculum: [
       { phase: "Foundations", duration: "35 min", lessons: [
