@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { LevelBadge } from "./LevelBadge";
+import ModuleVideoEmbed from "@/components/ModuleVideoEmbed";
+import { getModuleVideoById } from "@/data/moduleVideos";
 import type { Module } from "@/data/modules";
 
 interface DrawerProps {
