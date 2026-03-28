@@ -149,7 +149,6 @@ export const MODULES: Module[] = [
     tools: ["Greenhouse", "Lever", "Ashby", "Workday Recruiting"],
     curriculum: [
       { phase: "Foundations", duration: "35 min", lessons: [
-        { name: "ATS data models & pipeline stages", type: "📄", dur: "12 min", free: true },
         { name: "Where AI adds value in recruiting", type: "▶", dur: "12 min", free: true },
         { name: "Greenhouse & Lever API setup", type: "⚙️", dur: "11 min", free: false }
       ]},
