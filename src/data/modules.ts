@@ -175,7 +175,6 @@ export const MODULES: Module[] = [
     tools: ["Enboarder", "Sapling", "Talmundo", "Workday"],
     curriculum: [
       { phase: "Foundations", duration: "30 min", lessons: [
-        { name: "Onboarding process mapping for agent design", type: "📄", dur: "14 min", free: true },
         { name: "Cross-functional dependencies: IT, payroll, facilities", type: "▶", dur: "16 min", free: true }
       ]},
       { phase: "Building the Agent", duration: "80 min", lessons: [
