@@ -303,7 +303,6 @@ export const MODULES: Module[] = [
     tools: ["HR Acuity", "Dovetail", "ServiceNow HR", "Workday Case Mgmt"],
     curriculum: [
       { phase: "Foundations", duration: "40 min", lessons: [
-        { name: "ER case taxonomy: types, severity, jurisdiction", type: "📄", dur: "16 min", free: true },
         { name: "Privilege, confidentiality & documentation guardrails", type: "▶", dur: "24 min", free: true }
       ]},
       { phase: "Building the Agent", duration: "100 min", lessons: [
