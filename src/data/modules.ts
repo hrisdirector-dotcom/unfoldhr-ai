@@ -63,7 +63,7 @@ export const MODULES: Module[] = [
     id: "employee-listening", icon: "💬", iconBg: "#eef2ff",
     title: "Employee Listening & Engagement",
     desc: "Automate survey analysis, sentiment tagging, and action-plan generation from Glint, Qualtrics, or Lattice pulse data.",
-    level: "beg", levelLabel: "Beginner", lessons: 7, duration: "3h",
+    level: "beg", levelLabel: "Beginner", lessons: 6, duration: "3h",
     tools: ["Glint", "Qualtrics", "Lattice", "Workday Peakon"],
     curriculum: [
       { phase: "Foundations", duration: "40 min", lessons: [
