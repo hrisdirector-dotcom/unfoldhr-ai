@@ -222,7 +222,7 @@ export const MODULES: Module[] = [
     id: "comp-benchmarking", icon: "💰", iconBg: "#eef2ff",
     title: "Job Architecture & Comp Benchmarking",
     desc: "Create agents that match roles to market data, flag out-of-band offers, and auto-draft job level frameworks.",
-    level: "adv", levelLabel: "Advanced", lessons: 9, duration: "4h",
+    level: "adv", levelLabel: "Advanced", lessons: 8, duration: "4h",
     tools: ["Radford/Aon", "Mercer", "Pave", "Workday Comp"],
     curriculum: [
       { phase: "Foundations", duration: "50 min", lessons: [
