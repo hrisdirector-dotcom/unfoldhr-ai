@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 type RequestBuildPanelProps = {
-  moduleTitle: string;
+  moduleTitle?: string;
 };
 
 export default function RequestBuildPanel({ moduleTitle }: RequestBuildPanelProps) {
