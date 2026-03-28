@@ -121,7 +121,6 @@ export const MODULES: Module[] = [
     tools: ["Betterworks", "Leapsome", "15Five", "Lattice"],
     curriculum: [
       { phase: "Foundations", duration: "45 min", lessons: [
-        { name: "Performance cycle anatomy & data flows", type: "📄", dur: "15 min", free: true },
         { name: "Understanding rating distributions", type: "▶", dur: "16 min", free: true },
         { name: "Betterworks / Lattice API primer", type: "⚙️", dur: "14 min", free: false }
       ]},
