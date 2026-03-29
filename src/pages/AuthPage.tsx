@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { RevealDiv } from "@/components/RevealDiv";
+import { useAuth } from "@/hooks/useAuth";
 
 interface AuthPageProps {
   onLogin: (user: { email: string; role: string }) => void;
@@ -11,28 +12,35 @@ export default function AuthPage({ onLogin, setPage }: AuthPageProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const { signIn, signUp, isAdmin } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
-    if (isLogin) {
-      if (email === "eric@unfold.hr" && password === "admin") {
-        onLogin({ email, role: "admin" });
-        setPage("dashboard");
-      } else if (email && password) {
-        onLogin({ email, role: "user" });
-        setPage("dashboard");
+    try {
+      if (isLogin) {
+        const { error: err } = await signIn(email, password);
+        if (err) {
+          setError(err.message);
+          return;
+        }
       } else {
-        setError("Please enter email and password.");
+        const { error: err } = await signUp(email, password);
+        if (err) {
+          setError(err.message);
+          return;
+        }
       }
-    } else {
-      if (email && password) {
-        onLogin({ email, role: "user" });
+      // After successful auth, check role via a short delay for state to settle
+      setTimeout(() => {
+        onLogin({ email, role: isAdmin ? "admin" : "user" });
         setPage("dashboard");
-      } else {
-        setError("Please fill in all fields.");
-      }
+      }, 500);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -68,8 +76,12 @@ export default function AuthPage({ onLogin, setPage }: AuthPageProps) {
                 className="w-full bg-background border border-border rounded-lg px-4 py-3 text-sm text-foreground outline-none focus:border-primary transition-colors"
               />
             </div>
-            <button type="submit" className="w-full py-3.5 rounded-lg bg-foreground text-background font-bold text-sm border-none cursor-pointer hover:bg-primary transition-colors">
-              {isLogin ? "Sign In →" : "Create Account →"}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-3.5 rounded-lg bg-foreground text-background font-bold text-sm border-none cursor-pointer hover:bg-primary transition-colors disabled:opacity-60"
+            >
+              {loading ? "Please wait..." : isLogin ? "Sign In →" : "Create Account →"}
             </button>
           </form>
 
@@ -80,10 +92,6 @@ export default function AuthPage({ onLogin, setPage }: AuthPageProps) {
             >
               {isLogin ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
             </button>
-          </div>
-
-          <div className="mt-4 text-center text-xs text-muted-foreground">
-            Demo admin: eric@unfold.hr / admin
           </div>
         </div>
       </RevealDiv>
