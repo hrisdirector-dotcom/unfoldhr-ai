@@ -99,7 +99,11 @@ export function ModuleDrawer({ mod, onClose, onToast }: DrawerProps) {
 
         {/* Tabs */}
         <div className="flex border-b border-border">
-          {([["curriculum", "📚 Curriculum"], ["prompts", "💬 Prompt Library"], ["build", "⚡ Request Build"]] as const).map(([key, label]) => (
+          {([
+            { key: "curriculum" as const, label: "📚 Curriculum" },
+            { key: "prompts" as const, label: "💬 Prompt Library" },
+            { key: "build" as const, label: "⚡ Request Build" },
+          ]).map(({ key, label }) => (
             <button
               key={key}
               onClick={() => setTab(key)}
@@ -108,7 +112,7 @@ export function ModuleDrawer({ mod, onClose, onToast }: DrawerProps) {
               }`}
               style={{ borderBottomWidth: 2, borderBottomStyle: "solid", borderBottomColor: tab === key ? "hsl(var(--primary))" : "transparent" }}
             >
-              {label === "curriculum" ? "📚 Curriculum" : label === "prompts" ? "💬 Prompt Library" : "⚡ Request Build"}
+              {label}
             </button>
           ))}
         </div>
