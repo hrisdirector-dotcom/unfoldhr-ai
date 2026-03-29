@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { LevelBadge } from "./LevelBadge";
 import ModuleVideoEmbed from "@/components/ModuleVideoEmbed";
 import { getModuleVideoById } from "@/data/moduleVideos";
+import { supabase } from "@/integrations/supabase/client";
 import type { Module } from "@/data/modules";
 
 interface DrawerProps {
@@ -14,11 +15,45 @@ export function ModuleDrawer({ mod, onClose, onToast }: DrawerProps) {
   const [tab, setTab] = useState<"curriculum" | "prompts" | "build">("curriculum");
   const [openPrompts, setOpenPrompts] = useState<Record<number, boolean>>({});
   const [copied, setCopied] = useState<Record<number, boolean>>({});
+  const [submitting, setSubmitting] = useState(false);
 
-  useEffect(() => {
-    setTab("curriculum");
-    setOpenPrompts({});
-  }, [mod?.id]);
+  // Build request form state
+  const [buildEmail, setBuildEmail] = useState("");
+  const [buildCompany, setBuildCompany] = useState("");
+  const [buildChallenge, setBuildChallenge] = useState("");
+
+  const resetBuildForm = () => {
+    setBuildEmail("");
+    setBuildCompany("");
+    setBuildChallenge("");
+  };
+
+  const handleBuildSubmit = async () => {
+    if (!buildEmail || !buildChallenge) {
+      onToast("Please fill in email and challenge fields.");
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const companyParts = buildCompany.split("—").map(s => s.trim());
+      const { error } = await supabase.from("submissions").insert({
+        request_type: "build_request",
+        contact_name: companyParts[1] || companyParts[0] || "",
+        email: buildEmail,
+        company_name: companyParts[0] || "",
+        module: mod?.title || "",
+        message: buildChallenge,
+      });
+      if (error) throw error;
+      resetBuildForm();
+      onClose();
+      onToast("✓ Build request received. Expect a scoping call within 48 hours.");
+    } catch {
+      onToast("Failed to submit. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   if (!mod) return null;
 
@@ -64,7 +99,11 @@ export function ModuleDrawer({ mod, onClose, onToast }: DrawerProps) {
 
         {/* Tabs */}
         <div className="flex border-b border-border">
-          {([["curriculum", "📚 Curriculum"], ["prompts", "💬 Prompt Library"], ["build", "⚡ Request Build"]] as const).map(([key, label]) => (
+          {([
+            { key: "curriculum" as const, label: "📚 Curriculum" },
+            { key: "prompts" as const, label: "💬 Prompt Library" },
+            { key: "build" as const, label: "⚡ Request Build" },
+          ]).map(({ key, label }) => (
             <button
               key={key}
               onClick={() => setTab(key)}
@@ -148,21 +187,42 @@ export function ModuleDrawer({ mod, onClose, onToast }: DrawerProps) {
                 Tell us your specific workflow challenge. We'll scope, advise, and work with you to deploy a production-ready agent — typically delivered in 2–4 weeks.
               </p>
               <div className="space-y-4">
-                {[["Work Email", "email", "jane@company.com"], ["Company & Role", "text", "Acme Corp — VP People Ops"]].map(([lbl, type, ph]) => (
-                  <div key={lbl}>
-                    <label className="block text-xs font-bold text-muted-foreground mb-1.5 uppercase tracking-wider">{lbl}</label>
-                    <input type={type} placeholder={ph} className="w-full bg-card border border-border rounded-lg px-4 py-3 text-sm text-foreground outline-none focus:border-primary transition-colors" />
-                  </div>
-                ))}
+                <div>
+                  <label className="block text-xs font-bold text-muted-foreground mb-1.5 uppercase tracking-wider">Work Email</label>
+                  <input
+                    type="email"
+                    placeholder="jane@company.com"
+                    value={buildEmail}
+                    onChange={e => setBuildEmail(e.target.value)}
+                    className="w-full bg-card border border-border rounded-lg px-4 py-3 text-sm text-foreground outline-none focus:border-primary transition-colors"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-muted-foreground mb-1.5 uppercase tracking-wider">Company & Role</label>
+                  <input
+                    type="text"
+                    placeholder="Acme Corp — VP People Ops"
+                    value={buildCompany}
+                    onChange={e => setBuildCompany(e.target.value)}
+                    className="w-full bg-card border border-border rounded-lg px-4 py-3 text-sm text-foreground outline-none focus:border-primary transition-colors"
+                  />
+                </div>
                 <div>
                   <label className="block text-xs font-bold text-muted-foreground mb-1.5 uppercase tracking-wider">Describe Your Challenge</label>
-                  <textarea rows={4} placeholder="Tell us about your current process…" className="w-full bg-card border border-border rounded-lg px-4 py-3 text-sm text-foreground outline-none focus:border-primary transition-colors resize-none" />
+                  <textarea
+                    rows={4}
+                    placeholder="Tell us about your current process…"
+                    value={buildChallenge}
+                    onChange={e => setBuildChallenge(e.target.value)}
+                    className="w-full bg-card border border-border rounded-lg px-4 py-3 text-sm text-foreground outline-none focus:border-primary transition-colors resize-none"
+                  />
                 </div>
                 <button
-                  onClick={() => { onClose(); onToast("✓ Build request received. Expect a scoping call within 48 hours."); }}
-                  className="w-full py-3 rounded-lg bg-foreground text-background font-bold text-sm border-none cursor-pointer hover:bg-primary transition-colors"
+                  onClick={handleBuildSubmit}
+                  disabled={submitting}
+                  className="w-full py-3 rounded-lg bg-foreground text-background font-bold text-sm border-none cursor-pointer hover:bg-primary transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                  Submit Build Request →
+                  {submitting ? "Submitting..." : "Submit Build Request →"}
                 </button>
               </div>
             </div>
