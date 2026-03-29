@@ -99,7 +99,7 @@ export function ModuleDrawer({ mod, onClose, onToast }: DrawerProps) {
 
         {/* Tabs */}
         <div className="flex border-b border-border">
-          {(["curriculum", "prompts", "build"] as const).map(([key, label]) => (
+          {([["curriculum", "📚 Curriculum"], ["prompts", "💬 Prompt Library"], ["build", "⚡ Request Build"]] as const).map(([key, label]) => (
             <button
               key={key}
               onClick={() => setTab(key)}
