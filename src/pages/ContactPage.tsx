@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 type RequestBuildPanelProps = {
   moduleTitle?: string;
@@ -17,23 +18,42 @@ export default function RequestBuildPanel({ moduleTitle }: RequestBuildPanelProp
     const form = e.currentTarget;
     const formData = new FormData(form);
 
+    const name = (formData.get("name") as string)?.trim();
+    const email = (formData.get("email") as string)?.trim();
+    const company = (formData.get("company") as string)?.trim();
+    const module = (formData.get("module") as string)?.trim();
+    const message = (formData.get("message") as string)?.trim();
+
+    if (!name || !email || !message) {
+      setError("Please fill in all required fields.");
+      setSubmitting(false);
+      return;
+    }
+
     try {
-      const response = await fetch("https://formspree.io/f/mgopojll", {
-        method: "POST",
-        body: formData,
-        headers: {
-          Accept: "application/json",
-        },
+      // Save to database
+      const { error: dbError } = await supabase.from("submissions").insert({
+        request_type: "contact",
+        contact_name: name,
+        email,
+        company_name: company || "",
+        module: module || "",
+        message,
       });
 
-      if (response.ok) {
-        setSubmitted(true);
-        form.reset();
-      } else {
-        setError("Request failed. Please try again.");
-      }
+      if (dbError) throw dbError;
+
+      // Also send to Formspree
+      await fetch("https://formspree.io/f/mgopojll", {
+        method: "POST",
+        body: formData,
+        headers: { Accept: "application/json" },
+      });
+
+      setSubmitted(true);
+      form.reset();
     } catch {
-      setError("Request failed. Please check your connection and try again.");
+      setError("Request failed. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -44,7 +64,7 @@ export default function RequestBuildPanel({ moduleTitle }: RequestBuildPanelProp
       <div className="bg-background border border-border rounded-2xl p-10 text-center">
         <div className="text-4xl mb-4">✓</div>
         <h2 className="font-display text-2xl text-foreground mb-2">Request sent</h2>
-        <p className="text-muted-foreground">We’ll be in contact within 48 hours.</p>
+        <p className="text-muted-foreground">We'll be in contact within 48 hours.</p>
       </div>
     );
   }
@@ -104,7 +124,7 @@ export default function RequestBuildPanel({ moduleTitle }: RequestBuildPanelProp
         />
       </div>
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p className="text-sm text-destructive">{error}</p>}
 
       <button
         type="submit"
