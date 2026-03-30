@@ -1,4 +1,5 @@
 import { type TrainingModule } from "@/data/trainingModules";
+import AgentDemo from "@/components/AgentDemo";
 
 type Props = {
   module: TrainingModule;
@@ -36,6 +37,32 @@ export default function TrainingModuleDetail({ module }: Props) {
           </ul>
         </div>
       </div>
+
+      {module.id === "workforce-planning" && (
+        <AgentDemo
+          input={[
+            "Current headcount: 120",
+            "Growth target: +25%",
+            "Budget constraint: +15%"
+          ]}
+          prompt={`Draft a headcount plan based on growth and budget constraints.`}
+          output={`Headcount Plan Summary
+
+Recommended hires:
+• 8 Sales Reps
+• 3 Engineers
+• 2 HR Business Partners
+
+Timeline:
+• Q1: 5 hires
+• Q2: 4 hires
+• Q3: 4 hires
+
+Risks:
+• Budget overrun if hiring accelerates early
+• Engineering hiring constraints`}
+        />
+      )}
     </div>
   );
 }
