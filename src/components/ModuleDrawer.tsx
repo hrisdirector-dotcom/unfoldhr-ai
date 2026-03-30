@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { LevelBadge } from "./LevelBadge";
+import AgentDemo from "@/components/AgentDemo";
 import ModuleVideoEmbed from "@/components/ModuleVideoEmbed";
 import { getModuleVideoById } from "@/data/moduleVideos";
 import { supabase } from "@/integrations/supabase/client";
