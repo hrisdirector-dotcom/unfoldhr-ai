@@ -147,6 +147,35 @@ export function ModuleDrawer({ mod, onClose, onToast }: DrawerProps) {
             </div>
           ))}
 
+          {/* Agent Demo for Workforce Planning */}
+          {tab === "curriculum" && mod.id === "workforce-planning" && (
+            <div className="mt-6">
+              <AgentDemo
+                input={[
+                  "Current headcount: 120",
+                  "Growth target: +25%",
+                  "Budget constraint: +15%"
+                ]}
+                prompt={`Draft a headcount plan based on growth and budget constraints.`}
+                output={`Headcount Plan Summary
+
+Recommended hires:
+• 8 Sales Reps
+• 3 Engineers
+• 2 HR Business Partners
+
+Timeline:
+• Q1: 5 hires
+• Q2: 4 hires
+• Q3: 4 hires
+
+Risks:
+• Budget overrun if hiring accelerates early
+• Engineering hiring constraints`}
+              />
+            </div>
+          )}
+
           {/* PROMPTS TAB */}
           {tab === "prompts" && (
             <div>
