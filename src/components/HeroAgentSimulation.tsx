@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { RotateCcw } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function HeroAgentSimulation() {
   const [step, setStep] = useState(0);
