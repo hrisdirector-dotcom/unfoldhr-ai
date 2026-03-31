@@ -89,7 +89,15 @@ Timeline:
 Q1: 5 hires
 Q2: 4 hires
 Q3: 4 hires`}
-          </div>
+      {outputVisible && (
+        <button
+          onClick={replay}
+          className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors mx-auto"
+        >
+          <RotateCcw className="w-3.5 h-3.5" />
+          Replay
+        </button>
+      )}
         </div>
       )}
     </div>
