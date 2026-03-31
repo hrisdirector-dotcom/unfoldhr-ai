@@ -8,6 +8,13 @@ export default function HeroAgentSimulation() {
 
   const fullPrompt = "Draft a headcount plan based on growth and budget constraints.";
 
+  const replay = useCallback(() => {
+    setStep(0);
+    setPromptText("");
+    setOutputVisible(false);
+    setTimeout(() => setStep(1), 800);
+  }, []);
+
   useEffect(() => {
     if (step === 1) {
       let i = 0;
