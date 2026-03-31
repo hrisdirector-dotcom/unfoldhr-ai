@@ -86,7 +86,7 @@ export default function HomePage({ setPage }: HomePageProps) {
             </RevealDiv>
           </div>
           <RevealDiv delay={0.3} className="hidden lg:block">
-            <HeroDemo />
+            <HeroAgentSimulation />
           </RevealDiv>
         </div>
       </section>
