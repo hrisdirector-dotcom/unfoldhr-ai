@@ -89,6 +89,10 @@ Timeline:
 Q1: 5 hires
 Q2: 4 hires
 Q3: 4 hires`}
+          </div>
+        </div>
+      )}
+
       {outputVisible && (
         <button
           onClick={replay}
@@ -97,8 +101,6 @@ Q3: 4 hires`}
           <RotateCcw className="w-3.5 h-3.5" />
           Replay
         </button>
-      )}
-        </div>
       )}
     </div>
   );
