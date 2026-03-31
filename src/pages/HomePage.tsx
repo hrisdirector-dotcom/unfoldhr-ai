@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import heroBg from "@/assets/hero-bg.jpg";
-import HeroDemo from "@/components/HeroDemo";
+import HeroAgentSimulation from "@/components/HeroAgentSimulation";
 import { MODULES } from "@/data/modules";
 import { ModuleCard } from "@/components/ModuleCard";
 import { ModuleDrawer } from "@/components/ModuleDrawer";
@@ -86,7 +86,7 @@ export default function HomePage({ setPage }: HomePageProps) {
             </RevealDiv>
           </div>
           <RevealDiv delay={0.3} className="hidden lg:block">
-            <HeroDemo />
+            <HeroAgentSimulation />
           </RevealDiv>
         </div>
       </section>
