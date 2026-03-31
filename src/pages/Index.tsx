@@ -253,14 +253,6 @@ const Index = () => {
         <AdminDashboard onBack={() => navigateTo("dashboard")} onLogout={handleLogout} />
       )}
 
-      {page !== "agent-workforce" && (
-        <button
-          onClick={() => navigateTo("agent-workforce")}
-          className="fixed bottom-6 right-6 z-50 px-4 py-3 rounded-full bg-foreground text-background text-sm font-semibold shadow-lg hover:bg-primary transition-colors"
-        >
-          Agent Demo →
-        </button>
-      )}
     </div>
   );
 };
