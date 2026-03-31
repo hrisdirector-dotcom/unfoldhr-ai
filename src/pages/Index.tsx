@@ -66,6 +66,7 @@ const Index = () => {
       {page === "about" && <AboutPage />}
       {page === "integrations" && <IntegrationsPage />}
       {page === "contact" && <ContactPage />}
+      {page === "workforce-planning-agent" && <WorkforcePlanningAgent />}
       {page === "login" && <AuthPage onLogin={handleLogin} setPage={navigateTo} />}
       {page === "dashboard" && currentUser && (
         <DashboardPage currentUser={currentUser} onLogout={handleLogout} setPage={navigateTo} />
