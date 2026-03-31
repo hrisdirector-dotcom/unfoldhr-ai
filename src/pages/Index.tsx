@@ -9,6 +9,7 @@ import AuthPage from "@/pages/AuthPage";
 import DashboardPage from "@/pages/DashboardPage";
 import AdminDashboard from "@/pages/AdminDashboard";
 import ExplainersPage from "@/pages/ExplainersPage";
+import WorkforcePlanningAgent from "@/pages/WorkforcePlanningAgent";
 
 const Index = () => {
   const [page, setPage] = useState("home");
