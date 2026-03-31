@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { UnfoldNav } from "@/components/UnfoldNav";
+import { RevealDiv } from "@/components/RevealDiv";
 import { useAuth } from "@/hooks/useAuth";
 import HomePage from "@/pages/HomePage";
 import AboutPage from "@/pages/AboutPage";
@@ -9,7 +10,186 @@ import AuthPage from "@/pages/AuthPage";
 import DashboardPage from "@/pages/DashboardPage";
 import AdminDashboard from "@/pages/AdminDashboard";
 import ExplainersPage from "@/pages/ExplainersPage";
-import WorkforcePlanningAgent from "@/pages/WorkforcePlanningAgent";
+
+function AgentDemo({
+  input,
+  prompt,
+  output,
+}: {
+  input: string[];
+  prompt: string;
+  output: string;
+}) {
+  const [step, setStep] = useState(0);
+  const [promptText, setPromptText] = useState("");
+  const [outputVisible, setOutputVisible] = useState(false);
+
+  useEffect(() => {
+    if (step === 1) {
+      let i = 0;
+      const interval = setInterval(() => {
+        setPromptText(prompt.slice(0, i));
+        i++;
+        if (i > prompt.length) {
+          clearInterval(interval);
+          setTimeout(() => setStep(2), 700);
+        }
+      }, 18);
+      return () => clearInterval(interval);
+    }
+
+    if (step === 2) {
+      const timeout = setTimeout(() => {
+        setOutputVisible(true);
+      }, 900);
+      return () => clearTimeout(timeout);
+    }
+  }, [step, prompt]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setStep(1), 700);
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <div className="bg-background border border-border rounded-xl p-6 space-y-5">
+      <div>
+        <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">
+          Inputs
+        </h4>
+        <ul className="text-sm text-foreground space-y-1">
+          {input.map((item) => (
+            <li key={item}>• {item}</li>
+          ))}
+        </ul>
+      </div>
+
+      <div>
+        <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">
+          Prompt
+        </h4>
+        <pre className="text-xs bg-muted p-3 rounded text-muted-foreground whitespace-pre-wrap min-h-[60px]">
+          {promptText}
+        </pre>
+      </div>
+
+      {step >= 2 && !outputVisible && (
+        <p className="text-xs text-muted-foreground animate-pulse">
+          Generating output...
+        </p>
+      )}
+
+      {outputVisible && (
+        <div>
+          <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">
+            Output
+          </h4>
+          <div className="text-sm text-foreground whitespace-pre-wrap bg-muted p-4 rounded">
+            {output}
+          </div>
+        </div>
+      )}
+
+      <p className="text-[10px] text-muted-foreground">
+        Example output for demonstration only.
+      </p>
+    </div>
+  );
+}
+
+function WorkforcePlanningAgent({ setPage }: { setPage: (p: string) => void }) {
+  return (
+    <div className="bg-background min-h-screen">
+      <div className="max-w-3xl mx-auto px-6 md:px-14 py-32 space-y-20">
+        <RevealDiv>
+          <span className="inline-block text-xs font-bold uppercase tracking-[3px] text-primary mb-5 bg-accent px-3 py-1.5 rounded-md">
+            Workforce Planning Agent
+          </span>
+
+          <h1 className="font-display text-4xl md:text-5xl text-foreground mb-4 leading-tight">
+            Plan your workforce before problems appear
+          </h1>
+
+          <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl">
+            Turn headcount planning from reactive guesswork into a structured, data-driven
+            process powered by AI agents.
+          </p>
+        </RevealDiv>
+
+        <RevealDiv>
+          <div className="bg-card border border-border rounded-xl p-8">
+            <h2 className="font-display text-xl text-foreground mb-3">The problem</h2>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Workforce planning is still driven by spreadsheets, disconnected systems, and
+              last-minute decisions. HR teams are expected to align hiring with growth
+              targets, budgets, and business strategy without real-time visibility or
+              predictive insight.
+            </p>
+          </div>
+        </RevealDiv>
+
+        <RevealDiv>
+          <div className="bg-card border border-border rounded-xl p-8">
+            <h2 className="font-display text-xl text-foreground mb-3">Ask the agent</h2>
+            <p className="text-sm text-muted-foreground italic leading-relaxed">
+              "How should we plan headcount for next year based on growth and budget
+              constraints?"
+            </p>
+          </div>
+        </RevealDiv>
+
+        <RevealDiv>
+          <AgentDemo
+            input={["Current headcount: 120", "Growth target: 30%", "Annual hiring budget: $2.4M"]}
+            prompt={"You are an HR workforce planning agent.\n\nGiven:\n- Current headcount: 120\n- Growth target: 30%\n- Budget: $2.4M\n\nGenerate a quarterly hiring plan with budget allocation and risk flags."}
+            output={"Q1: Hire 12 (Engineering 6, Sales 4, Ops 2) — $680K\nQ2: Hire 10 (Engineering 4, Marketing 3, Support 3) — $580K\nQ3: Hire 9 (Product 3, Sales 3, HR 3) — $540K\nQ4: Hire 5 (buffer + backfills) — $600K\n\n⚠ Risk: Engineering hiring in Q1 depends on updated JDs.\n⚠ Risk: Q4 buffer may be insufficient if attrition exceeds 8%."}
+          />
+        </RevealDiv>
+
+        <RevealDiv>
+          <div className="bg-card border border-border rounded-xl p-8">
+            <h2 className="font-display text-xl text-foreground mb-3">What the agent delivers</h2>
+            <ul className="text-sm text-muted-foreground space-y-2 leading-relaxed">
+              <li>• Structured headcount plan aligned to business growth</li>
+              <li>• Hiring timeline across quarters</li>
+              <li>• Budget-aware recommendations</li>
+              <li>• Identified risks before execution</li>
+            </ul>
+          </div>
+        </RevealDiv>
+
+        <RevealDiv>
+          <div className="bg-card border border-border rounded-xl p-8">
+            <h2 className="font-display text-xl text-foreground mb-3">How the agent works</h2>
+            <ul className="text-sm text-muted-foreground space-y-2 leading-relaxed">
+              <li>→ Connects to HR systems</li>
+              <li>→ Analyzes workforce composition</li>
+              <li>→ Models hiring scenarios</li>
+              <li>→ Generates structured outputs</li>
+            </ul>
+          </div>
+        </RevealDiv>
+
+        <RevealDiv>
+          <div className="text-center space-x-4">
+            <button
+              onClick={() => setPage("contact")}
+              className="px-6 py-3 bg-foreground text-background rounded-xl text-sm font-semibold hover:bg-primary transition-colors"
+            >
+              Build this agent →
+            </button>
+            <button
+              onClick={() => setPage("explainers")}
+              className="px-6 py-3 border border-border text-foreground rounded-xl text-sm font-semibold hover:bg-muted transition-colors"
+            >
+              Back to modules
+            </button>
+          </div>
+        </RevealDiv>
+      </div>
+    </div>
+  );
+}
 
 const Index = () => {
   const [page, setPage] = useState("home");
@@ -31,7 +211,6 @@ const Index = () => {
   };
 
   const handleLogin = (_user: { email: string; role: string }) => {
-    // Auth state is now managed by useAuth hook
     navigateTo("dashboard");
   };
 
@@ -40,7 +219,6 @@ const Index = () => {
     navigateTo("home");
   };
 
-  // Redirect away from protected pages if not logged in
   useEffect(() => {
     if (!loading && !user && (page === "dashboard" || page === "admin")) {
       setPage("login");
@@ -63,16 +241,25 @@ const Index = () => {
 
       {page === "home" && <HomePage setPage={navigateTo} />}
       {page === "explainers" && <ExplainersPage initialModuleId={explainerModuleId} />}
+      {page === "agent-workforce" && <WorkforcePlanningAgent setPage={navigateTo} />}
       {page === "about" && <AboutPage />}
       {page === "integrations" && <IntegrationsPage />}
       {page === "contact" && <ContactPage />}
-      {page === "workforce-planning-agent" && <WorkforcePlanningAgent />}
       {page === "login" && <AuthPage onLogin={handleLogin} setPage={navigateTo} />}
       {page === "dashboard" && currentUser && (
         <DashboardPage currentUser={currentUser} onLogout={handleLogout} setPage={navigateTo} />
       )}
       {page === "admin" && isAdmin && (
         <AdminDashboard onBack={() => navigateTo("dashboard")} onLogout={handleLogout} />
+      )}
+
+      {page !== "agent-workforce" && (
+        <button
+          onClick={() => navigateTo("agent-workforce")}
+          className="fixed bottom-6 right-6 z-50 px-4 py-3 rounded-full bg-foreground text-background text-sm font-semibold shadow-lg hover:bg-primary transition-colors"
+        >
+          Agent Demo →
+        </button>
       )}
     </div>
   );
