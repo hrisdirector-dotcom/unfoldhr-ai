@@ -73,13 +73,17 @@ export default function HeroAgentSimulation() {
         </p>
       )}
 
-      {/* Output */}
-      {outputVisible && (
-        <div>
-          <p className="text-xs font-bold uppercase tracking-[2px] text-muted-foreground mb-2">
-            Output
-          </p>
-          <div className="bg-card border border-border p-4 rounded text-sm whitespace-pre-wrap">
+      <AnimatePresence>
+        {outputVisible && (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+          >
+            <p className="text-xs font-bold uppercase tracking-[2px] text-muted-foreground mb-2">
+              Output
+            </p>
+            <div className="bg-card border border-border p-4 rounded text-sm whitespace-pre-wrap">
 {`Headcount Plan Summary
 
 • 8 Sales Reps
@@ -90,19 +94,25 @@ Timeline:
 Q1: 5 hires
 Q2: 4 hires
 Q3: 4 hires`}
-          </div>
-        </div>
-      )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      {outputVisible && (
-        <button
-          onClick={replay}
-          className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors mx-auto"
-        >
-          <RotateCcw className="w-3.5 h-3.5" />
-          Replay
-        </button>
-      )}
+      <AnimatePresence>
+        {outputVisible && (
+          <motion.button
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4, delay: 0.3 }}
+            onClick={replay}
+            className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors mx-auto"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+            Replay
+          </motion.button>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
