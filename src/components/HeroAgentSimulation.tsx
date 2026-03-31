@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { RotateCcw } from "lucide-react";
 
 export default function HeroAgentSimulation() {
   const [step, setStep] = useState(0);
