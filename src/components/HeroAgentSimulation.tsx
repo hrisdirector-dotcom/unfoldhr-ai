@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { RotateCcw } from "lucide-react";
 
 export default function HeroAgentSimulation() {
   const [step, setStep] = useState(0);
@@ -6,6 +7,13 @@ export default function HeroAgentSimulation() {
   const [outputVisible, setOutputVisible] = useState(false);
 
   const fullPrompt = "Draft a headcount plan based on growth and budget constraints.";
+
+  const replay = useCallback(() => {
+    setStep(0);
+    setPromptText("");
+    setOutputVisible(false);
+    setTimeout(() => setStep(1), 800);
+  }, []);
 
   useEffect(() => {
     if (step === 1) {
@@ -83,6 +91,16 @@ Q2: 4 hires
 Q3: 4 hires`}
           </div>
         </div>
+      )}
+
+      {outputVisible && (
+        <button
+          onClick={replay}
+          className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors mx-auto"
+        >
+          <RotateCcw className="w-3.5 h-3.5" />
+          Replay
+        </button>
       )}
     </div>
   );
