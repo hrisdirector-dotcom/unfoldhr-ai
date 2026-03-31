@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import heroBg from "@/assets/hero-bg.jpg";
+import HeroDemo from "@/components/HeroDemo";
 import { MODULES } from "@/data/modules";
 import { ModuleCard } from "@/components/ModuleCard";
 import { ModuleDrawer } from "@/components/ModuleDrawer";
@@ -41,46 +42,51 @@ export default function HomePage({ setPage }: HomePageProps) {
         </div>
         <div className="dot-grid absolute inset-0 opacity-30 pointer-events-none" />
         <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 55% 60% at 75% 50%, hsl(var(--blue-soft)) 0%, transparent 70%)" }} />
-        <div className="relative max-w-3xl">
-          <RevealDiv>
-            <span className="inline-block text-xs font-bold uppercase tracking-[3px] text-primary mb-5 bg-accent px-3 py-1.5 rounded-md">
-              AI Agent Platform for HR
-            </span>
-          </RevealDiv>
-          <RevealDiv delay={0.1}>
-            <h1 className="font-display text-5xl md:text-6xl lg:text-7xl leading-[1.08] text-foreground mb-6">
-              Build AI agents<br />
-              <span className="font-serif-alt italic text-primary">for every HR workflow</span>
-            </h1>
-          </RevealDiv>
-          <RevealDiv delay={0.2}>
-            <p className="text-lg text-muted-foreground leading-relaxed max-w-xl mb-8">
-              12 modules. 36 production-ready prompts. From workforce planning to benefits admin — 
-              unfoldHR gives your People team the playbook to ship AI agents that actually work.
-            </p>
-          </RevealDiv>
-          <RevealDiv delay={0.3}>
-            <div className="flex flex-wrap gap-3">
-              <button
-                onClick={() => document.getElementById("modules")?.scrollIntoView({ behavior: "smooth" })}
-                className="px-7 py-3.5 rounded-lg bg-foreground text-background font-semibold text-sm border-none cursor-pointer hover:bg-primary transition-colors"
-              >
-                Explore Modules
-              </button>
-              <button
-                onClick={() => document.getElementById("request")?.scrollIntoView({ behavior: "smooth" })}
-                className="px-7 py-3.5 rounded-lg bg-transparent text-foreground font-semibold text-sm border border-border cursor-pointer hover:border-foreground transition-colors"
-              >
-                Request a Build
-              </button>
-            </div>
-          </RevealDiv>
-          <RevealDiv delay={0.4}>
-            <div className="flex items-center gap-6 mt-10 text-sm text-muted-foreground">
-              <span>✓ 12 HR modules</span>
-              <span>✓ 36 agent prompts</span>
-              <span>✓ 23 API integrations</span>
-            </div>
+        <div className="relative w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div>
+            <RevealDiv>
+              <span className="inline-block text-xs font-bold uppercase tracking-[3px] text-primary mb-5 bg-accent px-3 py-1.5 rounded-md">
+                AI Agent Platform for HR
+              </span>
+            </RevealDiv>
+            <RevealDiv delay={0.1}>
+              <h1 className="font-display text-5xl md:text-6xl lg:text-7xl leading-[1.08] text-foreground mb-6">
+                Build AI agents<br />
+                <span className="font-serif-alt italic text-primary">for every HR workflow</span>
+              </h1>
+            </RevealDiv>
+            <RevealDiv delay={0.2}>
+              <p className="text-lg text-muted-foreground leading-relaxed max-w-xl mb-8">
+                12 modules. 36 production-ready prompts. From workforce planning to benefits admin — 
+                unfoldHR gives your People team the playbook to ship AI agents that actually work.
+              </p>
+            </RevealDiv>
+            <RevealDiv delay={0.3}>
+              <div className="flex flex-wrap gap-3">
+                <button
+                  onClick={() => document.getElementById("modules")?.scrollIntoView({ behavior: "smooth" })}
+                  className="px-7 py-3.5 rounded-lg bg-foreground text-background font-semibold text-sm border-none cursor-pointer hover:bg-primary transition-colors"
+                >
+                  Explore Modules
+                </button>
+                <button
+                  onClick={() => document.getElementById("request")?.scrollIntoView({ behavior: "smooth" })}
+                  className="px-7 py-3.5 rounded-lg bg-transparent text-foreground font-semibold text-sm border border-border cursor-pointer hover:border-foreground transition-colors"
+                >
+                  Request a Build
+                </button>
+              </div>
+            </RevealDiv>
+            <RevealDiv delay={0.4}>
+              <div className="flex items-center gap-6 mt-10 text-sm text-muted-foreground">
+                <span>✓ 12 HR modules</span>
+                <span>✓ 36 agent prompts</span>
+                <span>✓ 23 API integrations</span>
+              </div>
+            </RevealDiv>
+          </div>
+          <RevealDiv delay={0.3} className="hidden lg:block">
+            <HeroDemo />
           </RevealDiv>
         </div>
       </section>
