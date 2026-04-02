@@ -40,27 +40,39 @@ export default function TrainingModuleDetail({ module }: Props) {
 
       {module.id === "workforce-planning" && (
         <AgentDemo
-          input={[
-            "Current headcount: 120",
-            "Growth target: +25%",
-            "Budget constraint: +15%"
+          situation={[
+            "Workforce of 120 employees",
+            "Growth target of 25%",
+            "Hiring budget increase capped at 15%",
           ]}
-          prompt={`Draft a headcount plan based on growth and budget constraints.`}
-          output={`Headcount Plan Summary
-
-Recommended hires:
-• 8 Sales Reps
-• 3 Engineers
-• 2 HR Business Partners
-
-Timeline:
-• Q1: 5 hires
-• Q2: 4 hires
-• Q3: 4 hires
-
-Risks:
-• Budget overrun if hiring accelerates early
-• Engineering hiring constraints`}
+          question="How should we structure hiring to hit our growth target within budget constraints?"
+          plan={
+            <div className="space-y-5">
+              <div>
+                <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">Headcount Plan</h4>
+                <div className="space-y-1 text-sm text-foreground">
+                  <p>Sales — 8 hires</p>
+                  <p>Engineering — 3 hires</p>
+                  <p>HR — 2 hires</p>
+                </div>
+              </div>
+              <div>
+                <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">Timeline</h4>
+                <div className="space-y-1 text-sm text-foreground">
+                  <p>Q1 — 5 hires</p>
+                  <p>Q2 — 4 hires</p>
+                  <p>Q3 — 4 hires</p>
+                </div>
+              </div>
+              <div>
+                <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">Risks</h4>
+                <div className="space-y-1 text-sm text-muted-foreground">
+                  <p>Budget overrun if hiring accelerates early</p>
+                  <p>Engineering hiring constraints</p>
+                </div>
+              </div>
+            </div>
+          }
         />
       )}
     </div>

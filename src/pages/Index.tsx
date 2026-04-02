@@ -12,87 +12,52 @@ import AdminDashboard from "@/pages/AdminDashboard";
 import ExplainersPage from "@/pages/ExplainersPage";
 
 function AgentDemo({
-  input,
-  prompt,
-  output,
+  situation,
+  question,
+  plan,
 }: {
-  input: string[];
-  prompt: string;
-  output: string;
+  situation: string[];
+  question: string;
+  plan: React.ReactNode;
 }) {
-  const [step, setStep] = useState(0);
-  const [promptText, setPromptText] = useState("");
-  const [outputVisible, setOutputVisible] = useState(false);
+  const [showQuestion, setShowQuestion] = useState(false);
+  const [showPlan, setShowPlan] = useState(false);
 
   useEffect(() => {
-    if (step === 1) {
-      let i = 0;
-      const interval = setInterval(() => {
-        setPromptText(prompt.slice(0, i));
-        i++;
-        if (i > prompt.length) {
-          clearInterval(interval);
-          setTimeout(() => setStep(2), 700);
-        }
-      }, 18);
-      return () => clearInterval(interval);
-    }
-
-    if (step === 2) {
-      const timeout = setTimeout(() => {
-        setOutputVisible(true);
-      }, 900);
-      return () => clearTimeout(timeout);
-    }
-  }, [step, prompt]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setStep(1), 700);
-    return () => clearTimeout(timer);
+    const t1 = setTimeout(() => setShowQuestion(true), 800);
+    const t2 = setTimeout(() => setShowPlan(true), 2200);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
   }, []);
 
   return (
-    <div className="bg-background border border-border rounded-xl p-6 space-y-5">
+    <div className="space-y-10">
+      {/* Section 1 — Your Situation */}
       <div>
-        <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">
-          Business Context
-        </h4>
-        <div className="space-y-1.5">
-          {input.map((item) => (
-            <p key={item} className="text-sm text-foreground">{item}</p>
+        <h3 className="font-display text-lg text-foreground mb-4">Your Situation</h3>
+        <div className="space-y-2">
+          {situation.map((s) => (
+            <p key={s} className="text-sm text-muted-foreground leading-relaxed">{s}</p>
           ))}
         </div>
       </div>
 
-      <div>
-        <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">
-          You Ask
-        </h4>
-        <p className="text-sm text-foreground/90 bg-muted p-3 rounded leading-relaxed min-h-[60px]">
-          {promptText}
+      <div className="h-px bg-border" />
+
+      {/* Section 2 — The Question */}
+      <div className={`transition-opacity duration-700 ${showQuestion ? "opacity-100" : "opacity-0"}`}>
+        <h3 className="font-display text-lg text-foreground mb-4">The Question</h3>
+        <p className="text-base text-foreground/90 leading-relaxed italic">
+          "{question}"
         </p>
       </div>
 
-      {step >= 2 && !outputVisible && (
-        <p className="text-xs text-muted-foreground animate-pulse">
-          Analyzing scenario...
-        </p>
-      )}
+      <div className="h-px bg-border" />
 
-      {outputVisible && (
-        <div>
-          <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">
-            What You Get
-          </h4>
-          <div className="text-sm text-foreground whitespace-pre-wrap bg-muted p-4 rounded">
-            {output}
-          </div>
-        </div>
-      )}
-
-      <p className="text-[10px] text-muted-foreground">
-        Illustrative example based on the scenario above.
-      </p>
+      {/* Section 3 — Recommended Plan */}
+      <div className={`transition-opacity duration-700 ${showPlan ? "opacity-100" : "opacity-0"}`}>
+        <h3 className="font-display text-lg text-foreground mb-5">Recommended Plan</h3>
+        {plan}
+      </div>
     </div>
   );
 }
@@ -140,9 +105,42 @@ function WorkforcePlanningAgent({ setPage }: { setPage: (p: string) => void }) {
 
         <RevealDiv>
           <AgentDemo
-            input={["Workforce of 120 employees", "30% growth target next year", "$2.4M annual hiring budget"]}
-            prompt={"We are planning for 30% growth next year. How should we structure hiring by quarter while staying within budget and identifying risk early?"}
-            output={"Q1: Hire 12 (Engineering 6, Sales 4, Ops 2) — $680K\nQ2: Hire 10 (Engineering 4, Marketing 3, Support 3) — $580K\nQ3: Hire 9 (Product 3, Sales 3, HR 3) — $540K\nQ4: Hire 5 (buffer + backfills) — $600K\n\n⚠ Risk: Engineering hiring in Q1 depends on updated JDs.\n⚠ Risk: Q4 buffer may be insufficient if attrition exceeds 8%."}
+            situation={[
+              "Workforce of 120 employees",
+              "Planning for 30% growth next year",
+              "Operating within a $2.4M annual hiring budget",
+            ]}
+            question="How should we structure hiring to support growth while staying within budget and avoiding risk?"
+            plan={
+              <div className="space-y-6">
+                <div>
+                  <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">Headcount Plan</h4>
+                  <div className="space-y-1.5 text-sm text-foreground">
+                    <p>Engineering — 14 hires</p>
+                    <p>Sales — 10 hires</p>
+                    <p>Marketing — 3 hires</p>
+                    <p>Product — 3 hires</p>
+                    <p>HR &amp; Support — 6 hires</p>
+                  </div>
+                </div>
+                <div>
+                  <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">Hiring Timeline</h4>
+                  <div className="space-y-1.5 text-sm text-foreground">
+                    <p>Q1 — 12 hires · $680K</p>
+                    <p>Q2 — 10 hires · $580K</p>
+                    <p>Q3 — 9 hires · $540K</p>
+                    <p>Q4 — 5 hires (buffer + backfills) · $600K</p>
+                  </div>
+                </div>
+                <div>
+                  <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">Risks Identified</h4>
+                  <div className="space-y-1.5 text-sm text-muted-foreground">
+                    <p>Engineering hiring in Q1 depends on updated job descriptions</p>
+                    <p>Q4 buffer may be insufficient if attrition exceeds 8%</p>
+                  </div>
+                </div>
+              </div>
+            }
           />
         </RevealDiv>
 
