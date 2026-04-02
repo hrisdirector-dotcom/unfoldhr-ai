@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { UnfoldNav } from "@/components/UnfoldNav";
 import { useAuth } from "@/hooks/useAuth";
+import AgentPickerModal from "@/components/AgentPickerModal";
 import HomePage from "@/pages/HomePage";
 import AboutPage from "@/pages/AboutPage";
 import IntegrationsPage from "@/pages/IntegrationsPage";
@@ -17,11 +18,16 @@ import TryPerformanceAgentPage from "@/pages/TryPerformanceAgentPage";
 const Index = () => {
   const [page, setPage] = useState("home");
   const [agentId, setAgentId] = useState<string | undefined>();
+  const [pickerOpen, setPickerOpen] = useState(false);
   const { user, isAdmin, loading, signOut } = useAuth();
 
   const currentUser = user ? { email: user.email || "", role: isAdmin ? "admin" : "user" } : null;
 
   const navigateTo = (p: string) => {
+    if (p === "try-picker") {
+      setPickerOpen(true);
+      return;
+    }
     setPage(p);
     if (p !== "agent-detail") setAgentId(undefined);
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -78,6 +84,12 @@ const Index = () => {
       {page === "admin" && isAdmin && (
         <AdminDashboard onBack={() => navigateTo("dashboard")} onLogout={handleLogout} />
       )}
+
+      <AgentPickerModal
+        open={pickerOpen}
+        onClose={() => setPickerOpen(false)}
+        onSelect={navigateTo}
+      />
     </div>
   );
 };

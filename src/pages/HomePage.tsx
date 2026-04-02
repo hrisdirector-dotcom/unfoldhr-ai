@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import heroBg from "@/assets/hero-bg.jpg";
 import DecisionBriefCard from "@/components/DecisionBriefCard";
 import { RevealDiv } from "@/components/RevealDiv";
@@ -21,17 +21,9 @@ const PATHS = [
   { icon: "🎓", title: "Advisory", desc: "Strategic guidance on where AI fits in your HR operations, with a clear roadmap to implementation.", tag: "Strategy first" },
 ];
 
-const AGENTS = [
-  { id: "try-agent", name: "Workforce Planning", desc: "Get a hiring plan aligned to your growth targets and budget constraints." },
-  { id: "try-listening-agent", name: "Employee Listening", desc: "Surface what your workforce is really saying — and what to do about it." },
-  { id: "try-performance-agent", name: "Performance Management", desc: "Identify performance gaps and get a structured action plan." },
-];
-
 export default function HomePage({ setPage }: HomePageProps) {
   const [toast, setToast] = useState("");
   const [scrollY, setScrollY] = useState(0);
-  const [showPicker, setShowPicker] = useState(false);
-  const pickerRef = useRef<HTMLDivElement>(null);
   const showToast = (msg: string) => { setToast(msg); setTimeout(() => setToast(""), 5000); };
 
   useEffect(() => {
@@ -75,7 +67,7 @@ export default function HomePage({ setPage }: HomePageProps) {
             <RevealDiv delay={0.3}>
               <div className="flex flex-wrap gap-3">
                 <button
-                  onClick={() => setShowPicker(true)}
+                  onClick={() => setPage("try-picker")}
                   className="px-7 py-3.5 rounded-lg bg-foreground text-background font-semibold text-sm border-none cursor-pointer hover:bg-primary transition-colors"
                 >
                   Try an Agent
@@ -183,37 +175,7 @@ export default function HomePage({ setPage }: HomePageProps) {
         <p className="text-sm text-muted-foreground">© 2025 unfoldHR. AI-powered HR decision platform.</p>
       </footer>
 
-      {/* AGENT PICKER MODAL */}
-      {showPicker && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/40 backdrop-blur-sm"
-          onClick={(e) => { if (e.target === e.currentTarget) setShowPicker(false); }}
-        >
-          <div ref={pickerRef} className="bg-card border border-border rounded-2xl p-8 md:p-10 max-w-lg w-full mx-4 shadow-2xl">
-            <p className="text-xs font-bold uppercase tracking-[3px] text-primary mb-3">Try an Agent</p>
-            <h2 className="font-display text-2xl md:text-3xl text-foreground mb-2">Choose an agent</h2>
-            <p className="text-sm text-muted-foreground mb-8">Pick one to get an instant, personalized recommendation.</p>
-            <div className="space-y-3">
-              {AGENTS.map((agent) => (
-                <button
-                  key={agent.id}
-                  onClick={() => { setShowPicker(false); setPage(agent.id); }}
-                  className="w-full text-left bg-background border border-border rounded-xl px-5 py-4 cursor-pointer hover:border-foreground transition-colors group"
-                >
-                  <span className="block text-sm font-semibold text-foreground group-hover:text-primary transition-colors">{agent.name}</span>
-                  <span className="block text-xs text-muted-foreground mt-1 leading-relaxed">{agent.desc}</span>
-                </button>
-              ))}
-            </div>
-            <button
-              onClick={() => setShowPicker(false)}
-              className="mt-6 text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer bg-transparent border-none w-full text-center"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      )}
+
 
       <Toast message={toast} />
     </div>
