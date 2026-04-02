@@ -178,6 +178,12 @@ export default function TryAgentPage({ setPage }: TryAgentPageProps) {
                 >
                   ← Try different inputs
                 </button>
+                <button
+                  onClick={() => setPage("home")}
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer bg-transparent border-none"
+                >
+                  Try a different agent
+                </button>
               </div>
             </RevealDiv>
           </div>
