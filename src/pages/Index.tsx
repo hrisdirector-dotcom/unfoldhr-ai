@@ -182,7 +182,7 @@ function WorkforcePlanningAgent({ setPage }: { setPage: (p: string) => void }) {
               onClick={() => setPage("explainers")}
               className="px-6 py-3 border border-border text-foreground rounded-xl text-sm font-semibold hover:bg-muted transition-colors"
             >
-              Back to modules
+              Back to Agents
             </button>
           </div>
         </RevealDiv>
