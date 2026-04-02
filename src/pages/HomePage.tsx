@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import heroBg from "@/assets/hero-bg.jpg";
 import DecisionBriefCard from "@/components/DecisionBriefCard";
 import { RevealDiv } from "@/components/RevealDiv";
