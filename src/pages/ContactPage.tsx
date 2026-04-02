@@ -25,8 +25,9 @@ export default function RequestBuildPanel() {
     const name = (formData.get("name") as string)?.trim();
     const email = (formData.get("email") as string)?.trim();
     const company = (formData.get("company") as string)?.trim();
+    const message = (formData.get("message") as string)?.trim();
 
-    if (!name || !email || !aiJourney) {
+    if (!name || !email || !aiJourney || !message) {
       setError("Please fill in all required fields.");
       setSubmitting(false);
       return;
@@ -38,7 +39,7 @@ export default function RequestBuildPanel() {
         contact_name: name,
         email,
         company_name: company || "",
-        message: `AI Journey: ${aiJourney}`,
+        message: `AI Journey: ${aiJourney}\n\n${message}`,
       });
 
       if (dbError) throw dbError;
@@ -122,6 +123,19 @@ export default function RequestBuildPanel() {
             </button>
           ))}
         </div>
+      </div>
+
+      <div>
+        <label className="block text-xs font-bold text-muted-foreground mb-1.5 uppercase tracking-wider">
+          Challenges you're trying to solve?
+        </label>
+        <textarea
+          name="message"
+          rows={4}
+          required
+          className="w-full bg-card border border-border rounded-lg px-4 py-3 text-sm text-foreground outline-none focus:border-primary transition-colors resize-none"
+          placeholder="Tell us about the HR workflows or decisions you'd like to improve."
+        />
       </div>
 
       {error && <p className="text-sm text-destructive">{error}</p>}
