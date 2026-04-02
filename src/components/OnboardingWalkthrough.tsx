@@ -115,7 +115,7 @@ export default function OnboardingWalkthrough() {
         transition={{ duration: 0.35, ease: "easeOut" }}
         className="fixed z-[9999] pointer-events-none"
         style={{
-          top: pos.top - 28,
+          top: pos.top - 40,
           left: pos.left,
           transform: "translate(-50%, -100%)",
         }}
