@@ -82,7 +82,7 @@ export default function HomePage({ setPage }: HomePageProps) {
                   onClick={() => document.getElementById("request")?.scrollIntoView({ behavior: "smooth" })}
                   className="px-7 py-3.5 rounded-lg bg-transparent text-foreground font-semibold text-sm border-none cursor-pointer hover:text-primary transition-colors underline-offset-4 underline decoration-border hover:decoration-foreground"
                 >
-                  Request a Demo
+                  Contact Us
                 </button>
               </div>
             </RevealDiv>
@@ -151,7 +151,7 @@ export default function HomePage({ setPage }: HomePageProps) {
         <RevealDiv>
           <div className="bg-card border border-border rounded-2xl p-8 md:p-10">
             <span className="inline-block text-xs font-bold uppercase tracking-[3px] text-primary mb-4">Get Started</span>
-            <h2 className="font-display text-2xl md:text-3xl text-foreground mb-2">Request a Demo</h2>
+            <h2 className="font-display text-2xl md:text-3xl text-foreground mb-2">Contact Us</h2>
             <p className="text-sm text-muted-foreground mb-8 leading-relaxed">
               Tell us about your HR workflow challenge and we'll show you how UnfoldHR can help.
             </p>

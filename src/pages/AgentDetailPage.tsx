@@ -105,7 +105,7 @@ export default function AgentDetailPage({ agentId, setPage }: AgentDetailPagePro
                 onClick={() => setPage("contact")}
                 className="px-6 py-3 bg-foreground text-background rounded-lg text-sm font-semibold border-none cursor-pointer hover:bg-primary transition-colors"
               >
-                Request a Demo
+                Contact Us
               </button>
               <button
                 onClick={() => setPage("agents")}
