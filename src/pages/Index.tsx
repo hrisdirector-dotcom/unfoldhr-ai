@@ -14,6 +14,7 @@ import AgentDetailPage from "@/pages/AgentDetailPage";
 import TryAgentPage from "@/pages/TryAgentPage";
 import TryListeningAgentPage from "@/pages/TryListeningAgentPage";
 import TryPerformanceAgentPage from "@/pages/TryPerformanceAgentPage";
+import OnboardingWalkthrough from "@/components/OnboardingWalkthrough";
 
 const Index = () => {
   const [page, setPage] = useState("home");
@@ -90,6 +91,8 @@ const Index = () => {
         onClose={() => setPickerOpen(false)}
         onSelect={navigateTo}
       />
+
+      {page === "home" && <OnboardingWalkthrough />}
     </div>
   );
 };

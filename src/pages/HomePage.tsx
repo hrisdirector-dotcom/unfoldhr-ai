@@ -67,6 +67,7 @@ export default function HomePage({ setPage }: HomePageProps) {
             <RevealDiv delay={0.3}>
               <div className="flex flex-wrap gap-3">
                 <button
+                  data-tour="try-agent"
                   onClick={() => setPage("try-picker")}
                   className="px-7 py-3.5 rounded-lg bg-foreground text-background font-semibold text-sm border-none cursor-pointer hover:bg-primary transition-colors"
                 >
@@ -79,6 +80,7 @@ export default function HomePage({ setPage }: HomePageProps) {
                   Explore Agents
                 </button>
                 <button
+                  data-tour="contact-us"
                   onClick={() => document.getElementById("request")?.scrollIntoView({ behavior: "smooth" })}
                   className="px-7 py-3.5 rounded-lg bg-transparent text-foreground font-semibold text-sm border-none cursor-pointer hover:text-primary transition-colors underline-offset-4 underline decoration-border hover:decoration-foreground"
                 >
