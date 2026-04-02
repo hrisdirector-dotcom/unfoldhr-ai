@@ -205,11 +205,12 @@ export default function TryListeningAgentPage({ setPage }: TryListeningAgentPage
 
             <RevealDiv delay={0.15}>
               <div className="flex flex-col items-center gap-4">
+                <p className="text-sm text-muted-foreground">Ready to get started on your AI Agent journey?</p>
                 <button
                   onClick={() => setPage("contact")}
                   className="px-8 py-4 rounded-lg bg-foreground text-background font-semibold text-sm cursor-pointer hover:bg-primary transition-colors"
                 >
-                  Request a Demo
+                  Contact Us Now
                 </button>
                 <button
                   onClick={() => {
