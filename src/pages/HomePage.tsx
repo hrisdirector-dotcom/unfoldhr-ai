@@ -65,7 +65,7 @@ export default function HomePage({ setPage }: HomePageProps) {
               </p>
             </RevealDiv>
             <RevealDiv delay={0.3}>
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-3 mt-8 md:mt-10">
                 <button
                   data-tour="try-agent"
                   onClick={() => setPage("try-picker")}
