@@ -21,17 +21,9 @@ const PATHS = [
   { icon: "🎓", title: "Advisory", desc: "Strategic guidance on where AI fits in your HR operations, with a clear roadmap to implementation.", tag: "Strategy first" },
 ];
 
-const AGENTS = [
-  { id: "try-agent", name: "Workforce Planning", desc: "Get a hiring plan aligned to your growth targets and budget constraints." },
-  { id: "try-listening-agent", name: "Employee Listening", desc: "Surface what your workforce is really saying — and what to do about it." },
-  { id: "try-performance-agent", name: "Performance Management", desc: "Identify performance gaps and get a structured action plan." },
-];
-
 export default function HomePage({ setPage }: HomePageProps) {
   const [toast, setToast] = useState("");
   const [scrollY, setScrollY] = useState(0);
-  const [showPicker, setShowPicker] = useState(false);
-  const pickerRef = useRef<HTMLDivElement>(null);
   const showToast = (msg: string) => { setToast(msg); setTimeout(() => setToast(""), 5000); };
 
   useEffect(() => {
