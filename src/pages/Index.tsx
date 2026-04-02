@@ -91,6 +91,8 @@ const Index = () => {
         onClose={() => setPickerOpen(false)}
         onSelect={navigateTo}
       />
+
+      {page === "home" && <OnboardingWalkthrough />}
     </div>
   );
 };
