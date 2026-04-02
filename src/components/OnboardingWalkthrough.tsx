@@ -57,7 +57,7 @@ export default function OnboardingWalkthrough() {
     if (!target) return;
     const rect = target.getBoundingClientRect();
     setPos({
-      top: rect.top + window.scrollY,
+      top: rect.top,
       left: rect.left + rect.width / 2,
       width: rect.width,
     });
@@ -113,14 +113,14 @@ export default function OnboardingWalkthrough() {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 10 }}
         transition={{ duration: 0.35, ease: "easeOut" }}
-        className="fixed z-[9999] pointer-events-auto"
+        className="fixed z-[9999] pointer-events-none"
         style={{
           top: pos.top - 12,
           left: pos.left,
           transform: "translate(-50%, -100%)",
         }}
       >
-        <div className="relative bg-foreground text-background rounded-xl px-5 py-4 shadow-2xl max-w-[280px]">
+        <div className="relative bg-foreground text-background rounded-xl px-5 py-4 shadow-2xl max-w-[280px] pointer-events-auto">
           <p className="font-display text-sm font-bold mb-1">{currentStep.title}</p>
           <p className="text-xs leading-relaxed opacity-80">{currentStep.description}</p>
           <div className="flex items-center justify-between mt-3 gap-2">
