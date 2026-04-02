@@ -51,8 +51,8 @@ export default function WorkforcePlanningAgent() {
         {/* DEMO */}
         <RevealDiv>
           <AgentDemo
-            input={["Current headcount: 120", "Growth target: 30%", "Annual hiring budget: $2.4M"]}
-            prompt={"You are an HR workforce planning agent.\n\nGiven:\n- Current headcount: 120\n- Growth target: 30%\n- Budget: $2.4M\n\nGenerate a quarterly hiring plan with budget allocation and risk flags."}
+            input={["Workforce of 120 employees", "30% growth target next year", "$2.4M annual hiring budget"]}
+            prompt={"We are planning for 30% growth next year. How should we structure hiring by quarter while staying within budget and identifying risk early?"}
             output={"Q1: Hire 12 (Engineering 6, Sales 4, Ops 2) — $680K\nQ2: Hire 10 (Engineering 4, Marketing 3, Support 3) — $580K\nQ3: Hire 9 (Product 3, Sales 3, HR 3) — $540K\nQ4: Hire 5 (buffer + backfills) — $600K\n\n⚠ Risk: Engineering hiring in Q1 depends on updated JDs.\n⚠ Risk: Q4 buffer may be insufficient if attrition exceeds 8%."}
           />
         </RevealDiv>

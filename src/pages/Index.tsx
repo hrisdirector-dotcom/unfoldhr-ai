@@ -55,34 +55,34 @@ function AgentDemo({
     <div className="bg-background border border-border rounded-xl p-6 space-y-5">
       <div>
         <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">
-          Inputs
+          Business Context
         </h4>
-        <ul className="text-sm text-foreground space-y-1">
+        <div className="space-y-1.5">
           {input.map((item) => (
-            <li key={item}>• {item}</li>
+            <p key={item} className="text-sm text-foreground">{item}</p>
           ))}
-        </ul>
+        </div>
       </div>
 
       <div>
         <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">
-          Prompt
+          You Ask
         </h4>
-        <pre className="text-xs bg-muted p-3 rounded text-muted-foreground whitespace-pre-wrap min-h-[60px]">
+        <p className="text-sm text-foreground/90 bg-muted p-3 rounded leading-relaxed min-h-[60px]">
           {promptText}
-        </pre>
+        </p>
       </div>
 
       {step >= 2 && !outputVisible && (
         <p className="text-xs text-muted-foreground animate-pulse">
-          Generating output...
+          Analyzing scenario...
         </p>
       )}
 
       {outputVisible && (
         <div>
           <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">
-            Output
+            What You Get
           </h4>
           <div className="text-sm text-foreground whitespace-pre-wrap bg-muted p-4 rounded">
             {output}
@@ -91,7 +91,7 @@ function AgentDemo({
       )}
 
       <p className="text-[10px] text-muted-foreground">
-        Example output for demonstration only.
+        Illustrative example based on the scenario above.
       </p>
     </div>
   );
@@ -140,8 +140,8 @@ function WorkforcePlanningAgent({ setPage }: { setPage: (p: string) => void }) {
 
         <RevealDiv>
           <AgentDemo
-            input={["Current headcount: 120", "Growth target: 30%", "Annual hiring budget: $2.4M"]}
-            prompt={"You are an HR workforce planning agent.\n\nGiven:\n- Current headcount: 120\n- Growth target: 30%\n- Budget: $2.4M\n\nGenerate a quarterly hiring plan with budget allocation and risk flags."}
+            input={["Workforce of 120 employees", "30% growth target next year", "$2.4M annual hiring budget"]}
+            prompt={"We are planning for 30% growth next year. How should we structure hiring by quarter while staying within budget and identifying risk early?"}
             output={"Q1: Hire 12 (Engineering 6, Sales 4, Ops 2) — $680K\nQ2: Hire 10 (Engineering 4, Marketing 3, Support 3) — $580K\nQ3: Hire 9 (Product 3, Sales 3, HR 3) — $540K\nQ4: Hire 5 (buffer + backfills) — $600K\n\n⚠ Risk: Engineering hiring in Q1 depends on updated JDs.\n⚠ Risk: Q4 buffer may be insufficient if attrition exceeds 8%."}
           />
         </RevealDiv>
@@ -182,7 +182,7 @@ function WorkforcePlanningAgent({ setPage }: { setPage: (p: string) => void }) {
               onClick={() => setPage("explainers")}
               className="px-6 py-3 border border-border text-foreground rounded-xl text-sm font-semibold hover:bg-muted transition-colors"
             >
-              Back to modules
+              Back to Agents
             </button>
           </div>
         </RevealDiv>
