@@ -67,7 +67,7 @@ export default function HomePage({ setPage }: HomePageProps) {
             <RevealDiv delay={0.3}>
               <div className="flex flex-wrap gap-3">
                 <button
-                  onClick={() => setShowPicker(true)}
+                  onClick={() => setPage("try-picker")}
                   className="px-7 py-3.5 rounded-lg bg-foreground text-background font-semibold text-sm border-none cursor-pointer hover:bg-primary transition-colors"
                 >
                   Try an Agent
