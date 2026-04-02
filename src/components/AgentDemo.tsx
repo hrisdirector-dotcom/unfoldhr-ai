@@ -8,7 +8,6 @@ type Props = {
 
 export default function AgentDemo({ input, prompt, output }: Props) {
   const [run, setRun] = useState(false);
-  const [showPrompt, setShowPrompt] = useState(false);
 
   return (
     <div className="bg-background border border-border rounded-xl p-6 space-y-6">
