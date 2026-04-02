@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import heroBg from "@/assets/hero-bg.jpg";
-import HeroAgentSimulation from "@/components/HeroAgentSimulation";
+import DecisionBriefCard from "@/components/DecisionBriefCard";
 import { MODULES } from "@/data/modules";
 import { ModuleCard } from "@/components/ModuleCard";
 import { ModuleDrawer } from "@/components/ModuleDrawer";
