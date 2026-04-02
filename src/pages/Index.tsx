@@ -10,6 +10,7 @@ import DashboardPage from "@/pages/DashboardPage";
 import AdminDashboard from "@/pages/AdminDashboard";
 import AgentsPage from "@/pages/AgentsPage";
 import AgentDetailPage from "@/pages/AgentDetailPage";
+import TryAgentPage from "@/pages/TryAgentPage";
 
 const Index = () => {
   const [page, setPage] = useState("home");
