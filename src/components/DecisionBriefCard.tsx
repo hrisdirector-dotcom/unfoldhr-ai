@@ -37,6 +37,8 @@ export default function DecisionBriefCard({
   primaryItems,
   secondaryTitle,
   secondaryItems,
+  tertiaryTitle,
+  tertiaryItems,
   insights,
 }: DecisionBriefProps) {
   return (
