@@ -72,14 +72,14 @@ export default function DecisionBriefCard({
 
       {/* Secondary section */}
       <motion.div custom={3} variants={fadeUp} className="mb-8">
-        <h3 className="font-display text-sm font-semibold text-foreground mb-3">
+        <h3 className="text-xs font-semibold uppercase tracking-[1.5px] text-muted-foreground mb-3">
           {secondaryTitle}
         </h3>
         <div className="space-y-1.5">
           {secondaryItems.map((item) => (
-            <p key={item.label} className="text-sm text-foreground/80">
+            <p key={item.label} className="text-[13px] text-foreground/75">
               {item.label} <span className="text-muted-foreground mx-1.5">→</span>{" "}
-              <span className="font-medium text-foreground">{item.value}</span>
+              <span className="font-medium text-foreground/90">{item.value}</span>
             </p>
           ))}
         </div>
