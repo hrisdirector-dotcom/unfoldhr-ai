@@ -12,87 +12,52 @@ import AdminDashboard from "@/pages/AdminDashboard";
 import ExplainersPage from "@/pages/ExplainersPage";
 
 function AgentDemo({
-  input,
-  prompt,
-  output,
+  situation,
+  question,
+  plan,
 }: {
-  input: string[];
-  prompt: string;
-  output: string;
+  situation: string[];
+  question: string;
+  plan: React.ReactNode;
 }) {
-  const [step, setStep] = useState(0);
-  const [promptText, setPromptText] = useState("");
-  const [outputVisible, setOutputVisible] = useState(false);
+  const [showQuestion, setShowQuestion] = useState(false);
+  const [showPlan, setShowPlan] = useState(false);
 
   useEffect(() => {
-    if (step === 1) {
-      let i = 0;
-      const interval = setInterval(() => {
-        setPromptText(prompt.slice(0, i));
-        i++;
-        if (i > prompt.length) {
-          clearInterval(interval);
-          setTimeout(() => setStep(2), 700);
-        }
-      }, 18);
-      return () => clearInterval(interval);
-    }
-
-    if (step === 2) {
-      const timeout = setTimeout(() => {
-        setOutputVisible(true);
-      }, 900);
-      return () => clearTimeout(timeout);
-    }
-  }, [step, prompt]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setStep(1), 700);
-    return () => clearTimeout(timer);
+    const t1 = setTimeout(() => setShowQuestion(true), 800);
+    const t2 = setTimeout(() => setShowPlan(true), 2200);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
   }, []);
 
   return (
-    <div className="bg-background border border-border rounded-xl p-6 space-y-5">
+    <div className="space-y-10">
+      {/* Section 1 — Your Situation */}
       <div>
-        <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">
-          Business Context
-        </h4>
-        <div className="space-y-1.5">
-          {input.map((item) => (
-            <p key={item} className="text-sm text-foreground">{item}</p>
+        <h3 className="font-display text-lg text-foreground mb-4">Your Situation</h3>
+        <div className="space-y-2">
+          {situation.map((s) => (
+            <p key={s} className="text-sm text-muted-foreground leading-relaxed">{s}</p>
           ))}
         </div>
       </div>
 
-      <div>
-        <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">
-          You Ask
-        </h4>
-        <p className="text-sm text-foreground/90 bg-muted p-3 rounded leading-relaxed min-h-[60px]">
-          {promptText}
+      <div className="h-px bg-border" />
+
+      {/* Section 2 — The Question */}
+      <div className={`transition-opacity duration-700 ${showQuestion ? "opacity-100" : "opacity-0"}`}>
+        <h3 className="font-display text-lg text-foreground mb-4">The Question</h3>
+        <p className="text-base text-foreground/90 leading-relaxed italic">
+          "{question}"
         </p>
       </div>
 
-      {step >= 2 && !outputVisible && (
-        <p className="text-xs text-muted-foreground animate-pulse">
-          Analyzing scenario...
-        </p>
-      )}
+      <div className="h-px bg-border" />
 
-      {outputVisible && (
-        <div>
-          <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">
-            What You Get
-          </h4>
-          <div className="text-sm text-foreground whitespace-pre-wrap bg-muted p-4 rounded">
-            {output}
-          </div>
-        </div>
-      )}
-
-      <p className="text-[10px] text-muted-foreground">
-        Illustrative example based on the scenario above.
-      </p>
+      {/* Section 3 — Recommended Plan */}
+      <div className={`transition-opacity duration-700 ${showPlan ? "opacity-100" : "opacity-0"}`}>
+        <h3 className="font-display text-lg text-foreground mb-5">Recommended Plan</h3>
+        {plan}
+      </div>
     </div>
   );
 }
