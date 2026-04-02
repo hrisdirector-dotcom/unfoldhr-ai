@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { UnfoldNav } from "@/components/UnfoldNav";
-import { RevealDiv } from "@/components/RevealDiv";
 import { useAuth } from "@/hooks/useAuth";
 import HomePage from "@/pages/HomePage";
 import AboutPage from "@/pages/AboutPage";
@@ -9,206 +8,29 @@ import ContactPage from "@/pages/ContactPage";
 import AuthPage from "@/pages/AuthPage";
 import DashboardPage from "@/pages/DashboardPage";
 import AdminDashboard from "@/pages/AdminDashboard";
-import ExplainersPage from "@/pages/ExplainersPage";
-
-function AgentDemo({
-  situation,
-  question,
-  plan,
-}: {
-  situation: string[];
-  question: string;
-  plan: React.ReactNode;
-}) {
-  const [showQuestion, setShowQuestion] = useState(false);
-  const [showPlan, setShowPlan] = useState(false);
-
-  useEffect(() => {
-    const t1 = setTimeout(() => setShowQuestion(true), 800);
-    const t2 = setTimeout(() => setShowPlan(true), 2200);
-    return () => { clearTimeout(t1); clearTimeout(t2); };
-  }, []);
-
-  return (
-    <div className="space-y-10">
-      {/* Section 1 — Your Situation */}
-      <div>
-        <h3 className="font-display text-lg text-foreground mb-4">Your Situation</h3>
-        <div className="space-y-2">
-          {situation.map((s) => (
-            <p key={s} className="text-sm text-muted-foreground leading-relaxed">{s}</p>
-          ))}
-        </div>
-      </div>
-
-      <div className="h-px bg-border" />
-
-      {/* Section 2 — The Question */}
-      <div className={`transition-opacity duration-700 ${showQuestion ? "opacity-100" : "opacity-0"}`}>
-        <h3 className="font-display text-lg text-foreground mb-4">The Question</h3>
-        <p className="text-base text-foreground/90 leading-relaxed italic">
-          "{question}"
-        </p>
-      </div>
-
-      <div className="h-px bg-border" />
-
-      {/* Section 3 — Recommended Plan */}
-      <div className={`transition-opacity duration-700 ${showPlan ? "opacity-100" : "opacity-0"}`}>
-        <h3 className="font-display text-lg text-foreground mb-5">Recommended Plan</h3>
-        {plan}
-      </div>
-    </div>
-  );
-}
-
-function WorkforcePlanningAgent({ setPage }: { setPage: (p: string) => void }) {
-  return (
-    <div className="bg-background min-h-screen">
-      <div className="max-w-3xl mx-auto px-6 md:px-14 py-32 space-y-20">
-        <RevealDiv>
-          <span className="inline-block text-xs font-bold uppercase tracking-[3px] text-primary mb-5 bg-accent px-3 py-1.5 rounded-md">
-            Workforce Planning Agent
-          </span>
-
-          <h1 className="font-display text-4xl md:text-5xl text-foreground mb-4 leading-tight">
-            Plan your workforce before problems appear
-          </h1>
-
-          <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl">
-            Turn headcount planning from reactive guesswork into a structured, data-driven
-            process powered by AI agents.
-          </p>
-        </RevealDiv>
-
-        <RevealDiv>
-          <div className="bg-card border border-border rounded-xl p-8">
-            <h2 className="font-display text-xl text-foreground mb-3">The problem</h2>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Workforce planning is still driven by spreadsheets, disconnected systems, and
-              last-minute decisions. HR teams are expected to align hiring with growth
-              targets, budgets, and business strategy without real-time visibility or
-              predictive insight.
-            </p>
-          </div>
-        </RevealDiv>
-
-        <RevealDiv>
-          <div className="bg-card border border-border rounded-xl p-8">
-            <h2 className="font-display text-xl text-foreground mb-3">Ask the agent</h2>
-            <p className="text-sm text-muted-foreground italic leading-relaxed">
-              "How should we plan headcount for next year based on growth and budget
-              constraints?"
-            </p>
-          </div>
-        </RevealDiv>
-
-        <RevealDiv>
-          <AgentDemo
-            situation={[
-              "Workforce of 120 employees",
-              "Planning for 30% growth next year",
-              "Operating within a $2.4M annual hiring budget",
-            ]}
-            question="How should we structure hiring to support growth while staying within budget and avoiding risk?"
-            plan={
-              <div className="space-y-6">
-                <div>
-                  <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">Headcount Plan</h4>
-                  <div className="space-y-1.5 text-sm text-foreground">
-                    <p>Engineering — 14 hires</p>
-                    <p>Sales — 10 hires</p>
-                    <p>Marketing — 3 hires</p>
-                    <p>Product — 3 hires</p>
-                    <p>HR &amp; Support — 6 hires</p>
-                  </div>
-                </div>
-                <div>
-                  <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">Hiring Timeline</h4>
-                  <div className="space-y-1.5 text-sm text-foreground">
-                    <p>Q1 — 12 hires · $680K</p>
-                    <p>Q2 — 10 hires · $580K</p>
-                    <p>Q3 — 9 hires · $540K</p>
-                    <p>Q4 — 5 hires (buffer + backfills) · $600K</p>
-                  </div>
-                </div>
-                <div>
-                  <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">Risks Identified</h4>
-                  <div className="space-y-1.5 text-sm text-muted-foreground">
-                    <p>Engineering hiring in Q1 depends on updated job descriptions</p>
-                    <p>Q4 buffer may be insufficient if attrition exceeds 8%</p>
-                  </div>
-                </div>
-              </div>
-            }
-          />
-        </RevealDiv>
-
-        <RevealDiv>
-          <div className="bg-card border border-border rounded-xl p-8">
-            <h2 className="font-display text-xl text-foreground mb-3">What the agent delivers</h2>
-            <ul className="text-sm text-muted-foreground space-y-2 leading-relaxed">
-              <li>• Structured headcount plan aligned to business growth</li>
-              <li>• Hiring timeline across quarters</li>
-              <li>• Budget-aware recommendations</li>
-              <li>• Identified risks before execution</li>
-            </ul>
-          </div>
-        </RevealDiv>
-
-        <RevealDiv>
-          <div className="bg-card border border-border rounded-xl p-8">
-            <h2 className="font-display text-xl text-foreground mb-3">How the agent works</h2>
-            <ul className="text-sm text-muted-foreground space-y-2 leading-relaxed">
-              <li>→ Connects to HR systems</li>
-              <li>→ Analyzes workforce composition</li>
-              <li>→ Models hiring scenarios</li>
-              <li>→ Generates structured outputs</li>
-            </ul>
-          </div>
-        </RevealDiv>
-
-        <RevealDiv>
-          <div className="text-center space-x-4">
-            <button
-              onClick={() => setPage("contact")}
-              className="px-6 py-3 bg-foreground text-background rounded-xl text-sm font-semibold hover:bg-primary transition-colors"
-            >
-              Build this agent →
-            </button>
-            <button
-              onClick={() => setPage("explainers")}
-              className="px-6 py-3 border border-border text-foreground rounded-xl text-sm font-semibold hover:bg-muted transition-colors"
-            >
-              Back to Agents
-            </button>
-          </div>
-        </RevealDiv>
-      </div>
-    </div>
-  );
-}
+import AgentsPage from "@/pages/AgentsPage";
+import AgentDetailPage from "@/pages/AgentDetailPage";
 
 const Index = () => {
   const [page, setPage] = useState("home");
-  const [explainerModuleId, setExplainerModuleId] = useState<string | undefined>();
+  const [agentId, setAgentId] = useState<string | undefined>();
   const { user, isAdmin, loading, signOut } = useAuth();
 
   const currentUser = user ? { email: user.email || "", role: isAdmin ? "admin" : "user" } : null;
 
   const navigateTo = (p: string) => {
     setPage(p);
-    if (p !== "explainers") setExplainerModuleId(undefined);
+    if (p !== "agent-detail") setAgentId(undefined);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const navigateToExplainer = (moduleId: string) => {
-    setExplainerModuleId(moduleId);
-    setPage("explainers");
+  const navigateToAgent = (id: string) => {
+    setAgentId(id);
+    setPage("agent-detail");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleLogin = (_user: { email: string; role: string }) => {
+  const handleLogin = () => {
     navigateTo("dashboard");
   };
 
@@ -238,8 +60,8 @@ const Index = () => {
       )}
 
       {page === "home" && <HomePage setPage={navigateTo} />}
-      {page === "explainers" && <ExplainersPage initialModuleId={explainerModuleId} />}
-      {page === "agent-workforce" && <WorkforcePlanningAgent setPage={navigateTo} />}
+      {page === "agents" && <AgentsPage onSelectAgent={navigateToAgent} />}
+      {page === "agent-detail" && agentId && <AgentDetailPage agentId={agentId} setPage={navigateTo} />}
       {page === "about" && <AboutPage />}
       {page === "integrations" && <IntegrationsPage />}
       {page === "contact" && <ContactPage />}
@@ -250,7 +72,6 @@ const Index = () => {
       {page === "admin" && isAdmin && (
         <AdminDashboard onBack={() => navigateTo("dashboard")} onLogout={handleLogout} />
       )}
-
     </div>
   );
 };
