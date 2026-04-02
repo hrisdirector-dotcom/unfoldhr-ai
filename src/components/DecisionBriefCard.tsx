@@ -11,7 +11,7 @@ interface InsightLine {
 
 export interface DecisionBriefProps {
   scenario: string;
-  context: BriefLine[];
+  contextLine: string;
   primaryTitle: string;
   primaryItems: BriefLine[];
   secondaryTitle: string;
