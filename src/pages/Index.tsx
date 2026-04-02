@@ -55,34 +55,34 @@ function AgentDemo({
     <div className="bg-background border border-border rounded-xl p-6 space-y-5">
       <div>
         <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">
-          Inputs
+          Business Context
         </h4>
-        <ul className="text-sm text-foreground space-y-1">
+        <div className="space-y-1.5">
           {input.map((item) => (
-            <li key={item}>• {item}</li>
+            <p key={item} className="text-sm text-foreground">{item}</p>
           ))}
-        </ul>
+        </div>
       </div>
 
       <div>
         <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">
-          Prompt
+          You Ask
         </h4>
-        <pre className="text-xs bg-muted p-3 rounded text-muted-foreground whitespace-pre-wrap min-h-[60px]">
+        <p className="text-sm text-foreground/90 bg-muted p-3 rounded leading-relaxed min-h-[60px]">
           {promptText}
-        </pre>
+        </p>
       </div>
 
       {step >= 2 && !outputVisible && (
         <p className="text-xs text-muted-foreground animate-pulse">
-          Generating output...
+          Analyzing scenario...
         </p>
       )}
 
       {outputVisible && (
         <div>
           <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">
-            Output
+            What You Get
           </h4>
           <div className="text-sm text-foreground whitespace-pre-wrap bg-muted p-4 rounded">
             {output}
@@ -91,7 +91,7 @@ function AgentDemo({
       )}
 
       <p className="text-[10px] text-muted-foreground">
-        Example output for demonstration only.
+        Illustrative example based on the scenario above.
       </p>
     </div>
   );
