@@ -24,37 +24,30 @@ export default function AgentDemo({ input, prompt, output }: Props) {
       {run && (
         <>
           <div>
-            <h4 className="text-sm font-semibold mb-2">Business Inputs</h4>
-            <ul className="text-sm text-muted-foreground space-y-1">
+            <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">Business Context</h4>
+            <div className="space-y-1.5">
               {input.map((i) => (
-                <li key={i}>• {i}</li>
+                <p key={i} className="text-sm text-foreground">{i}</p>
               ))}
-            </ul>
+            </div>
           </div>
 
           <div>
-            <button
-              onClick={() => setShowPrompt(!showPrompt)}
-              className="text-sm text-primary font-medium"
-            >
-              {showPrompt ? "Hide Prompt" : "View Prompt →"}
-            </button>
-            {showPrompt && (
-              <pre className="mt-2 text-xs bg-muted p-3 rounded text-muted-foreground whitespace-pre-wrap">
-                {prompt}
-              </pre>
-            )}
+            <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">You Ask</h4>
+            <p className="text-sm text-foreground/90 bg-muted p-3 rounded leading-relaxed">
+              {prompt}
+            </p>
           </div>
 
           <div>
-            <h4 className="text-sm font-semibold mb-2">AI Output</h4>
+            <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">What You Get</h4>
             <div className="text-sm text-foreground whitespace-pre-wrap bg-muted p-4 rounded">
               {output}
             </div>
           </div>
 
-          <p className="text-xs text-muted-foreground">
-            AI-generated output. Review before use.
+          <p className="text-[10px] text-muted-foreground">
+            Illustrative example based on the scenario above.
           </p>
         </>
       )}
