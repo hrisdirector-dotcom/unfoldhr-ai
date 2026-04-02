@@ -89,7 +89,7 @@ export default function DecisionBriefCard({
       {insights && insights.length > 0 && (
         <motion.div custom={4} variants={fadeUp}>
           <h4 className="text-xs font-semibold uppercase tracking-[1.5px] text-muted-foreground mb-2.5">
-            Risks to Consider
+            Execution Risks
           </h4>
           <ul className="space-y-1.5">
             {insights.map((insight, i) => (
