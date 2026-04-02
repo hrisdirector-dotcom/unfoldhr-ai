@@ -67,8 +67,14 @@ export default function HomePage({ setPage }: HomePageProps) {
             <RevealDiv delay={0.3}>
               <div className="flex flex-wrap gap-3">
                 <button
-                  onClick={() => setPage("agents")}
+                  onClick={() => setPage("try-agent")}
                   className="px-7 py-3.5 rounded-lg bg-foreground text-background font-semibold text-sm border-none cursor-pointer hover:bg-primary transition-colors"
+                >
+                  Try an Agent
+                </button>
+                <button
+                  onClick={() => setPage("agents")}
+                  className="px-7 py-3.5 rounded-lg bg-transparent text-foreground font-semibold text-sm border border-border cursor-pointer hover:border-foreground transition-colors"
                 >
                   Explore Agents
                 </button>
