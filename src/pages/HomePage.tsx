@@ -86,7 +86,30 @@ export default function HomePage({ setPage }: HomePageProps) {
             </RevealDiv>
           </div>
           <RevealDiv delay={0.3} className="hidden lg:block">
-            <HeroAgentSimulation />
+            <DecisionBriefCard
+              scenario="Workforce Planning Scenario"
+              context={[
+                { label: "Workforce", value: "120 employees" },
+                { label: "Growth", value: "25% YoY" },
+                { label: "Budget", value: "Fixed hiring envelope" },
+              ]}
+              primaryTitle="Recommended Hiring Plan"
+              primaryItems={[
+                { label: "Sales", value: "8 hires" },
+                { label: "Engineering", value: "3 hires" },
+                { label: "HR", value: "2 hires" },
+              ]}
+              secondaryTitle="Hiring Timeline"
+              secondaryItems={[
+                { label: "Q1", value: "5 hires" },
+                { label: "Q2", value: "4 hires" },
+                { label: "Q3", value: "4 hires" },
+              ]}
+              insights={[
+                { text: "Engineering hiring depends on pipeline readiness" },
+                { text: "Q3 capacity may require contractor support" },
+              ]}
+            />
           </RevealDiv>
         </div>
       </section>
