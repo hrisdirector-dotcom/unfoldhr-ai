@@ -105,9 +105,42 @@ function WorkforcePlanningAgent({ setPage }: { setPage: (p: string) => void }) {
 
         <RevealDiv>
           <AgentDemo
-            input={["Workforce of 120 employees", "30% growth target next year", "$2.4M annual hiring budget"]}
-            prompt={"We are planning for 30% growth next year. How should we structure hiring by quarter while staying within budget and identifying risk early?"}
-            output={"Q1: Hire 12 (Engineering 6, Sales 4, Ops 2) — $680K\nQ2: Hire 10 (Engineering 4, Marketing 3, Support 3) — $580K\nQ3: Hire 9 (Product 3, Sales 3, HR 3) — $540K\nQ4: Hire 5 (buffer + backfills) — $600K\n\n⚠ Risk: Engineering hiring in Q1 depends on updated JDs.\n⚠ Risk: Q4 buffer may be insufficient if attrition exceeds 8%."}
+            situation={[
+              "Workforce of 120 employees",
+              "Planning for 30% growth next year",
+              "Operating within a $2.4M annual hiring budget",
+            ]}
+            question="How should we structure hiring to support growth while staying within budget and avoiding risk?"
+            plan={
+              <div className="space-y-6">
+                <div>
+                  <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">Headcount Plan</h4>
+                  <div className="space-y-1.5 text-sm text-foreground">
+                    <p>Engineering — 14 hires</p>
+                    <p>Sales — 10 hires</p>
+                    <p>Marketing — 3 hires</p>
+                    <p>Product — 3 hires</p>
+                    <p>HR &amp; Support — 6 hires</p>
+                  </div>
+                </div>
+                <div>
+                  <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">Hiring Timeline</h4>
+                  <div className="space-y-1.5 text-sm text-foreground">
+                    <p>Q1 — 12 hires · $680K</p>
+                    <p>Q2 — 10 hires · $580K</p>
+                    <p>Q3 — 9 hires · $540K</p>
+                    <p>Q4 — 5 hires (buffer + backfills) · $600K</p>
+                  </div>
+                </div>
+                <div>
+                  <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">Risks Identified</h4>
+                  <div className="space-y-1.5 text-sm text-muted-foreground">
+                    <p>Engineering hiring in Q1 depends on updated job descriptions</p>
+                    <p>Q4 buffer may be insufficient if attrition exceeds 8%</p>
+                  </div>
+                </div>
+              </div>
+            }
           />
         </RevealDiv>
 

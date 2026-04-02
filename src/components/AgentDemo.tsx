@@ -1,54 +1,56 @@
 import { useState } from "react";
+import type { ReactNode } from "react";
 
 type Props = {
-  input: string[];
-  prompt: string;
-  output: string;
+  situation: string[];
+  question: string;
+  plan: ReactNode;
 };
 
-export default function AgentDemo({ input, prompt, output }: Props) {
+export default function AgentDemo({ situation, question, plan }: Props) {
   const [run, setRun] = useState(false);
 
   return (
-    <div className="bg-background border border-border rounded-xl p-6 space-y-6">
+    <div>
       {!run && (
         <button
           onClick={() => setRun(true)}
-          className="px-4 py-2 bg-foreground text-background rounded-lg text-sm font-semibold"
+          className="px-5 py-2.5 bg-foreground text-background rounded-lg text-sm font-semibold hover:bg-primary transition-colors"
         >
-          Run Demo →
+          See the plan →
         </button>
       )}
 
       {run && (
-        <>
+        <div className="space-y-10">
+          {/* Your Situation */}
           <div>
-            <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">Business Context</h4>
-            <div className="space-y-1.5">
-              {input.map((i) => (
-                <p key={i} className="text-sm text-foreground">{i}</p>
+            <h3 className="font-display text-lg text-foreground mb-4">Your Situation</h3>
+            <div className="space-y-2">
+              {situation.map((s) => (
+                <p key={s} className="text-sm text-muted-foreground leading-relaxed">{s}</p>
               ))}
             </div>
           </div>
 
+          <div className="h-px bg-border" />
+
+          {/* The Question */}
           <div>
-            <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">You Ask</h4>
-            <p className="text-sm text-foreground/90 bg-muted p-3 rounded leading-relaxed">
-              {prompt}
+            <h3 className="font-display text-lg text-foreground mb-4">The Question</h3>
+            <p className="text-base text-foreground/90 leading-relaxed italic">
+              "{question}"
             </p>
           </div>
 
-          <div>
-            <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">What You Get</h4>
-            <div className="text-sm text-foreground whitespace-pre-wrap bg-muted p-4 rounded">
-              {output}
-            </div>
-          </div>
+          <div className="h-px bg-border" />
 
-          <p className="text-[10px] text-muted-foreground">
-            Illustrative example based on the scenario above.
-          </p>
-        </>
+          {/* Recommended Plan */}
+          <div>
+            <h3 className="font-display text-lg text-foreground mb-5">Recommended Plan</h3>
+            {plan}
+          </div>
+        </div>
       )}
     </div>
   );
