@@ -89,7 +89,7 @@ export default function HomePage({ setPage }: HomePageProps) {
             <DecisionBriefCard
               scenario="Workforce Planning"
               contextLine="120 employees · 25% growth · Fixed hiring budget"
-              primaryTitle="Recommended Hiring Plan"
+              primaryTitle="Recommended Hiring Plan for 25% Growth"
               primaryItems={[
                 { label: "Sales", value: "8 hires" },
                 { label: "Engineering", value: "3 hires" },
