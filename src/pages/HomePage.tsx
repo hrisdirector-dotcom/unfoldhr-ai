@@ -80,7 +80,7 @@ export default function HomePage({ setPage }: HomePageProps) {
                 </button>
                 <button
                   onClick={() => document.getElementById("request")?.scrollIntoView({ behavior: "smooth" })}
-                  className="px-7 py-3.5 rounded-lg bg-transparent text-foreground font-semibold text-sm border border-border cursor-pointer hover:border-foreground transition-colors"
+                  className="px-7 py-3.5 rounded-lg bg-transparent text-foreground font-semibold text-sm border-none cursor-pointer hover:text-primary transition-colors underline-offset-4 underline decoration-border hover:decoration-foreground"
                 >
                   Request a Demo
                 </button>
