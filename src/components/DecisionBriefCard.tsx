@@ -11,7 +11,7 @@ interface InsightLine {
 
 export interface DecisionBriefProps {
   scenario: string;
-  context: BriefLine[];
+  contextLine: string;
   primaryTitle: string;
   primaryItems: BriefLine[];
   secondaryTitle: string;
@@ -30,7 +30,7 @@ const fadeUp = {
 
 export default function DecisionBriefCard({
   scenario,
-  context,
+  contextLine,
   primaryTitle,
   primaryItems,
   secondaryTitle,
@@ -42,52 +42,42 @@ export default function DecisionBriefCard({
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, margin: "-40px" }}
-      className="bg-card border border-border rounded-2xl p-8 space-y-6"
+      className="bg-card border border-border rounded-2xl px-8 py-9"
     >
-      {/* Scenario label */}
-      <motion.p
-        custom={0}
-        variants={fadeUp}
-        className="text-xs font-semibold uppercase tracking-[2.5px] text-primary"
-      >
-        {scenario}
-      </motion.p>
-
-      {/* Context */}
-      <motion.div custom={1} variants={fadeUp} className="flex flex-wrap gap-x-6 gap-y-1">
-        {context.map((c) => (
-          <p key={c.label} className="text-sm text-muted-foreground">
-            <span className="text-foreground font-medium">{c.label}:</span> {c.value}
-          </p>
-        ))}
+      {/* Scenario label + context */}
+      <motion.div custom={0} variants={fadeUp} className="mb-8">
+        <p className="text-[11px] font-medium uppercase tracking-[2px] text-muted-foreground mb-1.5">
+          {scenario}
+        </p>
+        <p className="text-sm text-foreground/70">{contextLine}</p>
       </motion.div>
 
       {/* Divider */}
-      <motion.div custom={2} variants={fadeUp} className="border-t border-border" />
+      <motion.div custom={1} variants={fadeUp} className="border-t border-border mb-8" />
 
       {/* Primary section */}
-      <motion.div custom={3} variants={fadeUp}>
-        <h3 className="font-display text-base font-semibold text-foreground mb-3">
+      <motion.div custom={2} variants={fadeUp} className="mb-8">
+        <h3 className="font-display text-lg font-bold text-foreground mb-4">
           {primaryTitle}
         </h3>
-        <div className="space-y-1.5">
+        <div className="space-y-2">
           {primaryItems.map((item) => (
             <p key={item.label} className="text-sm text-foreground/85">
               {item.label} <span className="text-muted-foreground mx-1.5">→</span>{" "}
-              <span className="font-medium text-foreground">{item.value}</span>
+              <span className="font-semibold text-foreground">{item.value}</span>
             </p>
           ))}
         </div>
       </motion.div>
 
       {/* Secondary section */}
-      <motion.div custom={4} variants={fadeUp}>
-        <h3 className="font-display text-base font-semibold text-foreground mb-3">
+      <motion.div custom={3} variants={fadeUp} className="mb-8">
+        <h3 className="font-display text-sm font-semibold text-foreground mb-3">
           {secondaryTitle}
         </h3>
         <div className="space-y-1.5">
           {secondaryItems.map((item) => (
-            <p key={item.label} className="text-sm text-foreground/85">
+            <p key={item.label} className="text-sm text-foreground/80">
               {item.label} <span className="text-muted-foreground mx-1.5">→</span>{" "}
               <span className="font-medium text-foreground">{item.value}</span>
             </p>
@@ -95,14 +85,20 @@ export default function DecisionBriefCard({
         </div>
       </motion.div>
 
-      {/* Insights */}
+      {/* Risks */}
       {insights && insights.length > 0 && (
-        <motion.div custom={5} variants={fadeUp} className="space-y-1.5 pt-1">
-          {insights.map((insight, i) => (
-            <p key={i} className="text-xs text-muted-foreground leading-relaxed">
-              ⚠ {insight.text}
-            </p>
-          ))}
+        <motion.div custom={4} variants={fadeUp}>
+          <h4 className="text-xs font-semibold uppercase tracking-[1.5px] text-muted-foreground mb-2.5">
+            Risks to Consider
+          </h4>
+          <ul className="space-y-1.5">
+            {insights.map((insight, i) => (
+              <li key={i} className="text-xs text-muted-foreground leading-relaxed flex items-start gap-2">
+                <span className="mt-1.5 h-1 w-1 rounded-full bg-muted-foreground/50 shrink-0" />
+                {insight.text}
+              </li>
+            ))}
+          </ul>
         </motion.div>
       )}
     </motion.div>
