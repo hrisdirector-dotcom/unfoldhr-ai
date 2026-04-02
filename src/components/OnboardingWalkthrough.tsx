@@ -137,9 +137,8 @@ export default function OnboardingWalkthrough() {
             transform: "translate(-50%, -100%)",
           }}
         >
-          <div className="relative bg-foreground text-background rounded-xl px-5 py-4 shadow-2xl max-w-[280px] pointer-events-auto">
-            <p className="font-display text-sm font-bold mb-1">{currentStep.title}</p>
-            <p className="text-xs leading-relaxed opacity-80">{currentStep.description}</p>
+          <div className="relative bg-foreground text-background rounded-xl px-5 py-3 shadow-2xl max-w-[220px] pointer-events-auto">
+            <p className="font-display text-sm font-bold mb-2">{currentStep.title}</p>
             <div className="flex items-center justify-between mt-3 gap-2">
               <button
                 onClick={step === 0 ? dismiss : completeStep1}
