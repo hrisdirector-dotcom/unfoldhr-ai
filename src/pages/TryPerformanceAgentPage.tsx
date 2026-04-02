@@ -231,7 +231,8 @@ export default function TryPerformanceAgentPage({ setPage }: TryPerformanceAgent
             </RevealDiv>
 
             <RevealDiv delay={0.15}>
-              <p className="text-sm text-muted-foreground mb-4">Ready to get started on your AI Agent journey?</p>
+              <div className="flex flex-col items-center gap-4">
+                <p className="text-sm text-muted-foreground">Ready to get started on your AI Agent journey?</p>
                 <button
                   onClick={() => setPage("contact")}
                   className="px-8 py-4 rounded-lg bg-foreground text-background font-semibold text-sm cursor-pointer hover:bg-primary transition-colors"
