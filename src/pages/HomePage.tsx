@@ -82,7 +82,7 @@ export default function HomePage({ setPage }: HomePageProps) {
                   onClick={() => document.getElementById("request")?.scrollIntoView({ behavior: "smooth" })}
                   className="px-7 py-3.5 rounded-lg bg-transparent text-foreground font-semibold text-sm border-none cursor-pointer hover:text-primary transition-colors underline-offset-4 underline decoration-border hover:decoration-foreground"
                 >
-                  Request a Demo
+                  Contact Us
                 </button>
               </div>
             </RevealDiv>
