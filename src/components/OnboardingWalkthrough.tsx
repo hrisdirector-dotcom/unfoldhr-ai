@@ -4,77 +4,52 @@ import { motion, AnimatePresence } from "framer-motion";
 const STORAGE_KEY = "unfold_onboarding";
 
 type TourStep = {
-  target: string;       // data-tour attribute value
+  target: string;
   title: string;
-  description: string;
-  arrowSide: "bottom" | "top";
 };
 
 const STEPS: TourStep[] = [
-  {
-    target: "try-agent",
-    title: "Start here 👋",
-    description: "See what an AI HR agent can do for you — try one in 60 seconds.",
-    arrowSide: "bottom",
-  },
-  {
-    target: "contact-us",
-    title: "Like what you see?",
-    description: "Tell us about your challenges and we'll show you what's possible.",
-    arrowSide: "bottom",
-  },
+  { target: "try-agent", title: "Start here 👋" },
+  { target: "contact-us", title: "Like what you see?" },
 ];
 
 export default function OnboardingWalkthrough() {
   const [step, setStep] = useState<number | null>(null);
-  const [pos, setPos] = useState<{ top: number; left: number; width: number } | null>(null);
+  const [rect, setRect] = useState<DOMRect | null>(null);
 
-  // Initialise from localStorage
   useEffect(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (!saved) {
-        // First visit → show step 0 after short delay
         const t = setTimeout(() => setStep(0), 1500);
         return () => clearTimeout(t);
       }
       const data = JSON.parse(saved);
       if (data.step === 1 && !data.done) {
-        // Returned after trying agent → show step 1
         const t = setTimeout(() => setStep(1), 1000);
         return () => clearTimeout(t);
       }
-      // Tour complete, do nothing
-    } catch {
-      // ignore
-    }
+    } catch {}
   }, []);
 
-  // Position the tooltip relative to the target element
   const updatePosition = useCallback(() => {
     if (step === null) return;
-    const target = document.querySelector(`[data-tour="${STEPS[step].target}"]`);
-    if (!target) return;
-    const rect = target.getBoundingClientRect();
-    setPos({
-      top: rect.top,
-      left: rect.left + rect.width / 2,
-      width: rect.width,
-    });
+    const el = document.querySelector(`[data-tour="${STEPS[step].target}"]`);
+    if (!el) return;
+    setRect(el.getBoundingClientRect());
   }, [step]);
 
   useEffect(() => {
     updatePosition();
     window.addEventListener("resize", updatePosition);
-    window.addEventListener("scroll", updatePosition);
+    window.addEventListener("scroll", updatePosition, true);
     return () => {
       window.removeEventListener("resize", updatePosition);
-      window.removeEventListener("scroll", updatePosition);
+      window.removeEventListener("scroll", updatePosition, true);
     };
   }, [updatePosition]);
 
   const advanceToStep1 = () => {
-    // User clicked "Try an Agent" — mark step 0 done, queue step 1 for after they return
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ step: 1, done: false }));
     setStep(null);
   };
@@ -89,11 +64,9 @@ export default function OnboardingWalkthrough() {
     setStep(null);
   };
 
-  // Listen for navigation to try-* pages to auto-advance
   useEffect(() => {
     if (step !== 0) return;
     const observer = new MutationObserver(() => {
-      // If the try-agent target disappears, user navigated away (tried an agent)
       const target = document.querySelector(`[data-tour="try-agent"]`);
       if (!target) advanceToStep1();
     });
@@ -101,65 +74,70 @@ export default function OnboardingWalkthrough() {
     return () => observer.disconnect();
   }, [step]);
 
-  if (step === null || !pos) return null;
+  if (step === null || !rect) return null;
 
   const currentStep = STEPS[step];
+  const handleAction = step === 0 ? dismiss : completeStep1;
 
   return (
     <>
-      {/* Pulsing ring around target */}
+      {/* Subtle dot indicator under the button */}
       <motion.div
-        key={`ring-${step}`}
-        className="fixed z-[9998] pointer-events-none rounded-full border-2 border-primary"
+        key={`dot-${step}`}
+        className="fixed z-[9998] pointer-events-none"
         style={{
-          width: pos.width + 16,
-          height: 52,
-          top: pos.top - 8,
-          left: pos.left,
-          transform: "translateX(-50%)",
+          width: 6,
+          height: 6,
+          borderRadius: "50%",
+          top: rect.top - 10,
+          left: rect.left + rect.width / 2 - 3,
         }}
-        animate={{ scale: [1, 1.08, 1], opacity: [0.7, 0.3, 0.7] }}
+        animate={{ opacity: [0.9, 0.4, 0.9] }}
         transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-      />
+      >
+        <div className="w-full h-full rounded-full bg-primary" />
+      </motion.div>
 
-      {/* Tooltip above the target */}
+      {/* Tooltip anchored above the specific button, left-aligned */}
       <AnimatePresence>
         <motion.div
           key={step}
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 10 }}
-          transition={{ duration: 0.35, ease: "easeOut" }}
-          className="fixed z-[9999] pointer-events-none"
+          exit={{ opacity: 0, y: 6 }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
+          className="fixed z-[9999]"
           style={{
-            top: pos.top - 56,
-            left: pos.left,
-            transform: "translate(-50%, -100%)",
+            bottom: `calc(100vh - ${rect.top}px + 12px)`,
+            left: rect.left,
           }}
         >
-          <div className="relative bg-foreground text-background rounded-xl px-5 py-3 shadow-2xl max-w-[220px] pointer-events-auto">
-            <p className="font-display text-sm font-bold mb-2">{currentStep.title}</p>
-            <div className="flex items-center justify-between mt-3 gap-2">
+          <div className="relative bg-foreground text-background rounded-lg px-4 py-2.5 shadow-xl max-w-[180px]">
+            <p className="font-display text-[13px] font-semibold leading-tight">{currentStep.title}</p>
+            <div className="flex items-center gap-2 mt-2">
               <button
-                onClick={step === 0 ? dismiss : completeStep1}
-                className="text-xs opacity-60 hover:opacity-100 transition-opacity cursor-pointer bg-transparent border-none text-background"
+                onClick={handleAction}
+                className="text-[11px] opacity-50 hover:opacity-100 transition-opacity cursor-pointer bg-transparent border-none text-background"
               >
                 Skip
               </button>
               <button
-                onClick={step === 0 ? dismiss : completeStep1}
-                className="text-xs font-semibold px-3 py-1.5 rounded-md bg-primary text-primary-foreground cursor-pointer border-none hover:opacity-90 transition-opacity"
+                onClick={handleAction}
+                className="text-[11px] font-semibold px-2.5 py-1 rounded-md bg-primary text-primary-foreground cursor-pointer border-none hover:opacity-90 transition-opacity"
               >
                 Got it
               </button>
             </div>
-            {/* Arrow pointing down to the button */}
+            {/* Arrow */}
             <div
-              className="absolute left-1/2 -translate-x-1/2 -bottom-2 w-0 h-0"
+              className="absolute -bottom-[6px]"
               style={{
-                borderLeft: "8px solid transparent",
-                borderRight: "8px solid transparent",
-                borderTop: "8px solid hsl(var(--foreground))",
+                left: Math.min(rect.width / 2, 60),
+                width: 0,
+                height: 0,
+                borderLeft: "6px solid transparent",
+                borderRight: "6px solid transparent",
+                borderTop: "6px solid hsl(var(--foreground))",
               }}
             />
           </div>
