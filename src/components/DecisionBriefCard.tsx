@@ -89,6 +89,23 @@ export default function DecisionBriefCard({
         </div>
       </motion.div>
 
+      {/* Tertiary section */}
+      {tertiaryTitle && tertiaryItems && tertiaryItems.length > 0 && (
+        <motion.div custom={4} variants={fadeUp} className="mb-8">
+          <h3 className="text-xs font-semibold uppercase tracking-[1.5px] text-muted-foreground mb-3">
+            {tertiaryTitle}
+          </h3>
+          <div className="space-y-1.5">
+            {tertiaryItems.map((item) => (
+              <p key={item.label} className="text-[13px] text-foreground/75">
+                {item.label} <span className="text-muted-foreground mx-1.5">→</span>{" "}
+                <span className="font-medium text-foreground/90">{item.value}</span>
+              </p>
+            ))}
+          </div>
+        </motion.div>
+      )}
+
       {/* Risks */}
       {insights && insights.length > 0 && (
         <motion.div custom={4} variants={fadeUp}>
