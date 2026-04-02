@@ -106,62 +106,66 @@ export default function OnboardingWalkthrough() {
   const currentStep = STEPS[step];
 
   return (
-    <AnimatePresence>
+    <>
+      {/* Pulsing ring around target */}
       <motion.div
-        key={step}
-        initial={{ opacity: 0, y: currentStep.arrowSide === "bottom" ? 10 : -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: 10 }}
-        transition={{ duration: 0.35, ease: "easeOut" }}
-        className="fixed z-[9999] pointer-events-none"
+        key={`ring-${step}`}
+        className="fixed z-[9998] pointer-events-none rounded-full border-2 border-primary"
         style={{
-          top: pos.top - 20,
+          width: pos.width + 16,
+          height: 52,
+          top: pos.top - 8,
           left: pos.left,
-          transform: "translate(-50%, -100%)",
+          transform: "translateX(-50%)",
         }}
-      >
-        <div className="relative bg-foreground text-background rounded-xl px-5 py-4 shadow-2xl max-w-[280px] pointer-events-auto">
-          <p className="font-display text-sm font-bold mb-1">{currentStep.title}</p>
-          <p className="text-xs leading-relaxed opacity-80">{currentStep.description}</p>
-          <div className="flex items-center justify-between mt-3 gap-2">
-            <button
-              onClick={step === 0 ? dismiss : completeStep1}
-              className="text-xs opacity-60 hover:opacity-100 transition-opacity cursor-pointer bg-transparent border-none text-background"
-            >
-              Skip
-            </button>
-            <button
-              onClick={step === 0 ? dismiss : completeStep1}
-              className="text-xs font-semibold px-3 py-1.5 rounded-md bg-primary text-primary-foreground cursor-pointer border-none hover:opacity-90 transition-opacity"
-            >
-              Got it
-            </button>
-          </div>
-          {/* Arrow pointing down to the button */}
-          <div
-            className="absolute left-1/2 -translate-x-1/2 -bottom-2 w-0 h-0"
-            style={{
-              borderLeft: "8px solid transparent",
-              borderRight: "8px solid transparent",
-              borderTop: "8px solid hsl(var(--foreground))",
-            }}
-          />
-        </div>
+        animate={{ scale: [1, 1.08, 1], opacity: [0.7, 0.3, 0.7] }}
+        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+      />
 
-        {/* Pulsing ring around target */}
+      {/* Tooltip above the target */}
+      <AnimatePresence>
         <motion.div
-          className="absolute rounded-full border-2 border-primary pointer-events-none"
+          key={step}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 10 }}
+          transition={{ duration: 0.35, ease: "easeOut" }}
+          className="fixed z-[9999] pointer-events-none"
           style={{
-            width: pos.width + 16,
-            height: 52,
-            left: "50%",
-            top: 20,
-            transform: "translateX(-50%)",
+            top: pos.top - 56,
+            left: pos.left,
+            transform: "translate(-50%, -100%)",
           }}
-          animate={{ scale: [1, 1.08, 1], opacity: [0.7, 0.3, 0.7] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-        />
-      </motion.div>
-    </AnimatePresence>
+        >
+          <div className="relative bg-foreground text-background rounded-xl px-5 py-4 shadow-2xl max-w-[280px] pointer-events-auto">
+            <p className="font-display text-sm font-bold mb-1">{currentStep.title}</p>
+            <p className="text-xs leading-relaxed opacity-80">{currentStep.description}</p>
+            <div className="flex items-center justify-between mt-3 gap-2">
+              <button
+                onClick={step === 0 ? dismiss : completeStep1}
+                className="text-xs opacity-60 hover:opacity-100 transition-opacity cursor-pointer bg-transparent border-none text-background"
+              >
+                Skip
+              </button>
+              <button
+                onClick={step === 0 ? dismiss : completeStep1}
+                className="text-xs font-semibold px-3 py-1.5 rounded-md bg-primary text-primary-foreground cursor-pointer border-none hover:opacity-90 transition-opacity"
+              >
+                Got it
+              </button>
+            </div>
+            {/* Arrow pointing down to the button */}
+            <div
+              className="absolute left-1/2 -translate-x-1/2 -bottom-2 w-0 h-0"
+              style={{
+                borderLeft: "8px solid transparent",
+                borderRight: "8px solid transparent",
+                borderTop: "8px solid hsl(var(--foreground))",
+              }}
+            />
+          </div>
+        </motion.div>
+      </AnimatePresence>
+    </>
   );
 }
