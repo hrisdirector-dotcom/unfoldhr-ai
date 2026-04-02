@@ -87,12 +87,8 @@ export default function HomePage({ setPage }: HomePageProps) {
           </div>
           <RevealDiv delay={0.3} className="hidden lg:block">
             <DecisionBriefCard
-              scenario="Workforce Planning Scenario"
-              context={[
-                { label: "Workforce", value: "120 employees" },
-                { label: "Growth", value: "25% YoY" },
-                { label: "Budget", value: "Fixed hiring envelope" },
-              ]}
+              scenario="Workforce Planning"
+              contextLine="120 employees · 25% growth · Fixed hiring budget"
               primaryTitle="Recommended Hiring Plan"
               primaryItems={[
                 { label: "Sales", value: "8 hires" },
