@@ -1,14 +1,18 @@
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
-type RequestBuildPanelProps = {
-  moduleTitle?: string;
-};
+const AI_JOURNEY_OPTIONS = [
+  "It's a new language to me",
+  "I've experimented with AI tools",
+  "My company wants me to figure this out",
+  "I get AI — show me what's next",
+];
 
-export default function RequestBuildPanel({ moduleTitle }: RequestBuildPanelProps) {
+export default function RequestBuildPanel() {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [aiJourney, setAiJourney] = useState("");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -21,29 +25,25 @@ export default function RequestBuildPanel({ moduleTitle }: RequestBuildPanelProp
     const name = (formData.get("name") as string)?.trim();
     const email = (formData.get("email") as string)?.trim();
     const company = (formData.get("company") as string)?.trim();
-    const module = (formData.get("module") as string)?.trim();
-    const message = (formData.get("message") as string)?.trim();
 
-    if (!name || !email || !message) {
+    if (!name || !email || !aiJourney) {
       setError("Please fill in all required fields.");
       setSubmitting(false);
       return;
     }
 
     try {
-      // Save to database
       const { error: dbError } = await supabase.from("submissions").insert({
         request_type: "contact",
         contact_name: name,
         email,
         company_name: company || "",
-        module: module || "",
-        message,
+        message: `AI Journey: ${aiJourney}`,
       });
 
       if (dbError) throw dbError;
 
-      // Also send to Formspree
+      formData.append("ai_journey", aiJourney);
       await fetch("https://formspree.io/f/mgopojll", {
         method: "POST",
         body: formData,
@@ -71,7 +71,7 @@ export default function RequestBuildPanel({ moduleTitle }: RequestBuildPanelProp
 
   return (
     <form onSubmit={handleSubmit} className="bg-background border border-border rounded-2xl p-8 md:p-10 space-y-5">
-      <input type="hidden" name="form_type" value="request_build" />
+      <input type="hidden" name="form_type" value="contact" />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
@@ -103,25 +103,25 @@ export default function RequestBuildPanel({ moduleTitle }: RequestBuildPanelProp
       </div>
 
       <div>
-        <label className="block text-xs font-bold text-muted-foreground mb-1.5 uppercase tracking-wider">Module</label>
-        <input
-          name="module"
-          defaultValue={moduleTitle}
-          className="w-full bg-card border border-border rounded-lg px-4 py-3 text-sm text-foreground outline-none focus:border-primary transition-colors"
-        />
-      </div>
-
-      <div>
-        <label className="block text-xs font-bold text-muted-foreground mb-1.5 uppercase tracking-wider">
-          Request Details
+        <label className="block text-xs font-bold text-muted-foreground mb-3 uppercase tracking-wider">
+          Where are you on your AI journey?
         </label>
-        <textarea
-          name="message"
-          rows={6}
-          required
-          className="w-full bg-card border border-border rounded-lg px-4 py-3 text-sm text-foreground outline-none focus:border-primary transition-colors resize-none"
-          placeholder="Describe the workflow, systems, outputs, and business outcome you want."
-        />
+        <div className="flex flex-wrap gap-2">
+          {AI_JOURNEY_OPTIONS.map((opt) => (
+            <button
+              key={opt}
+              type="button"
+              onClick={() => setAiJourney(opt)}
+              className={`px-4 py-2.5 rounded-lg text-sm font-medium transition-colors cursor-pointer border ${
+                aiJourney === opt
+                  ? "bg-foreground text-background border-foreground"
+                  : "bg-card text-foreground border-border hover:border-foreground"
+              }`}
+            >
+              {opt}
+            </button>
+          ))}
+        </div>
       </div>
 
       {error && <p className="text-sm text-destructive">{error}</p>}
@@ -131,7 +131,7 @@ export default function RequestBuildPanel({ moduleTitle }: RequestBuildPanelProp
         disabled={submitting}
         className="w-full py-3.5 rounded-lg bg-foreground text-background font-bold text-sm border-none cursor-pointer hover:bg-primary transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
       >
-        {submitting ? "Sending..." : "Request Build →"}
+        {submitting ? "Sending..." : "Get in Touch →"}
       </button>
     </form>
   );
