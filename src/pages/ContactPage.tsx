@@ -39,7 +39,7 @@ export default function RequestBuildPanel() {
         contact_name: name,
         email,
         company_name: company || "",
-        message: `AI Journey: ${aiJourney}`,
+        message: `AI Journey: ${aiJourney}\n\n${message}`,
       });
 
       if (dbError) throw dbError;
