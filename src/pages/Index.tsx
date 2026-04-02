@@ -11,6 +11,8 @@ import AdminDashboard from "@/pages/AdminDashboard";
 import AgentsPage from "@/pages/AgentsPage";
 import AgentDetailPage from "@/pages/AgentDetailPage";
 import TryAgentPage from "@/pages/TryAgentPage";
+import TryListeningAgentPage from "@/pages/TryListeningAgentPage";
+import TryPerformanceAgentPage from "@/pages/TryPerformanceAgentPage";
 
 const Index = () => {
   const [page, setPage] = useState("home");
@@ -64,6 +66,8 @@ const Index = () => {
       {page === "agents" && <AgentsPage onSelectAgent={navigateToAgent} />}
       {page === "agent-detail" && agentId && <AgentDetailPage agentId={agentId} setPage={navigateTo} />}
       {page === "try-agent" && <TryAgentPage setPage={navigateTo} />}
+      {page === "try-listening-agent" && <TryListeningAgentPage setPage={navigateTo} />}
+      {page === "try-performance-agent" && <TryPerformanceAgentPage setPage={navigateTo} />}
       {page === "about" && <AboutPage />}
       {page === "integrations" && <IntegrationsPage />}
       {page === "contact" && <ContactPage />}
