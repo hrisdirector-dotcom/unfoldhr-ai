@@ -25,8 +25,9 @@ export default function RequestBuildPanel() {
     const name = (formData.get("name") as string)?.trim();
     const email = (formData.get("email") as string)?.trim();
     const company = (formData.get("company") as string)?.trim();
+    const message = (formData.get("message") as string)?.trim();
 
-    if (!name || !email || !aiJourney) {
+    if (!name || !email || !aiJourney || !message) {
       setError("Please fill in all required fields.");
       setSubmitting(false);
       return;
