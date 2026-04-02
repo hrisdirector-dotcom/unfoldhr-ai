@@ -124,6 +124,19 @@ export default function RequestBuildPanel() {
         </div>
       </div>
 
+      <div>
+        <label className="block text-xs font-bold text-muted-foreground mb-1.5 uppercase tracking-wider">
+          Challenges you're trying to solve?
+        </label>
+        <textarea
+          name="message"
+          rows={4}
+          required
+          className="w-full bg-card border border-border rounded-lg px-4 py-3 text-sm text-foreground outline-none focus:border-primary transition-colors resize-none"
+          placeholder="Tell us about the HR workflows or decisions you'd like to improve."
+        />
+      </div>
+
       {error && <p className="text-sm text-destructive">{error}</p>}
 
       <button
