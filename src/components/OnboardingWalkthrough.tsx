@@ -57,7 +57,7 @@ export default function OnboardingWalkthrough() {
     if (!target) return;
     const rect = target.getBoundingClientRect();
     setPos({
-      top: rect.top + window.scrollY,
+      top: rect.top,
       left: rect.left + rect.width / 2,
       width: rect.width,
     });
