@@ -64,21 +64,19 @@ export default function HeroDemo() {
                   AI Output
                 </p>
                 <div className="rounded-xl bg-card border border-border p-4 text-sm text-foreground whitespace-pre-wrap leading-relaxed">
-{`Headcount Plan Summary
+{`Recommended Hiring Plan for 25% Growth
 
-Recommended hires:
-• 8 Sales Reps
-• 3 Engineers
-• 2 HR Business Partners
+Summary
+Hiring should concentrate on revenue-generating roles early, with support functions phased in.
 
-Timeline:
-• Q1: 5 hires
-• Q2: 4 hires
-• Q3: 4 hires
+Headcount: Sales 8 · Engineering 3 · HR 2
 
-Risks:
-• Budget overrun if hiring accelerates early
-• Engineering pipeline constraints`}
+Timeline
+Q1: 5 hires (Sales focus)
+Q2: 4 hires (Engineering ramp)
+Q3: 4 hires (HR & support)
+
+Confidence: Medium`}
                 </div>
               </div>
 

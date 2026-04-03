@@ -9,16 +9,24 @@ interface InsightLine {
   text: string;
 }
 
+interface ConfidenceLevel {
+  level: string;
+  reason: string;
+}
+
 export interface DecisionBriefProps {
   scenario: string;
   contextLine: string;
   primaryTitle: string;
+  summary?: string;
   primaryItems: BriefLine[];
   secondaryTitle: string;
   secondaryItems: BriefLine[];
   tertiaryTitle?: string;
   tertiaryItems?: BriefLine[];
+  observations?: InsightLine[];
   insights?: InsightLine[];
+  confidence?: ConfidenceLevel;
 }
 
 const fadeUp = {
@@ -34,13 +42,18 @@ export default function DecisionBriefCard({
   scenario,
   contextLine,
   primaryTitle,
+  summary,
   primaryItems,
   secondaryTitle,
   secondaryItems,
   tertiaryTitle,
   tertiaryItems,
+  observations,
   insights,
+  confidence,
 }: DecisionBriefProps) {
+  let seq = 0;
+
   return (
     <motion.div
       initial="hidden"
@@ -49,7 +62,7 @@ export default function DecisionBriefCard({
       className="bg-card border border-border rounded-2xl px-8 py-9"
     >
       {/* Scenario label + context */}
-      <motion.div custom={0} variants={fadeUp} className="mb-8">
+      <motion.div custom={seq++} variants={fadeUp} className="mb-8">
         <p className="text-[11px] font-medium uppercase tracking-[2px] text-muted-foreground mb-1.5">
           {scenario}
         </p>
@@ -57,13 +70,30 @@ export default function DecisionBriefCard({
       </motion.div>
 
       {/* Divider */}
-      <motion.div custom={1} variants={fadeUp} className="border-t border-border mb-8" />
+      <motion.div custom={seq++} variants={fadeUp} className="border-t border-border mb-8" />
 
-      {/* Primary section */}
-      <motion.div custom={2} variants={fadeUp} className="mb-8">
-        <h3 className="font-display text-lg font-bold text-foreground mb-4">
+      {/* Primary title */}
+      <motion.div custom={seq++} variants={fadeUp} className="mb-4">
+        <h3 className="font-display text-lg font-bold text-foreground">
           {primaryTitle}
         </h3>
+      </motion.div>
+
+      {/* Summary */}
+      {summary && (
+        <motion.div custom={seq++} variants={fadeUp} className="mb-8">
+          <h4 className="text-xs font-semibold uppercase tracking-[1.5px] text-muted-foreground mb-2">
+            Summary
+          </h4>
+          <p className="text-sm text-foreground/80 leading-relaxed">{summary}</p>
+        </motion.div>
+      )}
+
+      {/* Primary items (Headcount Plan) */}
+      <motion.div custom={seq++} variants={fadeUp} className="mb-8">
+        <h4 className="text-xs font-semibold uppercase tracking-[1.5px] text-muted-foreground mb-3">
+          Headcount Plan
+        </h4>
         <div className="space-y-2">
           {primaryItems.map((item) => (
             <p key={item.label} className="text-sm text-foreground/85">
@@ -74,11 +104,11 @@ export default function DecisionBriefCard({
         </div>
       </motion.div>
 
-      {/* Secondary section */}
-      <motion.div custom={3} variants={fadeUp} className="mb-8">
-        <h3 className="text-xs font-semibold uppercase tracking-[1.5px] text-muted-foreground mb-3">
+      {/* Secondary section (Timeline) */}
+      <motion.div custom={seq++} variants={fadeUp} className="mb-8">
+        <h4 className="text-xs font-semibold uppercase tracking-[1.5px] text-muted-foreground mb-3">
           {secondaryTitle}
-        </h3>
+        </h4>
         <div className="space-y-1.5">
           {secondaryItems.map((item) => (
             <p key={item.label} className="text-[13px] text-foreground/75">
@@ -91,10 +121,10 @@ export default function DecisionBriefCard({
 
       {/* Tertiary section */}
       {tertiaryTitle && tertiaryItems && tertiaryItems.length > 0 && (
-        <motion.div custom={4} variants={fadeUp} className="mb-8">
-          <h3 className="text-xs font-semibold uppercase tracking-[1.5px] text-muted-foreground mb-3">
+        <motion.div custom={seq++} variants={fadeUp} className="mb-8">
+          <h4 className="text-xs font-semibold uppercase tracking-[1.5px] text-muted-foreground mb-3">
             {tertiaryTitle}
-          </h3>
+          </h4>
           <div className="space-y-1.5">
             {tertiaryItems.map((item) => (
               <p key={item.label} className="text-[13px] text-foreground/75">
@@ -106,9 +136,26 @@ export default function DecisionBriefCard({
         </motion.div>
       )}
 
-      {/* Risks */}
+      {/* Key Observations */}
+      {observations && observations.length > 0 && (
+        <motion.div custom={seq++} variants={fadeUp} className="mb-8">
+          <h4 className="text-xs font-semibold uppercase tracking-[1.5px] text-muted-foreground mb-2.5">
+            Key Observations
+          </h4>
+          <ul className="space-y-1.5">
+            {observations.map((obs, i) => (
+              <li key={i} className="text-xs text-foreground/75 leading-relaxed flex items-start gap-2">
+                <span className="mt-1.5 h-1 w-1 rounded-full bg-primary/60 shrink-0" />
+                {obs.text}
+              </li>
+            ))}
+          </ul>
+        </motion.div>
+      )}
+
+      {/* Execution Risks */}
       {insights && insights.length > 0 && (
-        <motion.div custom={4} variants={fadeUp}>
+        <motion.div custom={seq++} variants={fadeUp} className="mb-8">
           <h4 className="text-xs font-semibold uppercase tracking-[1.5px] text-muted-foreground mb-2.5">
             Execution Risks
           </h4>
@@ -120,6 +167,19 @@ export default function DecisionBriefCard({
               </li>
             ))}
           </ul>
+        </motion.div>
+      )}
+
+      {/* Confidence Level */}
+      {confidence && (
+        <motion.div custom={seq++} variants={fadeUp}>
+          <div className="border-t border-border pt-6">
+            <p className="text-xs font-semibold uppercase tracking-[1.5px] text-muted-foreground mb-1.5">
+              Confidence Level
+            </p>
+            <p className="text-sm font-semibold text-foreground mb-1">{confidence.level}</p>
+            <p className="text-xs text-muted-foreground leading-relaxed">{confidence.reason}</p>
+          </div>
         </motion.div>
       )}
     </motion.div>
