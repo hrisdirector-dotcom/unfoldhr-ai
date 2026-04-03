@@ -11,10 +11,13 @@ export interface Agent {
     scenario: string;
     contextLine: string;
     primaryTitle: string;
+    summary?: string;
     primaryItems: { label: string; value: string }[];
     secondaryTitle: string;
     secondaryItems: { label: string; value: string }[];
+    observations?: { text: string }[];
     insights: { text: string }[];
+    confidence?: { level: string; reason: string };
   };
   businessContext: string[];
   howItWorks: string[];
