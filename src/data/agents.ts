@@ -36,6 +36,7 @@ export const AGENTS: Agent[] = [
       scenario: "Workforce Planning",
       contextLine: "120 employees · 25% growth · Fixed hiring budget",
       primaryTitle: "Recommended Hiring Plan for 25% Growth",
+      summary: "To support a 25% increase in workforce capacity, hiring should be concentrated in revenue-generating roles early in the year, with supporting functions phased in as operational demand increases.",
       primaryItems: [
         { label: "Sales", value: "8 hires" },
         { label: "Engineering", value: "3 hires" },
@@ -43,14 +44,21 @@ export const AGENTS: Agent[] = [
       ],
       secondaryTitle: "Hiring Timeline",
       secondaryItems: [
-        { label: "Q1", value: "5 hires" },
-        { label: "Q2", value: "4 hires" },
-        { label: "Q3", value: "4 hires" },
+        { label: "Q1", value: "5 hires (focus on Sales to accelerate revenue coverage)" },
+        { label: "Q2", value: "4 hires (Engineering ramp begins)" },
+        { label: "Q3", value: "4 hires (HR and operational support roles added)" },
+      ],
+      observations: [
+        { text: "Sales hiring must lead to avoid revenue lag against growth targets" },
+        { text: "Engineering capacity becomes a bottleneck by mid-year if delayed" },
+        { text: "HR hiring is reactive and should scale with workforce expansion" },
       ],
       insights: [
-        { text: "Engineering hiring depends on pipeline readiness" },
-        { text: "Q3 capacity may require contractor support" },
+        { text: "Engineering hiring risk is elevated due to limited candidate pipeline in Q2–Q3" },
+        { text: "Delayed Sales hiring will directly impact revenue realization timing" },
+        { text: "Budget pressure may increase if hiring is backloaded into later quarters" },
       ],
+      confidence: { level: "Medium", reason: "Growth targets are clearly defined, but hiring success depends heavily on market availability and speed of execution." },
     },
     businessContext: [
       "Current workforce of 120 employees across 6 departments",
