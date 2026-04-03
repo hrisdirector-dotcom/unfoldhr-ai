@@ -14,43 +14,63 @@ function generateBrief(size: string, growth: string, budget: string): DecisionBr
   const base = size === "Under 50" ? 40 : size === "50–200" ? 120 : size === "200–500" ? 350 : 800;
   const totalHires = Math.round(base * (growthNum / 100));
 
-  const eng = Math.round(totalHires * 0.35);
-  const sales = Math.round(totalHires * 0.28);
+  const sales = Math.round(totalHires * 0.35);
+  const eng = Math.round(totalHires * 0.28);
   const ops = Math.round(totalHires * 0.2);
-  const hr = totalHires - eng - sales - ops;
+  const hr = totalHires - sales - eng - ops;
 
   const q1 = Math.round(totalHires * 0.35);
   const q2 = Math.round(totalHires * 0.28);
   const q3 = Math.round(totalHires * 0.22);
   const q4 = totalHires - q1 - q2 - q3;
 
-  const risks = [
-    { text: budget === "High" ? "Tight budget may require phased onboarding" : "Hiring velocity may outpace onboarding capacity" },
-    { text: growthNum >= 30 ? "Aggressive growth increases attrition risk in Q3–Q4" : "Pipeline readiness is critical for Q1 execution" },
+  const budgetNote = budget === "High"
+    ? "with careful phasing to manage cost peaks"
+    : budget === "Low"
+    ? "with front-loaded investment in revenue-generating roles"
+    : "with supporting functions phased in as operational demand increases";
+
+  const observations = [
+    { text: "Sales hiring must lead to avoid revenue lag against growth targets" },
+    { text: growthNum >= 30
+      ? "Engineering capacity becomes a critical bottleneck if hiring is delayed past Q1"
+      : "Engineering capacity becomes a bottleneck by mid-year if delayed" },
+    { text: "HR hiring is reactive and should scale with workforce expansion" },
   ];
 
-  if (budget === "High") {
-    risks.push({ text: "Consider contractor support to manage cost peaks" });
-  }
+  const risks = [
+    { text: budget === "High" ? "Tight budget may require phased onboarding and contractor support" : "Hiring velocity may outpace onboarding capacity" },
+    { text: `Engineering hiring risk is elevated due to limited candidate pipeline in Q2–Q3` },
+    { text: growthNum >= 30 ? "Aggressive growth increases attrition risk in Q3–Q4" : "Delayed Sales hiring will directly impact revenue realization timing" },
+    { text: "Budget pressure may increase if hiring is backloaded into later quarters" },
+  ];
+
+  const confidenceLevel = growthNum >= 30 ? "Low–Medium" : budget === "High" ? "Medium" : "Medium–High";
+  const confidenceReason = growthNum >= 30
+    ? "Aggressive growth targets introduce significant execution risk across pipeline, onboarding, and retention."
+    : "Growth targets are clearly defined, but hiring success depends heavily on market availability and speed of execution.";
 
   return {
     scenario: "Workforce Planning",
     contextLine: `${base} employees · ${growth} growth · ${budget} budget sensitivity`,
     primaryTitle: `Recommended Hiring Plan for ${growth} Growth`,
+    summary: `To support a ${growth} increase in workforce capacity, hiring should be concentrated in revenue-generating roles early in the year, ${budgetNote}.`,
     primaryItems: [
-      { label: "Engineering", value: `${eng} hires` },
       { label: "Sales", value: `${sales} hires` },
+      { label: "Engineering", value: `${eng} hires` },
       { label: "Operations", value: `${ops} hires` },
       { label: "HR & Support", value: `${hr} hires` },
     ],
     secondaryTitle: "Hiring Timeline",
     secondaryItems: [
-      { label: "Q1", value: `${q1} hires` },
-      { label: "Q2", value: `${q2} hires` },
-      { label: "Q3", value: `${q3} hires` },
-      { label: "Q4", value: `${q4} hires` },
+      { label: "Q1", value: `${q1} hires (focus on Sales to accelerate revenue coverage)` },
+      { label: "Q2", value: `${q2} hires (Engineering ramp begins)` },
+      { label: "Q3", value: `${q3} hires (HR and operational support roles added)` },
+      { label: "Q4", value: `${q4} hires (remaining capacity and backfill)` },
     ],
+    observations,
     insights: risks,
+    confidence: { level: confidenceLevel, reason: confidenceReason },
   };
 }
 

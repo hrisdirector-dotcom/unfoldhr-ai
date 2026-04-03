@@ -83,17 +83,20 @@ export default function HeroAgentSimulation() {
             <p className="text-xs font-bold uppercase tracking-[2px] text-muted-foreground mb-2">
               Output
             </p>
-            <div className="bg-card border border-border p-4 rounded text-sm whitespace-pre-wrap">
-{`Headcount Plan Summary
+            <div className="bg-card border border-border p-4 rounded text-sm whitespace-pre-wrap leading-relaxed">
+{`Recommended Hiring Plan for 25% Growth
 
-• 8 Sales Reps
-• 3 Engineers
-• 2 HRBP
+Summary
+Hiring should concentrate on revenue-generating roles early, with support functions phased in.
 
-Timeline:
-Q1: 5 hires
-Q2: 4 hires
-Q3: 4 hires`}
+Headcount: Sales 8 · Engineering 3 · HR 2
+
+Timeline
+Q1: 5 hires (Sales focus)
+Q2: 4 hires (Engineering ramp)
+Q3: 4 hires (HR & support)
+
+Confidence: Medium`}
             </div>
           </motion.div>
         )}
