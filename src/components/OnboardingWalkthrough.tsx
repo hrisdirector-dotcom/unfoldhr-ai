@@ -1,9 +1,9 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const STORAGE_KEY = "unfold_onboarding";
 const TOOLTIP_WIDTH = 190;
-const TOOLTIP_OFFSET = 14;
+const TOOLTIP_OFFSET = 10;
 const VIEWPORT_PADDING = 12;
 
 type TourStep = {
@@ -19,47 +19,38 @@ const STEPS: TourStep[] = [
 export default function OnboardingWalkthrough() {
   const [step, setStep] = useState<number | null>(null);
   const [rect, setRect] = useState<DOMRect | null>(null);
+  const tooltipRef = useRef<HTMLDivElement>(null);
+  const [tooltipHeight, setTooltipHeight] = useState(60);
 
   useEffect(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
-
       if (!saved) {
         const t = setTimeout(() => setStep(0), 1200);
         return () => clearTimeout(t);
       }
-
       const data = JSON.parse(saved);
       if (data.step === 1 && !data.done) {
         const t = setTimeout(() => setStep(1), 800);
         return () => clearTimeout(t);
       }
     } catch {
-      // ignore storage errors
+      // ignore
     }
   }, []);
 
   const updatePosition = useCallback(() => {
     if (step === null) return;
-
     const el = document.querySelector(`[data-tour="${STEPS[step].target}"]`) as HTMLElement | null;
-
     if (!el) return;
-
-    const nextRect = el.getBoundingClientRect();
-    setRect(nextRect);
+    setRect(el.getBoundingClientRect());
   }, [step]);
 
   useEffect(() => {
     if (step === null) return;
-
-    const raf = requestAnimationFrame(() => {
-      updatePosition();
-    });
-
+    const raf = requestAnimationFrame(updatePosition);
     window.addEventListener("resize", updatePosition);
     window.addEventListener("scroll", updatePosition, true);
-
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", updatePosition);
@@ -67,9 +58,15 @@ export default function OnboardingWalkthrough() {
     };
   }, [step, updatePosition]);
 
+  // Measure tooltip height after render
+  useEffect(() => {
+    if (tooltipRef.current) {
+      setTooltipHeight(tooltipRef.current.offsetHeight);
+    }
+  });
+
   useEffect(() => {
     if (step !== 0) return;
-
     const observer = new MutationObserver(() => {
       const target = document.querySelector(`[data-tour="try-agent"]`);
       if (!target) {
@@ -77,7 +74,6 @@ export default function OnboardingWalkthrough() {
         setStep(null);
       }
     });
-
     observer.observe(document.body, { childList: true, subtree: true });
     return () => observer.disconnect();
   }, [step]);
@@ -89,24 +85,28 @@ export default function OnboardingWalkthrough() {
 
   if (step === null || !rect) return null;
 
+  // Center tooltip above button
   const tooltipLeftRaw = rect.left + rect.width / 2 - TOOLTIP_WIDTH / 2;
   const tooltipLeft = Math.min(
     Math.max(tooltipLeftRaw, VIEWPORT_PADDING),
     window.innerWidth - TOOLTIP_WIDTH - VIEWPORT_PADDING,
   );
+  const tooltipTop = Math.max(rect.top - tooltipHeight - TOOLTIP_OFFSET, VIEWPORT_PADDING);
 
-  const tooltipTop = Math.max(rect.top - TOOLTIP_OFFSET - 70, VIEWPORT_PADDING);
+  // Arrow points to button center
   const arrowLeft = rect.left + rect.width / 2 - tooltipLeft - 6;
+  const clampedArrowLeft = Math.min(Math.max(arrowLeft, 12), TOOLTIP_WIDTH - 24);
 
   return (
     <AnimatePresence>
       <motion.div
         key={step}
+        ref={tooltipRef}
         initial={{ opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 6 }}
         transition={{ duration: 0.22, ease: "easeOut" }}
-        className="fixed z-[9999]"
+        className="fixed z-[9999] pointer-events-auto"
         style={{
           top: tooltipTop,
           left: tooltipLeft,
@@ -114,16 +114,17 @@ export default function OnboardingWalkthrough() {
         }}
       >
         <div className="relative rounded-lg bg-foreground text-background px-4 py-3 shadow-xl">
-          <p className="font-display text-[13px] font-semibold leading-tight">{STEPS[step].title}</p>
+          <p className="font-display text-[13px] font-semibold leading-tight">
+            {STEPS[step].title}
+          </p>
 
           <div className="mt-2 flex items-center gap-2">
             <button
               onClick={dismiss}
-              className="border-none bg-transparent text-[11px] text-background/65 transition-opacity hover:text-background"
+              className="border-none bg-transparent text-[11px] text-background/60 transition-colors hover:text-background"
             >
               Skip
             </button>
-
             <button
               onClick={dismiss}
               className="rounded-md border-none bg-primary px-2.5 py-1 text-[11px] font-semibold text-primary-foreground transition-opacity hover:opacity-90"
@@ -132,10 +133,11 @@ export default function OnboardingWalkthrough() {
             </button>
           </div>
 
+          {/* Arrow */}
           <div
             className="absolute -bottom-[6px]"
             style={{
-              left: Math.min(Math.max(arrowLeft, 12), TOOLTIP_WIDTH - 24),
+              left: clampedArrowLeft,
               width: 0,
               height: 0,
               borderLeft: "6px solid transparent",
