@@ -94,7 +94,7 @@ export default function DecisionBriefCard({
       {/* Primary items */}
       <motion.div custom={seq++} variants={fadeUp} className="mb-8">
         <h4 className="text-xs font-semibold uppercase tracking-[1.5px] text-muted-foreground mb-3">
-          Key Themes
+          {primarySectionTitle || "Key Themes"}
         </h4>
         <div className="space-y-4">
           {primaryItems.map((item) => (
