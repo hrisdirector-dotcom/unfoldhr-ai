@@ -104,6 +104,7 @@ export default function HomePage({ setPage }: HomePageProps) {
               contextLine="120 employees · 25% growth · Fixed hiring budget"
               primaryTitle="Recommended Hiring Plan for 25% Growth"
               summary="To support a 25% increase in workforce capacity, hiring should be concentrated in revenue-generating roles early in the year, with supporting functions phased in as operational demand increases."
+              primarySectionTitle="Headcount Plan"
               primaryItems={[
                 { label: "Sales", value: "8 hires" },
                 { label: "Engineering", value: "3 hires" },
