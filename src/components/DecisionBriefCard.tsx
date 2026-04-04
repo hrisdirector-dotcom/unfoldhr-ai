@@ -19,6 +19,7 @@ export interface DecisionBriefProps {
   contextLine: string;
   primaryTitle: string;
   summary?: string;
+  primarySectionTitle?: string;
   primaryItems: BriefLine[];
   secondaryTitle: string;
   secondaryItems: BriefLine[];
@@ -43,6 +44,7 @@ export default function DecisionBriefCard({
   contextLine,
   primaryTitle,
   summary,
+  primarySectionTitle,
   primaryItems,
   secondaryTitle,
   secondaryItems,
@@ -89,17 +91,17 @@ export default function DecisionBriefCard({
         </motion.div>
       )}
 
-      {/* Primary items (Headcount Plan) */}
+      {/* Primary items */}
       <motion.div custom={seq++} variants={fadeUp} className="mb-8">
         <h4 className="text-xs font-semibold uppercase tracking-[1.5px] text-muted-foreground mb-3">
-          Headcount Plan
+          {primarySectionTitle || "Key Themes"}
         </h4>
-        <div className="space-y-2">
+        <div className="space-y-4">
           {primaryItems.map((item) => (
-            <p key={item.label} className="text-sm text-foreground/85">
-              {item.label} <span className="text-muted-foreground mx-1.5">→</span>{" "}
-              <span className="font-semibold text-foreground">{item.value}</span>
-            </p>
+            <div key={item.label}>
+              <p className="text-sm font-semibold text-foreground mb-0.5">{item.label}</p>
+              <p className="text-[13px] text-foreground/75 leading-relaxed">{item.value}</p>
+            </div>
           ))}
         </div>
       </motion.div>
