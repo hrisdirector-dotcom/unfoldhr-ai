@@ -11,119 +11,92 @@ const CONCERNS = ["Attrition", "Manager effectiveness", "Culture"];
 
 function generateBrief(size: string, trend: string, concern: string): DecisionBriefProps {
   const base = size === "Under 50" ? 40 : size === "50–200" ? 130 : size === "200–500" ? 350 : 800;
-  const responded = Math.round(base * 0.78);
-  const responseRate = Math.round((responded / base) * 100);
 
-  const scoreMap: Record<string, number> = { Improving: 72, Flat: 61, Declining: 47 };
-  const engagementScore = scoreMap[trend];
-
-  const compExitPct = trend === "Declining" ? 42 : trend === "Flat" ? 38 : 29;
-  const careerGrowthPct = trend === "Declining" ? 68 : trend === "Flat" ? 62 : 54;
-  const workloadTopPct = trend === "Declining" ? 22 : trend === "Flat" ? 18 : 14;
-
-  // --- Summary ---
-  const summaryMap: Record<string, string> = {
-    Improving: `Overall engagement sits at ${engagementScore}/100, up from prior quarter — but the improvement is uneven. ${responseRate}% participation suggests reasonable coverage, though pockets of disengagement in high-turnover teams remain obscured by aggregate gains. Momentum is real, but fragile.`,
-    Flat: `Engagement holds at ${engagementScore}/100 with no meaningful movement in two quarters. A ${responseRate}% response rate signals adequate coverage, but stagnation at this level is not neutral — it typically precedes decline within 1–2 cycles. The organization is coasting, not stabilizing.`,
-    Declining: `Engagement has dropped to ${engagementScore}/100, down 9 pts from prior quarter. With ${responseRate}% participation, the signal is strong and the direction is clear. This trajectory suggests voluntary attrition will spike within 60–90 days if no visible action is taken.`,
+  const sentimentMap: Record<string, Record<string, { score: string; direction: string }>> = {
+    Improving: {
+      Attrition: { score: "72 / 100", direction: "Up 6 pts from prior quarter" },
+      "Manager effectiveness": { score: "74 / 100", direction: "Up 5 pts — manager NPS rising" },
+      Culture: { score: "76 / 100", direction: "Up 8 pts — culture initiatives gaining traction" },
+    },
+    Flat: {
+      Attrition: { score: "61 / 100", direction: "No meaningful change in 2 quarters" },
+      "Manager effectiveness": { score: "58 / 100", direction: "Stagnant — manager feedback loops underutilized" },
+      Culture: { score: "63 / 100", direction: "Flat — employees report mixed signals on values" },
+    },
+    Declining: {
+      Attrition: { score: "47 / 100", direction: "Down 9 pts — exit survey themes worsening" },
+      "Manager effectiveness": { score: "44 / 100", direction: "Down 11 pts — skip-level complaints rising" },
+      Culture: { score: "49 / 100", direction: "Down 7 pts — trust and belonging scores dropping" },
+    },
   };
 
-  // --- Key Themes (always Compensation, Career Growth, Workload) ---
-  const themesByTrend: Record<string, { label: string; value: string }[]> = {
-    Improving: [
-      { label: "Compensation Pressure", value: `Cited in ${compExitPct}% of exit interviews. Recent adjustments have slowed departures, but mid-level IC bands remain 8–12% below market in competitive roles` },
-      { label: "Career Growth Gaps", value: `${careerGrowthPct}% of departing employees cite limited advancement. Internal promotion velocity has improved in Engineering but remains stalled in Operations and Sales` },
-      { label: "Workload Imbalance", value: `Top ${workloadTopPct}% of performers carry 2.4× the project load of median contributors. Without redistribution, retention risk concentrates in exactly the people you can least afford to lose` },
+  const themesMap: Record<string, { label: string; value: string }[]> = {
+    Attrition: [
+      { label: "Compensation concerns", value: "Cited in 38% of exit interviews as a contributing factor" },
+      { label: "Career growth gaps", value: "62% of departing employees report limited advancement paths" },
+      { label: "Workload imbalance", value: "High performers carry disproportionate load in key teams" },
     ],
-    Flat: [
-      { label: "Compensation Pressure", value: `${compExitPct}% of exits reference pay as a contributing factor — unchanged from last quarter. The issue is not dramatic enough to trigger urgent action, which is precisely why it persists` },
-      { label: "Career Growth Gaps", value: `${careerGrowthPct}% of voluntary leavers report limited advancement paths. Lateral movement is underutilized — only 11% of open roles were filled internally this year` },
-      { label: "Workload Imbalance", value: `High performers absorb ${workloadTopPct}% more project volume than peers. Burnout signals are emerging in sprint velocity data and PTO usage patterns among tenured ICs` },
+    "Manager effectiveness": [
+      { label: "Inconsistent 1:1 cadence", value: "Only 41% of managers hold regular check-ins" },
+      { label: "Feedback quality", value: "Employees rate manager feedback 2.8 / 5 on usefulness" },
+      { label: "New manager readiness", value: "34% of first-time managers received no onboarding support" },
     ],
-    Declining: [
-      { label: "Compensation Pressure", value: `Now cited in ${compExitPct}% of exits, up from 34% last quarter. The gap is widening fastest in Engineering and Product roles where external offers are 15–20% above current bands` },
-      { label: "Career Growth Gaps", value: `${careerGrowthPct}% of departing employees flag growth as a primary driver — the highest reading in 4 quarters. Promotion timelines average 2.8 years vs. 1.9 at peer companies` },
-      { label: "Workload Imbalance", value: `Top contributors carry ${workloadTopPct}% more volume than median and are also the most actively recruited externally. This is the highest-risk intersection in the workforce` },
-    ],
-  };
-
-  // --- Key Observations ---
-  const observationsMap: Record<string, { text: string }[]> = {
-    Improving: [
-      { text: "Compensation improvements are reducing exits in junior bands, but mid-career attrition risk is now the primary exposure — a segment where career growth matters more than pay" },
-      { text: "If workload redistribution doesn't follow headcount gains, the next 2 quarters will see burnout-driven attrition among the exact high performers driving current momentum" },
-      { text: "The uncomfortable truth: improving aggregate scores are masking a widening gap between well-managed teams and underperforming managers — variance is the real story" },
-    ],
-    Flat: [
-      { text: "Compensation and career growth signals are reinforcing each other — employees who feel underpaid and stuck are 3.2× more likely to leave within 6 months" },
-      { text: "Flat engagement after two quarters without visible action suggests survey fatigue is imminent. The next pulse risks lower participation, not just lower scores" },
-      { text: "The uncomfortable truth: your highest performers are your highest flight risk right now. They have the most options and the most reason to exercise them" },
-    ],
-    Declining: [
-      { text: "The convergence of compensation pressure and career stagnation signals a systemic retention problem — this is not isolated to one team or function" },
-      { text: "At this trajectory, expect voluntary attrition to increase 15–25% within 90 days. The lag between sentiment decline and actual exits is closing fast" },
-      { text: "The uncomfortable truth: leadership credibility is eroding. Employees see listening efforts without follow-through as performative, which accelerates disengagement" },
+    Culture: [
+      { label: "Values–behavior gap", value: "Employees see stated values practiced only 55% of the time" },
+      { label: "Inclusion perception", value: "Underrepresented groups score belonging 18 pts lower than average" },
+      { label: "Cross-team trust", value: "Inter-departmental collaboration rated 2.4 / 5 by ICs" },
     ],
   };
 
-  // --- Recommended Actions ---
   const actionsMap: Record<string, { label: string; value: string }[]> = {
-    Improving: [
-      { label: "Target mid-career retention", value: "Launch stay interviews for ICs with 2–4 years tenure in top-quartile performance bands — this is where silent attrition risk lives" },
-      { label: "Audit comp bands against live market data", value: "Focus on Engineering, Product, and Sales roles where external offers are actively pulling talent" },
-      { label: "Pilot workload rebalancing in 2 highest-output teams", value: "Redistribute project ownership to reduce single-point-of-failure risk on top performers" },
+    Attrition: [
+      { label: "Launch stay interviews", value: "Target top 15% performers in highest-risk departments" },
+      { label: "Audit compensation bands", value: "Benchmark against market for roles with >20% turnover" },
+      { label: "Create internal mobility program", value: "Pilot lateral movement paths in Engineering and Sales" },
     ],
-    Flat: [
-      { label: "Launch targeted stay interviews within 30 days", value: "Focus on top 15% performers in departments with >18% TTM turnover — do not wait for the next survey cycle" },
-      { label: "Close the internal mobility gap", value: "Set a 25% internal fill rate target for open roles. Current rate of 11% signals a broken internal talent market" },
-      { label: "Make one visible, fast action from this data", value: "Choose one theme and act visibly within 2 weeks. Credibility depends on speed, not comprehensiveness" },
+    "Manager effectiveness": [
+      { label: "Mandate structured 1:1s", value: "Roll out cadence template with lightweight tracking" },
+      { label: "Launch manager coaching cohort", value: "6-week program for managers scoring below 3.0" },
+      { label: "Introduce upward feedback loops", value: "Quarterly anonymous pulse on manager effectiveness" },
     ],
-    Declining: [
-      { label: "Emergency comp review for highest-risk roles", value: "Benchmark and adjust bands for roles with >25% TTM attrition. Speed matters more than perfection here" },
-      { label: "Accelerate promotion timelines for blocked high performers", value: "Identify ICs overdue for advancement and fast-track decisions — every month of delay increases exit probability" },
-      { label: "Deploy skip-level listening sessions this quarter", value: "Structured 1:1s between senior leaders and front-line ICs to rebuild trust. Surveys alone won't restore credibility" },
+    Culture: [
+      { label: "Run values alignment workshops", value: "Facilitated sessions per department over 60 days" },
+      { label: "Establish ERG sponsorship model", value: "Assign executive sponsors with defined accountability" },
+      { label: "Redesign onboarding for culture integration", value: "Add values immersion in first 30 days" },
     ],
   };
 
-  // --- Execution Risks ---
   const risksMap: Record<string, { text: string }[]> = {
     Improving: [
-      { text: "Over-indexing on aggregate improvement creates blind spots. Manager-level variance is high, and the lowest-performing managers are not improving at the same rate" },
-      { text: "Comp adjustments without career path clarity will produce short-term retention gains that reverse within 12 months" },
-      { text: "Transparency about workload data may surface uncomfortable conversations about team-level performance gaps — but avoiding them is more expensive" },
+      { text: "Momentum may mask emerging pockets of disengagement in specific teams" },
+      { text: "Over-reliance on aggregate scores can obscure manager-level variance" },
     ],
     Flat: [
-      { text: "Taking no action is itself a decision — and employees will interpret silence as indifference. Expect scores to decline 4–6 pts next quarter if nothing changes" },
-      { text: "Comp transparency initiatives may temporarily increase dissatisfaction as employees discover internal inequities. This is necessary pain, not a reason to delay" },
-      { text: "Survey fatigue is a real risk. If this data doesn't lead to visible action within 30 days, future participation rates will drop, degrading your signal quality" },
+      { text: "Stagnation often precedes decline — without intervention, scores may drop within 1–2 quarters" },
+      { text: "Survey fatigue is likely if employees don't see visible action from prior feedback" },
     ],
     Declining: [
-      { text: "Rapid intervention without clear communication risks appearing reactive rather than strategic — framing matters as much as action" },
-      { text: "Emergency comp adjustments will create internal equity complaints from recently-hired employees paid at market. Plan for this second-order effect" },
-      { text: "Leadership visibility in response efforts is non-negotiable. Delegating the response to HR alone will be read as abdication, not empowerment" },
+      { text: "Rapid score decline increases attrition risk — expect a 60–90 day lag before voluntary exits spike" },
+      { text: "Leadership credibility is at stake if listening efforts aren't paired with visible, fast action" },
     ],
   };
 
-  // --- Confidence ---
-  const confidenceMap: Record<string, { level: string; reason: string }> = {
-    Improving: { level: "Medium–High", reason: `${responseRate}% participation and consistent trend direction provide a reliable signal. Confidence is tempered by limited visibility into manager-level variance and mid-career sentiment specifically.` },
-    Flat: { level: "Medium", reason: `Adequate response rate at ${responseRate}%, but two quarters of stagnation make it difficult to distinguish between genuine stability and pre-decline plateaus. Forward-looking confidence is lower than backward-looking.` },
-    Declining: { level: "High", reason: `Strong participation (${responseRate}%), consistent multi-quarter decline, and corroborating exit interview data all point in the same direction. The signal is clear — the only uncertainty is speed of impact.` },
-  };
+  const sentiment = sentimentMap[trend][concern];
 
   return {
     scenario: "Employee Listening",
-    contextLine: `${base} employees · ${responded} responded (${responseRate}%) · Trend: ${trend} · Focus: ${concern}`,
-    primaryTitle: "Employee Sentiment Summary",
-    summary: summaryMap[trend],
-    primaryItems: themesByTrend[trend],
-    secondaryTitle: "Key Observations",
-    secondaryItems: [],
-    observations: observationsMap[trend],
+    contextLine: `${base} employees · ${trend} engagement trend · Focus: ${concern}`,
+    primaryTitle: "Sentiment Summary",
+    primaryItems: [
+      { label: "Overall engagement score", value: sentiment.score },
+      { label: "Trend", value: sentiment.direction },
+      { label: "Survey coverage", value: `${Math.round(base * 0.78)} of ${base} employees responded` },
+    ],
+    secondaryTitle: "Key Themes",
+    secondaryItems: themesMap[concern],
     tertiaryTitle: "Recommended Actions",
-    tertiaryItems: actionsMap[trend],
+    tertiaryItems: actionsMap[concern],
     insights: risksMap[trend],
-    confidence: confidenceMap[trend],
   };
 }
 

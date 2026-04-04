@@ -55,7 +55,6 @@ function generateBrief(size: string, growth: string, budget: string): DecisionBr
     contextLine: `${base} employees · ${growth} growth · ${budget} budget sensitivity`,
     primaryTitle: `Recommended Hiring Plan for ${growth} Growth`,
     summary: `To support a ${growth} increase in workforce capacity, hiring should be concentrated in revenue-generating roles early in the year, ${budgetNote}.`,
-    primarySectionTitle: "Headcount Plan",
     primaryItems: [
       { label: "Sales", value: `${sales} hires` },
       { label: "Engineering", value: `${eng} hires` },
