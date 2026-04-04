@@ -19,6 +19,7 @@ export interface DecisionBriefProps {
   contextLine: string;
   primaryTitle: string;
   summary?: string;
+  primarySectionTitle?: string;
   primaryItems: BriefLine[];
   secondaryTitle: string;
   secondaryItems: BriefLine[];
