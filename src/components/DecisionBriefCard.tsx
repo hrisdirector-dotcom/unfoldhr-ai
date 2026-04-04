@@ -44,6 +44,7 @@ export default function DecisionBriefCard({
   contextLine,
   primaryTitle,
   summary,
+  primarySectionTitle,
   primaryItems,
   secondaryTitle,
   secondaryItems,
