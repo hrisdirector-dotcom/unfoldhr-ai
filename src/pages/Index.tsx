@@ -14,6 +14,7 @@ import AgentDetailPage from "@/pages/AgentDetailPage";
 import TryAgentPage from "@/pages/TryAgentPage";
 import TryListeningAgentPage from "@/pages/TryListeningAgentPage";
 import TryPerformanceAgentPage from "@/pages/TryPerformanceAgentPage";
+import PricingPage from "@/pages/PricingPage";
 import OnboardingWalkthrough from "@/components/OnboardingWalkthrough";
 
 const Index = () => {
