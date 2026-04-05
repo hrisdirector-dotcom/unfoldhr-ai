@@ -7,6 +7,9 @@ export interface Agent {
   category: string;
   valueStatement: string;
   supportingInsight: string;
+  access: "public" | "admin";
+  viewable: boolean;
+  runnable: boolean;
   briefData: {
     scenario: string;
     contextLine: string;
