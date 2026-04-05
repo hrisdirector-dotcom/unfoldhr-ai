@@ -76,6 +76,7 @@ const Index = () => {
       {page === "try-agent" && <TryAgentPage setPage={navigateTo} />}
       {page === "try-listening-agent" && <TryListeningAgentPage setPage={navigateTo} />}
       {page === "try-performance-agent" && <TryPerformanceAgentPage setPage={navigateTo} />}
+      {page === "pricing" && <PricingPage setPage={navigateTo} />}
       {page === "about" && <AboutPage />}
       {page === "integrations" && <IntegrationsPage />}
       {page === "contact" && <ContactPage />}
