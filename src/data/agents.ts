@@ -7,6 +7,9 @@ export interface Agent {
   category: string;
   valueStatement: string;
   supportingInsight: string;
+  access: "public" | "admin";
+  viewable: boolean;
+  runnable: boolean;
   briefData: {
     scenario: string;
     contextLine: string;
@@ -35,6 +38,9 @@ export const AGENTS: Agent[] = [
     category: "Workforce",
     valueStatement: "Turn headcount planning from reactive guesswork into a structured, data-driven recommendation.",
     supportingInsight: "This recommendation reflects current workforce composition, projected growth targets, and budget constraints. The agent models multiple scenarios and surfaces risks before they become problems.",
+    access: "public",
+    viewable: true,
+    runnable: true,
     briefData: {
       scenario: "Workforce Planning",
       contextLine: "120 employees · 25% growth · Fixed hiring budget",
@@ -93,6 +99,9 @@ export const AGENTS: Agent[] = [
     category: "Talent",
     valueStatement: "Transform engagement survey data into specific, measurable action plans for every manager.",
     supportingInsight: "The agent classifies sentiment across every open-text response, maps themes to 14 dimensions, and generates tailored action plans grounded in what employees actually said.",
+    access: "public",
+    viewable: true,
+    runnable: true,
     briefData: {
       scenario: "Employee Engagement",
       contextLine: "1,400 responses · 14 teams · Q1 cycle",
@@ -142,6 +151,9 @@ export const AGENTS: Agent[] = [
     category: "Talent",
     valueStatement: "Close skill gaps faster with AI-curated learning paths tailored to each employee's role and career goals.",
     supportingInsight: "The agent maps current competencies against role frameworks, identifies priority gaps, and curates content from your existing LMS — with completion nudges built in.",
+    access: "admin",
+    viewable: true,
+    runnable: true,
     briefData: {
       scenario: "Skill Development",
       contextLine: "L3 Analyst · Senior track · 5 skill gaps identified",
@@ -191,6 +203,9 @@ export const AGENTS: Agent[] = [
     category: "Talent",
     valueStatement: "Make review cycles faster, fairer, and more consistent across every manager in your organization.",
     supportingInsight: "The agent drafts review narratives from goal data, peer feedback, and manager notes — then scans rating distributions to flag bias patterns before calibration sessions.",
+    access: "public",
+    viewable: true,
+    runnable: true,
     briefData: {
       scenario: "Performance Review",
       contextLine: "H2 2024 cycle · 48 reviews · 6 managers",
@@ -240,6 +255,9 @@ export const AGENTS: Agent[] = [
     category: "Workforce",
     valueStatement: "Help recruiters spend less time on admin and more time building relationships with top candidates.",
     supportingInsight: "The agent summarizes resumes against role requirements, drafts personalized outreach, and generates weekly pipeline health reports — all without manual data pulls.",
+    access: "admin",
+    viewable: true,
+    runnable: true,
     briefData: {
       scenario: "Recruiting Pipeline",
       contextLine: "Senior PM role · 94 applicants · Week 3",
@@ -289,6 +307,9 @@ export const AGENTS: Agent[] = [
     category: "Workforce",
     valueStatement: "Make every new hire's first 90 days structured, personal, and consistently excellent.",
     supportingInsight: "The agent generates role-specific onboarding plans, matches buddies based on team and experience, and schedules milestone check-ins — reducing manual coordination across HR, IT, and managers.",
+    access: "admin",
+    viewable: true,
+    runnable: true,
     briefData: {
       scenario: "New Hire Onboarding",
       contextLine: "Product Designer · SF Office · Jan 15 start",
@@ -337,6 +358,9 @@ export const AGENTS: Agent[] = [
     category: "Compliance",
     valueStatement: "Reduce compliance risk by detecting policy gaps and surfacing regulatory changes before they become problems.",
     supportingInsight: "The agent monitors regulatory updates, audits your policy library against best practices, and generates acknowledgment workflows — keeping your organization compliant without constant manual review.",
+    access: "admin",
+    viewable: true,
+    runnable: true,
     briefData: {
       scenario: "Compliance Review",
       contextLine: "Multi-state employer · 14 policies · Q1 audit",
@@ -386,6 +410,9 @@ export const AGENTS: Agent[] = [
     category: "Workforce",
     valueStatement: "Make every compensation decision defensible with real-time market data and structured pay band analysis.",
     supportingInsight: "The agent benchmarks roles against survey data, flags offers that fall outside established bands, and classifies new positions into your job architecture — reducing pay equity risk.",
+    access: "admin",
+    viewable: true,
+    runnable: true,
     briefData: {
       scenario: "Compensation Review",
       contextLine: "Engineering team · 32 roles · Annual cycle",
@@ -435,6 +462,9 @@ export const AGENTS: Agent[] = [
     category: "Compliance",
     valueStatement: "Move DEI reporting from manual data pulls to automated, board-ready insights delivered quarterly.",
     supportingInsight: "The agent analyzes representation data across levels, compares against benchmarks, and generates structured reports — ensuring leadership has accurate, timely visibility into DEI progress.",
+    access: "admin",
+    viewable: true,
+    runnable: true,
     briefData: {
       scenario: "DEI Reporting",
       contextLine: "500 employees · 4 dimensions · Q4 report",
@@ -484,6 +514,9 @@ export const AGENTS: Agent[] = [
     category: "Workforce",
     valueStatement: "Eliminate manual document drafting with intelligent templates that adapt to role, level, and jurisdiction.",
     supportingInsight: "The agent generates compliant, personalized documents from structured inputs — then routes them for approval and e-signature automatically.",
+    access: "admin",
+    viewable: true,
+    runnable: true,
     briefData: {
       scenario: "Document Automation",
       contextLine: "Q1 hiring cycle · 18 offers · 3 promotions",
@@ -533,6 +566,9 @@ export const AGENTS: Agent[] = [
     category: "Compliance",
     valueStatement: "Ensure every employee relations case is classified, routed, and tracked consistently from intake to resolution.",
     supportingInsight: "The agent classifies cases by type and severity, routes to the right partner, surfaces relevant precedent documentation, and tracks resolution timelines — reducing time-to-action on sensitive matters.",
+    access: "admin",
+    viewable: true,
+    runnable: true,
     briefData: {
       scenario: "ER Case Management",
       contextLine: "Q1 intake · 23 cases · 4 categories",
@@ -582,6 +618,9 @@ export const AGENTS: Agent[] = [
     category: "Workforce",
     valueStatement: "Reduce benefits-related tickets and improve enrollment completion with intelligent employee guidance.",
     supportingInsight: "The agent answers employee questions about plan options, generates side-by-side comparisons, and automates life-event workflows — deflecting routine tickets and improving the enrollment experience.",
+    access: "admin",
+    viewable: true,
+    runnable: true,
     briefData: {
       scenario: "Open Enrollment",
       contextLine: "Annual OE · 340 employees · 4 plan options",
