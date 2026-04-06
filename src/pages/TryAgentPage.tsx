@@ -10,19 +10,9 @@ const GROWTH = ["10%", "20%", "30%"];
 const BUDGET = ["Low", "Moderate", "High"];
 
 function generateBrief(size: string, growth: string, budget: string): DecisionBriefProps {
+  const sizeLabel = size === "Under 50" ? "small" : size === "50–200" ? "mid-size" : size === "200–500" ? "scaling" : "large";
   const growthNum = parseInt(growth);
-  const base = size === "Under 50" ? 40 : size === "50–200" ? 120 : size === "200–500" ? 350 : 800;
-  const totalHires = Math.round(base * (growthNum / 100));
-
-  const sales = Math.round(totalHires * 0.35);
-  const eng = Math.round(totalHires * 0.28);
-  const ops = Math.round(totalHires * 0.2);
-  const hr = totalHires - sales - eng - ops;
-
-  const q1 = Math.round(totalHires * 0.35);
-  const q2 = Math.round(totalHires * 0.28);
-  const q3 = Math.round(totalHires * 0.22);
-  const q4 = totalHires - q1 - q2 - q3;
+  const isAggressive = growthNum >= 30;
 
   const budgetNote = budget === "High"
     ? "with careful phasing to manage cost peaks"
@@ -30,47 +20,59 @@ function generateBrief(size: string, growth: string, budget: string): DecisionBr
     ? "with front-loaded investment in revenue-generating roles"
     : "with supporting functions phased in as operational demand increases";
 
+  const primaryItems: { label: string; value: string }[] = [
+    { label: "Sales & Revenue", value: "Prioritize early to support revenue expansion and avoid growth lag" },
+    { label: "Engineering & Product", value: isAggressive
+      ? "Phase in aggressively to prevent critical capacity bottlenecks"
+      : "Phase in to support delivery and maintain product velocity" },
+    { label: "Operations", value: "Scale in alignment with workforce growth to maintain operational stability" },
+    { label: "HR & Support", value: budget === "High"
+      ? "Add selectively as headcount grows, constrained by budget sensitivity"
+      : "Expand as workforce scales to support onboarding and retention" },
+  ];
+
+  const secondaryItems: { label: string; value: string }[] = [
+    { label: "Early phase", value: "Prioritize revenue-generating roles to support growth targets" },
+    { label: "Mid-phase", value: "Expand technical and delivery capacity to sustain scale" },
+    { label: "Later phase", value: "Add operational and support functions as demand stabilizes" },
+    { label: "Ongoing", value: "Backfill and adjust based on attrition patterns and emerging needs" },
+  ];
+
   const observations = [
-    { text: "Sales hiring must lead to avoid revenue lag against growth targets" },
-    { text: growthNum >= 30
-      ? "Engineering capacity becomes a critical bottleneck if hiring is delayed past Q1"
-      : "Engineering capacity becomes a bottleneck by mid-year if delayed" },
-    { text: "HR hiring is reactive and should scale with workforce expansion" },
+    { text: "Growth targets require early investment in revenue roles to avoid downstream lag" },
+    { text: isAggressive
+      ? "Engineering capacity becomes a critical constraint if hiring is not front-loaded"
+      : "Hiring delays in technical roles may create capacity constraints by mid-year" },
+    { text: budget === "High"
+      ? "Budget sensitivity may limit the ability to hire ahead of demand"
+      : "Supporting functions should scale proportionally to avoid operational strain" },
   ];
 
   const risks = [
-    { text: budget === "High" ? "Tight budget may require phased onboarding and contractor support" : "Hiring velocity may outpace onboarding capacity" },
-    { text: `Engineering hiring risk is elevated due to limited candidate pipeline in Q2–Q3` },
-    { text: growthNum >= 30 ? "Aggressive growth increases attrition risk in Q3–Q4" : "Delayed Sales hiring will directly impact revenue realization timing" },
-    { text: "Budget pressure may increase if hiring is backloaded into later quarters" },
+    { text: "Delays in revenue-role hiring may directly impact growth realization timing" },
+    { text: isAggressive
+      ? "Aggressive growth increases attrition risk if onboarding capacity is not scaled accordingly"
+      : "Candidate availability may limit speed of execution in key roles" },
+    { text: budget === "High"
+      ? "Over-hiring early may create cost pressure if growth targets are not met"
+      : "Backloading hiring into later phases may create compounding capacity gaps" },
+    { text: "Lack of phased onboarding planning may reduce new hire effectiveness" },
   ];
 
-  const confidenceLevel = growthNum >= 30 ? "Low–Medium" : budget === "High" ? "Medium" : "Medium–High";
-  const confidenceReason = growthNum >= 30
-    ? "Aggressive growth targets introduce significant execution risk across pipeline, onboarding, and retention."
-    : "Growth targets are clearly defined, but hiring success depends heavily on market availability and speed of execution.";
-
   return {
-    scenario: "Workforce Planning",
-    contextLine: `${base} employees · ${growth} growth · ${budget} budget sensitivity`,
-    primaryTitle: `Recommended Hiring Plan for ${growth} Growth`,
-    summary: `To support a ${growth} increase in workforce capacity, hiring should be concentrated in revenue-generating roles early in the year, ${budgetNote}.`,
-    primaryItems: [
-      { label: "Sales", value: `${sales} hires` },
-      { label: "Engineering", value: `${eng} hires` },
-      { label: "Operations", value: `${ops} hires` },
-      { label: "HR & Support", value: `${hr} hires` },
-    ],
+    scenario: "Based on your selected scenario inputs",
+    contextLine: `${size} employees · ${growth} growth target · ${budget} budget sensitivity`,
+    primaryTitle: `Workforce Planning Strategy for ${growth} Growth`,
+    summary: `For a ${sizeLabel} organization targeting ${growth} growth, hiring should prioritize revenue-generating roles early in the cycle, ${budgetNote}. Supporting functions should be phased to align with operational demand.`,
+    primaryItems,
     secondaryTitle: "Hiring Timeline",
-    secondaryItems: [
-      { label: "Q1", value: `${q1} hires (focus on Sales to accelerate revenue coverage)` },
-      { label: "Q2", value: `${q2} hires (Engineering ramp begins)` },
-      { label: "Q3", value: `${q3} hires (HR and operational support roles added)` },
-      { label: "Q4", value: `${q4} hires (remaining capacity and backfill)` },
-    ],
+    secondaryItems,
     observations,
     insights: risks,
-    confidence: { level: confidenceLevel, reason: confidenceReason },
+    confidence: {
+      level: "Medium",
+      reason: "This plan is based on modeled workforce planning patterns aligned to your selected inputs, not actual organizational data.",
+    },
   };
 }
 
