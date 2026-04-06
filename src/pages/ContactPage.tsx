@@ -34,7 +34,9 @@ export default function RequestBuildPanel() {
     }
 
     try {
+      const submissionId = crypto.randomUUID();
       const { error: dbError } = await supabase.from("submissions").insert({
+        id: submissionId,
         request_type: "contact",
         contact_name: name,
         email,
@@ -49,6 +51,16 @@ export default function RequestBuildPanel() {
         method: "POST",
         body: formData,
         headers: { Accept: "application/json" },
+      });
+
+      // Send confirmation email to the user
+      await supabase.functions.invoke("send-transactional-email", {
+        body: {
+          templateName: "contact-confirmation",
+          recipientEmail: email,
+          idempotencyKey: `contact-confirm-${submissionId}`,
+          templateData: { name },
+        },
       });
 
       setSubmitted(true);
