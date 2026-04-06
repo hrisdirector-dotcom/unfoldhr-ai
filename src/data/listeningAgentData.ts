@@ -8,106 +8,106 @@ export function generateListeningBrief(
   group: string,
   context: string
 ): DecisionBriefProps {
-  const base = size === "Under 50" ? 40 : size === "50–200" ? 130 : size === "200–500" ? 350 : 800;
+  const sizeLabel = size === "Under 50" ? "a small" : size === "50–200" ? "a mid-size" : size === "200–500" ? "a growing" : "a large";
 
-  const sentimentMap: Record<string, Record<string, { score: string; direction: string }>> = {
+  const sentimentMap: Record<string, Record<string, { summary: string; direction: string }>> = {
     Improving: {
-      Attrition: { score: "72 / 100", direction: "Up 6 pts from prior quarter" },
-      "Manager effectiveness": { score: "74 / 100", direction: "Up 5 pts — manager NPS rising" },
-      Culture: { score: "76 / 100", direction: "Up 8 pts — culture initiatives gaining traction" },
+      Attrition: { summary: "Engagement signals are trending positively", direction: "Upward movement suggests recent initiatives are gaining traction" },
+      "Manager effectiveness": { summary: "Manager sentiment is showing signs of improvement", direction: "Upward trend indicates growing confidence in leadership support" },
+      Culture: { summary: "Culture-related signals are strengthening", direction: "Positive momentum suggests culture initiatives are resonating" },
     },
     Flat: {
-      Attrition: { score: "61 / 100", direction: "No meaningful change in 2 quarters" },
-      "Manager effectiveness": { score: "58 / 100", direction: "Stagnant — manager feedback loops underutilized" },
-      Culture: { score: "63 / 100", direction: "Flat — employees report mixed signals on values" },
+      Attrition: { summary: "Engagement signals have plateaued", direction: "No meaningful movement — stagnation may mask emerging risks" },
+      "Manager effectiveness": { summary: "Manager effectiveness signals remain unchanged", direction: "Stagnant patterns suggest feedback loops are underutilized" },
+      Culture: { summary: "Culture signals are neither improving nor declining", direction: "Flat trajectory — employees may be reporting mixed signals on values" },
     },
     Declining: {
-      Attrition: { score: "47 / 100", direction: "Down 9 pts — exit survey themes worsening" },
-      "Manager effectiveness": { score: "44 / 100", direction: "Down 11 pts — skip-level complaints rising" },
-      Culture: { score: "49 / 100", direction: "Down 7 pts — trust and belonging scores dropping" },
+      Attrition: { summary: "Engagement signals are trending downward", direction: "Declining patterns suggest worsening sentiment in exit feedback" },
+      "Manager effectiveness": { summary: "Manager effectiveness signals are weakening", direction: "Downward trend indicates rising frustration with leadership support" },
+      Culture: { summary: "Culture-related signals are deteriorating", direction: "Declining trajectory — trust and belonging patterns are weakening" },
     },
   };
 
   const themesMap: Record<string, Record<string, { label: string; value: string }[]>> = {
     Attrition: {
       Managers: [
-        { label: "Management burnout", value: "47% of managers report unsustainable workloads" },
-        { label: "Span of control", value: "Average manager-to-IC ratio exceeds 1:12 in key departments" },
-        { label: "Compensation gap", value: "Manager pay bands lag market by 8–12% in high-turnover roles" },
+        { label: "Management burnout", value: "A significant proportion of managers report unsustainable workloads" },
+        { label: "Span of control", value: "Manager-to-IC ratios appear elevated in key departments" },
+        { label: "Compensation gap", value: "Manager pay bands may lag market rates in high-turnover roles" },
       ],
       "High performers": [
-        { label: "Compensation concerns", value: "Cited in 42% of exit interviews from top-rated employees" },
-        { label: "Career growth gaps", value: "68% of departing high performers report limited advancement" },
-        { label: "Recognition deficit", value: "High performers receive formal recognition 30% less than peers" },
+        { label: "Compensation concerns", value: "Pay is frequently cited as a contributing factor in top-performer exits" },
+        { label: "Career growth gaps", value: "Many departing high performers report limited advancement opportunities" },
+        { label: "Recognition deficit", value: "High performers may receive less formal recognition relative to their contributions" },
       ],
       "New hires": [
-        { label: "Onboarding gaps", value: "34% of new hires report unclear role expectations after 90 days" },
-        { label: "Early attrition", value: "22% of voluntary exits occur within first 6 months" },
-        { label: "Buddy program gaps", value: "Only 40% of new hires were assigned a peer mentor" },
+        { label: "Onboarding gaps", value: "A notable share of new hires report unclear role expectations early on" },
+        { label: "Early attrition", value: "Voluntary exits appear concentrated in the first six months of tenure" },
+        { label: "Buddy program gaps", value: "Peer mentor assignment rates suggest inconsistent onboarding support" },
       ],
       "Frontline teams": [
-        { label: "Schedule inflexibility", value: "61% of frontline workers cite rigid scheduling as top concern" },
-        { label: "Wage compression", value: "Tenure-based pay gaps narrowing, creating retention risk" },
-        { label: "Safety and workload", value: "Incident reports up 15% in units with highest turnover" },
+        { label: "Schedule inflexibility", value: "Rigid scheduling is a commonly cited concern among frontline workers" },
+        { label: "Wage compression", value: "Tenure-based pay gaps are narrowing, creating potential retention risk" },
+        { label: "Safety and workload", value: "Incident patterns suggest a link between workload and turnover in certain units" },
       ],
       "Broadly distributed": [
-        { label: "Compensation concerns", value: "Cited in 38% of exit interviews as a contributing factor" },
-        { label: "Career growth gaps", value: "62% of departing employees report limited advancement paths" },
-        { label: "Workload imbalance", value: "High performers carry disproportionate load in key teams" },
+        { label: "Compensation concerns", value: "Pay is a recurring theme in exit feedback across roles" },
+        { label: "Career growth gaps", value: "Limited advancement paths are frequently cited by departing employees" },
+        { label: "Workload imbalance", value: "Top contributors appear to carry disproportionate workload in key teams" },
       ],
     },
     "Manager effectiveness": {
       Managers: [
-        { label: "Self-awareness gap", value: "Only 29% of managers rate themselves accurately vs. team feedback" },
-        { label: "Coaching skill deficit", value: "58% of managers received no formal coaching training" },
-        { label: "Administrative overload", value: "Managers spend 40% of time on non-people tasks" },
+        { label: "Self-awareness gap", value: "A noticeable gap exists between manager self-perception and team feedback" },
+        { label: "Coaching skill deficit", value: "A significant portion of managers lack formal coaching training" },
+        { label: "Administrative overload", value: "Managers spend a substantial share of their time on non-people tasks" },
       ],
       "High performers": [
-        { label: "Feedback quality", value: "Top performers rate manager feedback 2.4 / 5 on usefulness" },
-        { label: "Development neglect", value: "High performers are 35% less likely to have active IDPs" },
-        { label: "Autonomy friction", value: "Micromanagement cited by 28% of high performers as frustration" },
+        { label: "Feedback quality", value: "Top performers rate the usefulness of manager feedback as low" },
+        { label: "Development neglect", value: "High performers are less likely to have active individual development plans" },
+        { label: "Autonomy friction", value: "Micromanagement is cited as a frustration among high-performing employees" },
       ],
       "New hires": [
-        { label: "Inconsistent onboarding", value: "Manager-led onboarding varies by 3x across departments" },
-        { label: "Check-in cadence", value: "Only 38% of new hires have weekly 1:1s in first 90 days" },
-        { label: "Expectation clarity", value: "42% of new hires unclear on success metrics after month one" },
+        { label: "Inconsistent onboarding", value: "Manager-led onboarding quality varies significantly across departments" },
+        { label: "Check-in cadence", value: "Many new hires lack regular one-on-one meetings in their first months" },
+        { label: "Expectation clarity", value: "A meaningful share of new hires remain unclear on success metrics early on" },
       ],
       "Frontline teams": [
-        { label: "Supervisor accessibility", value: "Frontline teams see managers for < 15 min / week on average" },
-        { label: "Feedback timeliness", value: "Feedback arrives 2+ weeks after events in 55% of cases" },
-        { label: "Shift-based gaps", value: "Night and weekend teams report 40% less manager contact" },
+        { label: "Supervisor accessibility", value: "Frontline teams report limited face time with their direct managers" },
+        { label: "Feedback timeliness", value: "Feedback often arrives well after the events it addresses" },
+        { label: "Shift-based gaps", value: "Night and weekend teams report notably less manager contact" },
       ],
       "Broadly distributed": [
-        { label: "Inconsistent 1:1 cadence", value: "Only 41% of managers hold regular check-ins" },
-        { label: "Feedback quality", value: "Employees rate manager feedback 2.8 / 5 on usefulness" },
-        { label: "New manager readiness", value: "34% of first-time managers received no onboarding support" },
+        { label: "Inconsistent 1:1 cadence", value: "Regular check-ins are not consistently maintained across managers" },
+        { label: "Feedback quality", value: "Employees generally rate manager feedback as having limited usefulness" },
+        { label: "New manager readiness", value: "Many first-time managers report receiving no onboarding support" },
       ],
     },
     Culture: {
       Managers: [
-        { label: "Values modeling gap", value: "Only 48% of employees say their manager models company values" },
-        { label: "Psychological safety", value: "Teams with low-trust managers score 22 pts lower on safety" },
-        { label: "Decision transparency", value: "Manager communication rated 2.6 / 5 on clarity of rationale" },
+        { label: "Values modeling gap", value: "Employees often report that their manager does not consistently model company values" },
+        { label: "Psychological safety", value: "Teams with low-trust managers tend to score significantly lower on safety" },
+        { label: "Decision transparency", value: "Manager communication is rated poorly on clarity of rationale" },
       ],
       "High performers": [
-        { label: "Meritocracy perception", value: "High performers score fairness of advancement 18% lower" },
-        { label: "Innovation barriers", value: "Top contributors cite bureaucracy as #1 culture frustration" },
-        { label: "Recognition equity", value: "Visibility for contributions skews toward tenure, not impact" },
+        { label: "Meritocracy perception", value: "High performers perceive advancement criteria as less fair than peers do" },
+        { label: "Innovation barriers", value: "Top contributors cite bureaucracy as the primary culture frustration" },
+        { label: "Recognition equity", value: "Visibility for contributions tends to skew toward tenure rather than impact" },
       ],
       "New hires": [
-        { label: "Culture shock", value: "28% of new hires say lived culture differs from interview promise" },
-        { label: "Belonging gap", value: "New hire belonging scores trail tenured peers by 24 pts" },
-        { label: "Social integration", value: "Remote new hires report 40% fewer cross-team connections" },
+        { label: "Culture shock", value: "Some new hires report that lived culture differs from what was presented during hiring" },
+        { label: "Belonging gap", value: "New hire belonging signals trail those of tenured peers" },
+        { label: "Social integration", value: "Remote new hires report fewer cross-team connections" },
       ],
       "Frontline teams": [
-        { label: "Disconnection from HQ", value: "Frontline employees feel 'forgotten' — engagement 20 pts lower" },
-        { label: "Communication gaps", value: "Key updates reach frontline 3–5 days after corporate teams" },
-        { label: "Inclusion perception", value: "Frontline DEI scores lag corporate by 15 pts" },
+        { label: "Disconnection from HQ", value: "Frontline employees often feel overlooked — engagement signals lag corporate teams" },
+        { label: "Communication gaps", value: "Key updates tend to reach frontline staff later than corporate teams" },
+        { label: "Inclusion perception", value: "DEI-related signals among frontline workers trail corporate benchmarks" },
       ],
       "Broadly distributed": [
-        { label: "Values–behavior gap", value: "Employees see stated values practiced only 55% of the time" },
-        { label: "Inclusion perception", value: "Underrepresented groups score belonging 18 pts lower than avg" },
-        { label: "Cross-team trust", value: "Inter-departmental collaboration rated 2.4 / 5 by ICs" },
+        { label: "Values–behavior gap", value: "Employees report that stated values are not consistently practiced" },
+        { label: "Inclusion perception", value: "Underrepresented groups report notably lower belonging signals" },
+        { label: "Cross-team trust", value: "Inter-departmental collaboration is rated poorly by individual contributors" },
       ],
     },
   };
@@ -115,56 +115,56 @@ export function generateListeningBrief(
   const actionsMap: Record<string, Record<string, { label: string; value: string }[]>> = {
     Attrition: {
       Managers: [
-        { label: "Reduce manager admin burden", value: "Audit and eliminate 2–3 low-value reporting requirements" },
+        { label: "Reduce manager admin burden", value: "Audit and eliminate low-value reporting requirements" },
         { label: "Launch manager wellness program", value: "Pilot burnout prevention cohort in highest-risk teams" },
-        { label: "Recalibrate spans of control", value: "Target 1:8 ratio in departments exceeding 1:12" },
+        { label: "Recalibrate spans of control", value: "Target sustainable ratios in departments with elevated spans" },
       ],
       "High performers": [
-        { label: "Launch stay interviews", value: "Target top 15% performers in highest-risk departments" },
-        { label: "Audit compensation bands", value: "Benchmark against market for roles with >20% turnover" },
-        { label: "Create internal mobility program", value: "Pilot lateral movement paths in Engineering and Sales" },
+        { label: "Launch stay interviews", value: "Target top performers in highest-risk departments" },
+        { label: "Audit compensation bands", value: "Benchmark against market for roles with elevated turnover" },
+        { label: "Create internal mobility program", value: "Pilot lateral movement paths in high-attrition functions" },
       ],
       "New hires": [
         { label: "Redesign 90-day onboarding", value: "Add structured milestones and manager check-in cadence" },
-        { label: "Assign peer mentors", value: "Ensure 100% of new hires have a buddy by week one" },
-        { label: "Track early warning signals", value: "Flag new hires with < 3 manager touchpoints by day 30" },
+        { label: "Assign peer mentors", value: "Ensure all new hires have a buddy by week one" },
+        { label: "Track early warning signals", value: "Flag new hires with limited manager touchpoints in the first month" },
       ],
       "Frontline teams": [
-        { label: "Pilot flexible scheduling", value: "Test shift-swap and preference-based scheduling in 2 units" },
-        { label: "Address wage compression", value: "Review pay equity for frontline roles with 3+ years tenure" },
+        { label: "Pilot flexible scheduling", value: "Test shift-swap and preference-based scheduling in select units" },
+        { label: "Address wage compression", value: "Review pay equity for long-tenured frontline roles" },
         { label: "Improve working conditions", value: "Conduct safety and workload audit in high-turnover sites" },
       ],
       "Broadly distributed": [
-        { label: "Launch stay interviews", value: "Target top 15% performers in highest-risk departments" },
-        { label: "Audit compensation bands", value: "Benchmark against market for roles with >20% turnover" },
-        { label: "Create internal mobility program", value: "Pilot lateral movement paths in Engineering and Sales" },
+        { label: "Launch stay interviews", value: "Target top performers in highest-risk departments" },
+        { label: "Audit compensation bands", value: "Benchmark against market for roles with elevated turnover" },
+        { label: "Create internal mobility program", value: "Pilot lateral movement paths in high-attrition functions" },
       ],
     },
     "Manager effectiveness": {
       Managers: [
         { label: "Launch self-assessment calibration", value: "Pair 360 feedback with facilitated reflection sessions" },
         { label: "Invest in coaching training", value: "Require coaching skills certification for all people managers" },
-        { label: "Reduce administrative load", value: "Automate or delegate 2 recurring non-people-management tasks" },
+        { label: "Reduce administrative load", value: "Automate or delegate recurring non-people-management tasks" },
       ],
       "High performers": [
         { label: "Upgrade feedback practices", value: "Train managers on high-performer coaching conversations" },
-        { label: "Mandate active IDPs", value: "Require development plans for all employees rated 4+ " },
+        { label: "Mandate active IDPs", value: "Require development plans for all top-rated employees" },
         { label: "Calibrate autonomy levels", value: "Coach managers on delegation frameworks for top talent" },
       ],
       "New hires": [
         { label: "Standardize manager onboarding", value: "Create playbook with required touchpoints for first 90 days" },
-        { label: "Mandate weekly 1:1s", value: "Require weekly check-ins for all new hires through month 3" },
+        { label: "Mandate weekly 1:1s", value: "Require weekly check-ins for all new hires through month three" },
         { label: "Set clear success metrics", value: "Publish role-specific 30/60/90 day expectations" },
       ],
       "Frontline teams": [
-        { label: "Increase supervisor presence", value: "Restructure shifts to guarantee 30 min/week 1:1 time" },
+        { label: "Increase supervisor presence", value: "Restructure shifts to guarantee dedicated one-on-one time" },
         { label: "Enable real-time feedback", value: "Deploy mobile-friendly feedback tool for shift-based teams" },
         { label: "Equalize coverage", value: "Assign dedicated support for night and weekend supervisors" },
       ],
       "Broadly distributed": [
         { label: "Mandate structured 1:1s", value: "Roll out cadence template with lightweight tracking" },
-        { label: "Launch manager coaching cohort", value: "6-week program for managers scoring below 3.0" },
-        { label: "Introduce upward feedback loops", value: "Quarterly anonymous pulse on manager effectiveness" },
+        { label: "Launch manager coaching cohort", value: "Targeted program for managers with the weakest signals" },
+        { label: "Introduce upward feedback loops", value: "Periodic anonymous pulse on manager effectiveness" },
       ],
     },
     Culture: {
@@ -197,24 +197,24 @@ export function generateListeningBrief(
   };
 
   const sourceRiskMap: Record<string, string> = {
-    "Engagement survey": "Annual engagement data may lag real-time sentiment by 3–6 months",
-    "Pulse survey": "Frequent pulsing risks survey fatigue if results aren't visibly acted upon",
+    "Engagement survey": "Annual engagement data may lag real-time sentiment — patterns could reflect outdated conditions",
+    "Pulse survey": "Frequent pulsing risks survey fatigue if results are not visibly acted upon",
     "Exit interviews": "Exit data skews toward voluntary leavers and may underrepresent silent disengagement",
-    "Manager feedback": "Manager-reported insights carry bias — triangulate with direct employee data",
+    "Manager feedback": "Manager-reported insights carry inherent bias — triangulate with direct employee data",
   };
 
   const trendRisksMap: Record<string, { text: string }[]> = {
     Improving: [
-      { text: "Momentum may mask emerging pockets of disengagement in specific teams" },
-      { text: "Over-reliance on aggregate scores can obscure manager-level variance" },
+      { text: "Positive momentum may mask emerging pockets of disengagement in specific teams" },
+      { text: "Over-reliance on aggregate patterns can obscure manager-level variance" },
     ],
     Flat: [
-      { text: "Stagnation often precedes decline — without intervention, scores may drop within 1–2 quarters" },
-      { text: "Survey fatigue is likely if employees don't see visible action from prior feedback" },
+      { text: "Stagnation often precedes decline — without intervention, sentiment may weaken within a few quarters" },
+      { text: "Lack of visible action on prior feedback may reduce participation and trust over time" },
     ],
     Declining: [
-      { text: "Rapid score decline increases attrition risk — expect a 60–90 day lag before voluntary exits spike" },
-      { text: "Leadership credibility is at stake if listening efforts aren't paired with visible, fast action" },
+      { text: "Continued decline may increase attrition risk — voluntary exits often lag sentiment shifts" },
+      { text: "Leadership credibility is at stake if listening efforts are not paired with visible, fast action" },
     ],
   };
 
@@ -227,7 +227,6 @@ export function generateListeningBrief(
     { text: sourceRiskMap[source] },
   ];
 
-  // If user provided context, add a contextual risk/observation
   if (context.trim()) {
     risks.push({
       text: `User-reported signal: "${context.trim().slice(0, 120)}${context.trim().length > 120 ? "…" : ""}" — validate with quantitative data before acting`,
@@ -239,18 +238,22 @@ export function generateListeningBrief(
 
   return {
     scenario: "Employee Listening",
-    contextLine: `${base} employees · ${trend} engagement trend · Focus: ${concern} ${groupLabel} · Source: ${sourceLabel}`,
+    contextLine: `Based on your selected scenario inputs · ${sizeLabel} organization · ${trend.toLowerCase()} engagement trend · Focus: ${concern.toLowerCase()} ${groupLabel} · Source: ${sourceLabel}`,
     primaryTitle: "Sentiment Summary",
     primaryItems: [
-      { label: "Overall engagement score", value: sentiment.score },
-      { label: "Trend", value: sentiment.direction },
-      { label: "Survey coverage", value: `${Math.round(base * 0.78)} of ${base} employees responded` },
+      { label: "Overall pattern", value: sentiment.summary },
+      { label: "Trend direction", value: sentiment.direction },
       { label: "Most affected group", value: group },
+      { label: "Primary data source", value: source },
     ],
     secondaryTitle: "Key Themes",
     secondaryItems: themes,
     tertiaryTitle: "Recommended Actions",
     tertiaryItems: actions,
     insights: risks,
+    confidence: {
+      level: "Medium",
+      reason: "This output is based on modeled patterns aligned to your selected inputs, not actual organizational data.",
+    },
   };
 }
