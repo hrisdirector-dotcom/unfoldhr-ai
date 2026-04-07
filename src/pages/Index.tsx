@@ -15,6 +15,7 @@ import TryAgentPage from "@/pages/TryAgentPage";
 import TryListeningAgentPage from "@/pages/TryListeningAgentPage";
 import TryPerformanceAgentPage from "@/pages/TryPerformanceAgentPage";
 import PricingPage from "@/pages/PricingPage";
+import WorkforcePlanningAgent from "@/pages/WorkforcePlanningAgent";
 import OnboardingWalkthrough from "@/components/OnboardingWalkthrough";
 
 const Index = () => {
@@ -76,6 +77,7 @@ const Index = () => {
       {page === "try-agent" && <TryAgentPage setPage={navigateTo} />}
       {page === "try-listening-agent" && <TryListeningAgentPage setPage={navigateTo} />}
       {page === "try-performance-agent" && <TryPerformanceAgentPage setPage={navigateTo} />}
+      {page === "workforce-planning" && <WorkforcePlanningAgent />}
       {page === "pricing" && <PricingPage setPage={navigateTo} />}
       {page === "about" && <AboutPage />}
       {page === "integrations" && <IntegrationsPage />}
