@@ -99,34 +99,45 @@ export default function HomePage({ setPage }: HomePageProps) {
             </RevealDiv>
           </div>
           <RevealDiv delay={0.3} className="hidden lg:block">
-            <DecisionBriefCard
-              scenario="Workforce Planning"
-              contextLine="120 employees · 25% growth · Fixed hiring budget"
-              primaryTitle="Recommended Hiring Plan for 25% Growth"
-              summary="To support a 25% increase in workforce capacity, hiring should be concentrated in revenue-generating roles early in the year, with supporting functions phased in as operational demand increases."
-              primaryItems={[
-                { label: "Sales", value: "8 hires" },
-                { label: "Engineering", value: "3 hires" },
-                { label: "HR", value: "2 hires" },
-              ]}
-              secondaryTitle="Hiring Timeline"
-              secondaryItems={[
-                { label: "Q1", value: "5 hires (focus on Sales to accelerate revenue coverage)" },
-                { label: "Q2", value: "4 hires (Engineering ramp begins)" },
-                { label: "Q3", value: "4 hires (HR and operational support roles added)" },
-              ]}
-              observations={[
-                { text: "Sales hiring must lead to avoid revenue lag against growth targets" },
-                { text: "Engineering capacity becomes a bottleneck by mid-year if delayed" },
-                { text: "HR hiring is reactive and should scale with workforce expansion" },
-              ]}
-              insights={[
-                { text: "Engineering hiring risk is elevated due to limited candidate pipeline in Q2–Q3" },
-                { text: "Delayed Sales hiring will directly impact revenue realization timing" },
-                { text: "Budget pressure may increase if hiring is backloaded into later quarters" },
-              ]}
-              confidence={{ level: "Medium", reason: "Growth targets are clearly defined, but hiring success depends heavily on market availability and speed of execution." }}
-            />
+            <div className="bg-background border border-border rounded-2xl p-6 space-y-5">
+              <p className="text-xs font-bold uppercase tracking-[3px] text-primary">Decision Snapshot</p>
+              <p className="text-xs text-muted-foreground">120 employees · 25% growth · Fixed hiring budget</p>
+
+              <div className="grid grid-cols-3 gap-3">
+                {/* Hiring Plan */}
+                <div className="bg-card border border-border rounded-xl p-4">
+                  <p className="text-xs font-bold uppercase tracking-[2px] text-muted-foreground mb-3">Hiring Plan</p>
+                  <div className="space-y-1.5 text-sm text-foreground">
+                    <p>Sales <span className="text-primary font-semibold">+8</span></p>
+                    <p>Engineering <span className="text-primary font-semibold">+3</span></p>
+                    <p>HR <span className="text-primary font-semibold">+2</span></p>
+                  </div>
+                </div>
+
+                {/* Timeline */}
+                <div className="bg-card border border-border rounded-xl p-4">
+                  <p className="text-xs font-bold uppercase tracking-[2px] text-muted-foreground mb-3">Timeline</p>
+                  <div className="space-y-1.5 text-sm text-foreground">
+                    <p>Q1 <span className="text-muted-foreground">+5 hires</span></p>
+                    <p>Q2 <span className="text-muted-foreground">+4 hires</span></p>
+                    <p>Q3 <span className="text-muted-foreground">+4 hires</span></p>
+                  </div>
+                </div>
+
+                {/* Risk */}
+                <div className="bg-card border border-border rounded-xl p-4">
+                  <p className="text-xs font-bold uppercase tracking-[2px] text-muted-foreground mb-3">Risk</p>
+                  <p className="text-sm text-foreground leading-relaxed">Engineering hiring bottleneck in Q2–Q3</p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setPage("workforce-planning")}
+                className="w-full py-3 rounded-lg bg-foreground text-background font-semibold text-sm border-none cursor-pointer hover:bg-primary transition-colors"
+              >
+                Run this agent →
+              </button>
+            </div>
           </RevealDiv>
         </div>
       </section>
