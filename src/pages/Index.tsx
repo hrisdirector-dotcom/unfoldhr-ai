@@ -97,7 +97,7 @@ const Index = () => {
       {page !== "admin" && <UnfoldNav page={page} setPage={navigateTo} currentUser={currentUser} />}
 
       {page === "home" && <HomePage setPage={navigateTo} />}
-      {page === "agents" && <AgentsPage onSelectAgent={navigateToAgent} />}
+      {page === "agents" && <AgentsPage onSelectAgent={navigateToAgent} onBuildAgent={handleBuildAgent} />}
       {page === "agent-detail" && agentId && <AgentDetailPage agentId={agentId} setPage={navigateTo} />}
       {page === "try-agent" && <TryAgentPage setPage={navigateTo} />}
       {page === "try-listening-agent" && <TryListeningAgentPage setPage={navigateTo} />}
