@@ -31,14 +31,41 @@ const Index = () => {
       setPickerOpen(true);
       return;
     }
+
     setPage(p);
     if (p !== "agent-detail") setAgentId(undefined);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const navigateToAgent = (id: string) => {
+    // 3 free interactive agents
+    if (id === "workforce-planning") {
+      setPage("try-agent");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+
+    if (id === "employee-listening") {
+      setPage("try-listening-agent");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+
+    if (id === "performance-management") {
+      setPage("try-performance-agent");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+
+    // all other agents go to detail page
     setAgentId(id);
     setPage("agent-detail");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleBuildAgent = (id: string) => {
+    setAgentId(id);
+    setPage("contact");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -67,12 +94,10 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {page !== "admin" && (
-        <UnfoldNav page={page} setPage={navigateTo} currentUser={currentUser} />
-      )}
+      {page !== "admin" && <UnfoldNav page={page} setPage={navigateTo} currentUser={currentUser} />}
 
       {page === "home" && <HomePage setPage={navigateTo} />}
-      {page === "agents" && <AgentsPage onSelectAgent={navigateToAgent} />}
+      {page === "agents" && <AgentsPage onSelectAgent={navigateToAgent} onBuildAgent={handleBuildAgent} />}
       {page === "agent-detail" && agentId && <AgentDetailPage agentId={agentId} setPage={navigateTo} />}
       {page === "try-agent" && <TryAgentPage setPage={navigateTo} />}
       {page === "try-listening-agent" && <TryListeningAgentPage setPage={navigateTo} />}
@@ -86,15 +111,9 @@ const Index = () => {
       {page === "dashboard" && currentUser && (
         <DashboardPage currentUser={currentUser} onLogout={handleLogout} setPage={navigateTo} />
       )}
-      {page === "admin" && isAdmin && (
-        <AdminDashboard onBack={() => navigateTo("dashboard")} onLogout={handleLogout} />
-      )}
+      {page === "admin" && isAdmin && <AdminDashboard onBack={() => navigateTo("dashboard")} onLogout={handleLogout} />}
 
-      <AgentPickerModal
-        open={pickerOpen}
-        onClose={() => setPickerOpen(false)}
-        onSelect={navigateTo}
-      />
+      <AgentPickerModal open={pickerOpen} onClose={() => setPickerOpen(false)} onSelect={navigateTo} />
 
       {page === "home" && <OnboardingWalkthrough />}
     </div>
