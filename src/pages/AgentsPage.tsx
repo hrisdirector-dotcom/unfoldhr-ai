@@ -4,9 +4,10 @@ import { RevealDiv } from "@/components/RevealDiv";
 
 interface AgentsPageProps {
   onSelectAgent: (agentId: string) => void;
+  onBuildAgent: (agentId: string) => void;
 }
 
-export default function AgentsPage({ onSelectAgent }: AgentsPageProps) {
+export default function AgentsPage({ onSelectAgent, onBuildAgent }: AgentsPageProps) {
   return (
     <div className="min-h-screen bg-background pt-32 pb-24 px-4 md:px-14">
       <div className="max-w-6xl mx-auto">
@@ -25,7 +26,7 @@ export default function AgentsPage({ onSelectAgent }: AgentsPageProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {AGENTS.map((agent, i) => (
             <RevealDiv key={agent.id} delay={i * 0.05}>
-              <AgentCard agent={agent} onClick={() => onSelectAgent(agent.id)} />
+              <AgentCard agent={agent} onSelect={() => onSelectAgent(agent.id)} onBuild={() => onBuildAgent(agent.id)} />
             </RevealDiv>
           ))}
         </div>

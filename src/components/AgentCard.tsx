@@ -3,16 +3,17 @@ import type { Agent } from "@/data/agents";
 
 interface AgentCardProps {
   agent: Agent;
-  onClick: () => void;
+  onSelect: () => void;
+  onBuild?: () => void;
 }
 
-export function AgentCard({ agent, onClick }: AgentCardProps) {
+export function AgentCard({ agent, onSelect, onBuild }: AgentCardProps) {
   const [hov, setHov] = useState(false);
   const isFree = agent.access === "public" && agent.runnable;
 
   return (
     <div
-      onClick={onClick}
+      onClick={onSelect}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
       className={`bg-card border rounded-xl p-6 cursor-pointer relative overflow-hidden transition-all duration-300 flex flex-col ${
@@ -55,7 +56,15 @@ export function AgentCard({ agent, onClick }: AgentCardProps) {
         ) : (
           <>
             <span className="text-xs font-semibold text-foreground">View Agent →</span>
-            <span className="text-xs text-muted-foreground ml-auto">Build this agent</span>
+            <span
+              className="text-xs text-muted-foreground ml-auto hover:text-primary transition-colors"
+              onClick={(e) => {
+                e.stopPropagation();
+                onBuild?.();
+              }}
+            >
+              Build this agent
+            </span>
           </>
         )}
       </div>
