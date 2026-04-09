@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { UnfoldNav } from "@/components/UnfoldNav";
 import { useAuth } from "@/hooks/useAuth";
 import AgentPickerModal from "@/components/AgentPickerModal";
@@ -19,14 +19,20 @@ import WorkforcePlanningAgent from "@/pages/WorkforcePlanningAgent";
 import OnboardingWalkthrough from "@/components/OnboardingWalkthrough";
 
 const Index = () => {
-  const [page, setPage] = useState("home");
-  const [agentId, setAgentId] = useState<string | undefined>();
+  const [page, setPage] = useState(() => {
+    const state = window.history.state;
+    return state?.page || "home";
+  });
+  const [agentId, setAgentId] = useState<string | undefined>(() => {
+    const state = window.history.state;
+    return state?.agentId;
+  });
   const [pickerOpen, setPickerOpen] = useState(false);
   const { user, isAdmin, loading, signOut } = useAuth();
 
   const currentUser = user ? { email: user.email || "", role: isAdmin ? "admin" : "user" } : null;
 
-  const navigateTo = (p: string) => {
+  const navigateTo = useCallback((p: string, replace = false) => {
     if (p === "try-picker") {
       setPickerOpen(true);
       return;
@@ -34,40 +40,43 @@ const Index = () => {
 
     setPage(p);
     if (p !== "agent-detail") setAgentId(undefined);
+
+    const stateObj = { page: p, agentId: p === "agent-detail" ? agentId : undefined };
+    if (replace) {
+      window.history.replaceState(stateObj, "");
+    } else {
+      window.history.pushState(stateObj, "");
+    }
     window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+  }, [agentId]);
 
-  const navigateToAgent = (id: string) => {
-    // 3 free interactive agents
-    if (id === "workforce-planning") {
-      setPage("try-agent");
+  const navigateToAgent = useCallback((id: string) => {
+    const freeRoutes: Record<string, string> = {
+      "workforce-planning": "try-agent",
+      "employee-listening": "try-listening-agent",
+      "performance-management": "try-performance-agent",
+    };
+
+    const route = freeRoutes[id];
+    if (route) {
+      setPage(route);
+      window.history.pushState({ page: route }, "");
       window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
 
-    if (id === "employee-listening") {
-      setPage("try-listening-agent");
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      return;
-    }
-
-    if (id === "performance-management") {
-      setPage("try-performance-agent");
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      return;
-    }
-
-    // all other agents go to detail page
     setAgentId(id);
     setPage("agent-detail");
+    window.history.pushState({ page: "agent-detail", agentId: id }, "");
     window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+  }, []);
 
-  const handleBuildAgent = (id: string) => {
+  const handleBuildAgent = useCallback((id: string) => {
     setAgentId(id);
     setPage("contact");
+    window.history.pushState({ page: "contact", agentId: id }, "");
     window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+  }, []);
 
   const handleLogin = () => {
     navigateTo("dashboard");
@@ -77,6 +86,24 @@ const Index = () => {
     await signOut();
     navigateTo("home");
   };
+
+  // Handle browser back/forward
+  useEffect(() => {
+    const onPopState = (e: PopStateEvent) => {
+      const state = e.state;
+      setPage(state?.page || "home");
+      setAgentId(state?.agentId);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+    window.addEventListener("popstate", onPopState);
+
+    // Set initial state if none exists
+    if (!window.history.state?.page) {
+      window.history.replaceState({ page: "home" }, "");
+    }
+
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
 
   useEffect(() => {
     if (!loading && !user && (page === "dashboard" || page === "admin")) {
