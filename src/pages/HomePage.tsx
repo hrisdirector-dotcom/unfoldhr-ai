@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { RevealDiv } from "@/components/RevealDiv";
 import { Toast } from "@/components/Toast";
 import HeroSection from "@/components/landing/HeroSection";
+import InteractiveAgentSection from "@/components/landing/InteractiveAgentSection";
 import ProblemSolutionSection from "@/components/landing/ProblemSolutionSection";
 import HowItWorksSection from "@/components/landing/HowItWorksSection";
 import AgentsShowcase from "@/components/landing/AgentsShowcase";
@@ -21,6 +22,7 @@ export default function HomePage({ setPage }: HomePageProps) {
   return (
     <div className="bg-background">
       <HeroSection setPage={setPage} />
+      <InteractiveAgentSection />
       <ProblemSolutionSection />
       <HowItWorksSection />
       <AgentsShowcase setPage={setPage} />
