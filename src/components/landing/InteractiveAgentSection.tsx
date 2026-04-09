@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { RevealDiv } from "@/components/RevealDiv";
 import {
-  Users, Search, Rocket, Target, Shield,
+  Users, Search, Rocket, Target, Shield, Ear,
   ChevronRight, RotateCcw, Bookmark, ArrowRight
 } from "lucide-react";
 
@@ -16,7 +16,7 @@ interface SnapshotResult {
   confidence: { level: string; score: number; reason: string };
 }
 
-type AgentId = "workforce" | "recruiting" | "onboarding" | "performance" | "compliance";
+type AgentId = "workforce" | "recruiting" | "onboarding" | "performance" | "compliance" | "listening";
 
 interface AgentDef {
   id: AgentId;
@@ -31,6 +31,7 @@ const AGENTS: AgentDef[] = [
   { id: "onboarding", name: "Onboarding", icon: <Rocket className="w-4 h-4" />, shortDesc: "Create personalized onboarding plans, checklists, timelines, and success metrics for new hires." },
   { id: "performance", name: "Performance Review", icon: <Target className="w-4 h-4" />, shortDesc: "Analyze performance data and generate fair reviews with development plans and risk flags." },
   { id: "compliance", name: "Compliance Risk", icon: <Shield className="w-4 h-4" />, shortDesc: "Identify compliance gaps, flag risks, and recommend corrective actions with timelines." },
+  { id: "listening", name: "Employee Listening", icon: <Ear className="w-4 h-4" />, shortDesc: "Analyze employee sentiment, surface engagement trends, and suggest targeted improvements." },
 ];
 
 /* ─── Shared UI helpers ─── */
@@ -509,7 +510,78 @@ function ResultCard({ result, agentName, onTryAnother, onScrollToEngagement }: {
   );
 }
 
-/* ─── Main section ─── */
+function ListeningForm({ onRun, loading }: { onRun: (f: Record<string, any>) => void; loading: boolean }) {
+  const [department, setDepartment] = useState("Engineering");
+  const [timePeriod, setTimePeriod] = useState("Last quarter");
+  const [topics, setTopics] = useState("");
+  const [notes, setNotes] = useState("");
+  return (
+    <div className="space-y-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <div><label className={labelCls}>Department or Team</label>
+          <select value={department} onChange={e => setDepartment(e.target.value)} className={`${inputCls} appearance-none cursor-pointer`}>
+            {["Engineering", "Sales", "Marketing", "Operations", "HR", "Customer Support", "Company-wide"].map(d => <option key={d}>{d}</option>)}
+          </select>
+        </div>
+        <div><label className={labelCls}>Time Period</label>
+          <select value={timePeriod} onChange={e => setTimePeriod(e.target.value)} className={`${inputCls} appearance-none cursor-pointer`}>
+            {["Last month", "Last quarter", "Last 6 months", "Last year"].map(p => <option key={p}>{p}</option>)}
+          </select>
+        </div>
+      </div>
+      <div><label className={labelCls}>Key Topics to Analyze</label><textarea value={topics} onChange={e => setTopics(e.target.value)} placeholder="e.g., Burnout, manager effectiveness, career growth, remote work satisfaction..." rows={2} className={textareaCls} /></div>
+      <div><label className={labelCls}>Additional Notes</label><textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="e.g., Recent layoffs, new leadership, post-merger..." rows={2} className={textareaCls} /></div>
+      <RunButton loading={loading} onClick={() => onRun({ department, timePeriod, topics, notes })} label="Run Listening Agent" />
+    </div>
+  );
+}
+
+function simulateListening(f: Record<string, any>): SnapshotResult {
+  const { department = "Engineering", timePeriod = "Last quarter", topics = "", notes = "" } = f;
+  const topicList = topics ? topics.split(",").map((t: string) => t.trim()).filter(Boolean).slice(0, 4) : ["Work-life balance", "Manager effectiveness", "Career growth"];
+  const isCompanyWide = department === "Company-wide";
+  const sentimentScore = isCompanyWide ? 68 : 72;
+  return {
+    contextLine: `${department} · ${timePeriod} · ${topicList.length} topics analyzed`,
+    summary: `Sentiment analysis for ${department}${isCompanyWide ? "" : " team"} over ${timePeriod.toLowerCase()} reveals an overall engagement score of ${sentimentScore}/100. ${sentimentScore >= 70 ? "Generally positive sentiment with specific areas requiring attention." : "Below-target engagement — focused intervention recommended."} ${notes ? `Context noted: "${notes.slice(0, 60)}"` : ""}`,
+    sections: [
+      {
+        title: "Sentiment Overview", items: [
+          { label: "Overall Engagement", detail: `${sentimentScore}/100 — ${sentimentScore >= 70 ? "Above" : "Below"} industry benchmark (65)`, tag: sentimentScore >= 70 ? "Standard" : "Critical" },
+          { label: "eNPS Score", detail: `+${Math.round(sentimentScore * 0.4)} (${sentimentScore >= 70 ? "Promoters outweigh detractors" : "High detractor ratio"})`, tag: sentimentScore >= 70 ? "High" : "Medium" },
+          { label: "Response Rate", detail: isCompanyWide ? "74% — above 65% threshold" : "82% — strong participation", tag: "Standard" },
+        ],
+      },
+      {
+        title: "Topic Analysis", items: topicList.map((topic: string, i: number) => ({
+          label: topic,
+          detail: i === 0 ? `Trending negative — ${isCompanyWide ? "23%" : "18%"} flagged concerns`
+            : i === 1 ? "Stable — consistent with prior period"
+            : i === 2 ? "Improving — +8 points vs previous period"
+            : "New topic — insufficient historical data for trend",
+          tag: i === 0 ? "Critical" : i === 2 ? "High" : "Medium",
+        })),
+      },
+      {
+        title: "Recommended Actions", items: [
+          { label: "Manager 1:1 cadence", detail: `Increase to weekly for ${department === "Company-wide" ? "all underperforming teams" : department}`, tag: "Immediate" },
+          { label: "Pulse survey", detail: "Deploy focused 5-question pulse in 2 weeks to track intervention impact" },
+          { label: "Skip-level sessions", detail: "Schedule quarterly skip-levels to surface unfiltered feedback", tag: "30 days" },
+          { label: "Recognition program", detail: `Launch peer recognition initiative — ${isCompanyWide ? "company-wide" : `${department}-specific`} program` },
+        ],
+      },
+    ],
+    risks: [
+      `${sentimentScore < 70 ? "Below-benchmark engagement correlates with 2× voluntary attrition" : "Monitor for sentiment decline — early signals precede attrition by 60-90 days"}`,
+      `${department === "Company-wide" ? "Company-wide surveys may mask team-level issues" : `${department}-specific results may not reflect cross-functional dynamics`}`,
+      "Survey fatigue risk if pulse frequency exceeds monthly cadence",
+      topics ? `Topic "${topicList[0]}" flagged as trending concern — requires dedicated follow-up` : "No specific topics flagged — recommend open-ended feedback collection",
+    ],
+    confidence: { level: "Medium", score: 66, reason: "Based on typical engagement patterns — real analysis requires actual survey data and HRIS integration." },
+  };
+}
+
+
 
 const SIMULATORS: Record<AgentId, (f: Record<string, any>) => SnapshotResult> = {
   workforce: simulateWorkforce,
@@ -517,6 +589,7 @@ const SIMULATORS: Record<AgentId, (f: Record<string, any>) => SnapshotResult> = 
   onboarding: simulateOnboarding,
   performance: simulatePerformance,
   compliance: simulateCompliance,
+  listening: simulateListening,
 };
 
 export default function InteractiveAgentSection() {
@@ -592,6 +665,7 @@ export default function InteractiveAgentSection() {
             {activeAgent === "onboarding" && <OnboardingForm onRun={f => handleRun("onboarding", f)} loading={loading} />}
             {activeAgent === "performance" && <PerformanceForm onRun={f => handleRun("performance", f)} loading={loading} />}
             {activeAgent === "compliance" && <ComplianceForm onRun={f => handleRun("compliance", f)} loading={loading} />}
+            {activeAgent === "listening" && <ListeningForm onRun={f => handleRun("listening", f)} loading={loading} />}
           </div>
         </RevealDiv>
 
