@@ -41,10 +41,15 @@ export function useAuth() {
         }).then(({ data }) => {
           setIsAdmin(!!data);
           setLoading(false);
+        }).catch(() => {
+          setIsAdmin(false);
+          setLoading(false);
         });
       } else {
         setLoading(false);
       }
+    }).catch(() => {
+      setLoading(false);
     });
 
     return () => subscription.unsubscribe();
