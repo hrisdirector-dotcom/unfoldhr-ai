@@ -9,9 +9,6 @@ import ContactPage from "@/pages/ContactPage";
 import AuthPage from "@/pages/AuthPage";
 import DashboardPage from "@/pages/DashboardPage";
 import AdminDashboard from "@/pages/AdminDashboard";
-// AgentsPage removed — agents are accessed via homepage gallery
-import AgentDetailPage from "@/pages/AgentDetailPage";
-import TryAgentPage from "@/pages/TryAgentPage";
 import TryListeningAgentPage from "@/pages/TryListeningAgentPage";
 import TryPerformanceAgentPage from "@/pages/TryPerformanceAgentPage";
 import PricingPage from "@/pages/PricingPage";
@@ -124,9 +121,6 @@ const Index = () => {
       {page !== "admin" && <UnfoldNav page={page} setPage={navigateTo} currentUser={currentUser} />}
 
       {page === "home" && <HomePage setPage={navigateTo} />}
-      {/* AgentsPage removed — use homepage gallery instead */}
-      {page === "agent-detail" && agentId && <AgentDetailPage agentId={agentId} setPage={navigateTo} />}
-      {page === "try-agent" && <TryAgentPage setPage={navigateTo} />}
       {page === "try-listening-agent" && <TryListeningAgentPage setPage={navigateTo} />}
       {page === "try-performance-agent" && <TryPerformanceAgentPage setPage={navigateTo} />}
       {page === "workforce-planning" && <WorkforcePlanningAgent />}

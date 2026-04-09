@@ -16,6 +16,8 @@ interface SnapshotResult {
   confidence: { level: string; score: number; reason: string };
 }
 
+type RefineState = "idle" | "refining" | "done";
+
 type AgentId = "workforce" | "recruiting" | "onboarding" | "performance" | "compliance" | "listening";
 
 interface AgentDef {
@@ -23,15 +25,16 @@ interface AgentDef {
   name: string;
   icon: React.ReactNode;
   shortDesc: string;
+  featured?: boolean;
 }
 
 const AGENTS: AgentDef[] = [
   { id: "workforce", name: "Workforce Planning", icon: <Users className="w-4 h-4" />, shortDesc: "Forecast hiring needs, build phased plans, and identify workforce gaps." },
   { id: "recruiting", name: "Recruiting", icon: <Search className="w-4 h-4" />, shortDesc: "Screen candidates, rank top talent, suggest interview questions and outreach strategy." },
   { id: "onboarding", name: "Onboarding", icon: <Rocket className="w-4 h-4" />, shortDesc: "Create personalized onboarding plans, checklists, timelines, and success metrics for new hires." },
-  { id: "performance", name: "Performance Review", icon: <Target className="w-4 h-4" />, shortDesc: "Analyze performance data and generate fair reviews with development plans and risk flags." },
+  { id: "performance", name: "Performance Mgmt", icon: <Target className="w-4 h-4" />, shortDesc: "Analyze performance data and generate fair reviews with development plans and risk flags.", featured: true },
+  { id: "listening", name: "Employee Listening", icon: <Ear className="w-4 h-4" />, shortDesc: "Analyze employee sentiment, surface engagement trends, and suggest targeted improvements.", featured: true },
   { id: "compliance", name: "Compliance Risk", icon: <Shield className="w-4 h-4" />, shortDesc: "Identify compliance gaps, flag risks, and recommend corrective actions with timelines." },
-  { id: "listening", name: "Employee Listening", icon: <Ear className="w-4 h-4" />, shortDesc: "Analyze employee sentiment, surface engagement trends, and suggest targeted improvements." },
 ];
 
 /* ─── Shared UI helpers ─── */
@@ -421,9 +424,9 @@ function RunButton({ loading, onClick, label }: { loading: boolean; onClick: () 
 
 /* ─── Result card ─── */
 
-function ResultCard({ result, agentName, onTryAnother, onScrollToEngagement }: {
+function ResultCard({ result, agentName, onTryAnother, onScrollToEngagement, onRefine }: {
   result: SnapshotResult; agentName: string;
-  onTryAnother: () => void; onScrollToEngagement: () => void;
+  onTryAnother: () => void; onScrollToEngagement: () => void; onRefine: () => void;
 }) {
   return (
     <div className="mt-8 bg-card border border-border rounded-2xl p-6 md:p-8 shadow-lg space-y-6 animate-in fade-in-0 slide-in-from-bottom-4 duration-500">
@@ -492,6 +495,9 @@ function ResultCard({ result, agentName, onTryAnother, onScrollToEngagement }: {
 
       {/* Action buttons */}
       <div className="flex flex-wrap gap-3 pt-4 border-t border-border">
+        <button onClick={onRefine} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border bg-background text-sm font-medium text-foreground hover:bg-muted transition-colors">
+          <RotateCcw className="w-3.5 h-3.5" /> Refine this recommendation
+        </button>
         <button onClick={onTryAnother} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border bg-background text-sm font-medium text-foreground hover:bg-muted transition-colors">
           <RotateCcw className="w-3.5 h-3.5" /> Try another agent
         </button>
@@ -504,7 +510,7 @@ function ResultCard({ result, agentName, onTryAnother, onScrollToEngagement }: {
       </div>
 
       <p className="text-[11px] text-muted-foreground/70 text-center pt-2 border-t border-border">
-        This is a live simulation demo. Real Unfold HR agents can take autonomous actions, integrate with your HRIS/ATS, and run continuously.
+        This is a live simulation. Real agents run autonomously and integrate with your tools.
       </p>
     </div>
   );
@@ -642,7 +648,7 @@ export default function InteractiveAgentSection() {
               <button
                 key={agent.id}
                 onClick={() => handleTabChange(agent.id)}
-                className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 border ${
+                className={`relative inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 border ${
                   activeAgent === agent.id
                     ? "bg-foreground text-background border-foreground shadow-lg"
                     : "bg-card text-foreground border-border hover:border-primary/40 hover:bg-muted"
@@ -651,6 +657,11 @@ export default function InteractiveAgentSection() {
                 {agent.icon}
                 <span className="hidden sm:inline">{agent.name}</span>
                 <span className="sm:hidden">{agent.name.split(" ")[0]}</span>
+                {agent.featured && (
+                  <span className="absolute -top-2 -right-2 text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-primary text-primary-foreground">
+                    Featured
+                  </span>
+                )}
               </button>
             ))}
           </div>
@@ -676,6 +687,10 @@ export default function InteractiveAgentSection() {
             agentName={activeDef.name}
             onTryAnother={() => { setResult(null); }}
             onScrollToEngagement={scrollToEngagement}
+            onRefine={() => {
+              setResult(null);
+              document.getElementById("agent-gallery")?.scrollIntoView({ behavior: "smooth" });
+            }}
           />
         )}
       </div>
