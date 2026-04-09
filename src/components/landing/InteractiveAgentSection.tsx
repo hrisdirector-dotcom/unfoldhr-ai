@@ -16,6 +16,8 @@ interface SnapshotResult {
   confidence: { level: string; score: number; reason: string };
 }
 
+type RefineState = "idle" | "refining" | "done";
+
 type AgentId = "workforce" | "recruiting" | "onboarding" | "performance" | "compliance" | "listening";
 
 interface AgentDef {
@@ -23,15 +25,16 @@ interface AgentDef {
   name: string;
   icon: React.ReactNode;
   shortDesc: string;
+  featured?: boolean;
 }
 
 const AGENTS: AgentDef[] = [
   { id: "workforce", name: "Workforce Planning", icon: <Users className="w-4 h-4" />, shortDesc: "Forecast hiring needs, build phased plans, and identify workforce gaps." },
   { id: "recruiting", name: "Recruiting", icon: <Search className="w-4 h-4" />, shortDesc: "Screen candidates, rank top talent, suggest interview questions and outreach strategy." },
   { id: "onboarding", name: "Onboarding", icon: <Rocket className="w-4 h-4" />, shortDesc: "Create personalized onboarding plans, checklists, timelines, and success metrics for new hires." },
-  { id: "performance", name: "Performance Review", icon: <Target className="w-4 h-4" />, shortDesc: "Analyze performance data and generate fair reviews with development plans and risk flags." },
+  { id: "performance", name: "Performance Mgmt", icon: <Target className="w-4 h-4" />, shortDesc: "Analyze performance data and generate fair reviews with development plans and risk flags.", featured: true },
+  { id: "listening", name: "Employee Listening", icon: <Ear className="w-4 h-4" />, shortDesc: "Analyze employee sentiment, surface engagement trends, and suggest targeted improvements.", featured: true },
   { id: "compliance", name: "Compliance Risk", icon: <Shield className="w-4 h-4" />, shortDesc: "Identify compliance gaps, flag risks, and recommend corrective actions with timelines." },
-  { id: "listening", name: "Employee Listening", icon: <Ear className="w-4 h-4" />, shortDesc: "Analyze employee sentiment, surface engagement trends, and suggest targeted improvements." },
 ];
 
 /* ─── Shared UI helpers ─── */
