@@ -46,6 +46,12 @@
     --border-2: 218 18% 83%;
     --blue-soft: 225 84% 95%;
     --blue-mid: 222 84% 77%;
+    --green-soft: 152 60% 94%;
+    --green-mid: 152 56% 46%;
+    --emerald: 160 84% 39%;
+    --gradient-hero: linear-gradient(135deg, hsl(225 74% 53% / 0.08), hsl(152 56% 46% / 0.06));
+    --shadow-card: 0 4px 24px -4px hsl(217 26% 15% / 0.06);
+    --shadow-card-hover: 0 12px 40px -8px hsl(225 74% 53% / 0.12);
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;

@@ -63,6 +63,8 @@ export default {
         },
         "blue-soft": "hsl(var(--blue-soft))",
         "blue-mid": "hsl(var(--blue-mid))",
+        "green-soft": "hsl(var(--green-soft))",
+        "green-mid": "hsl(var(--green-mid))",
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
