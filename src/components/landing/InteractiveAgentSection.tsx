@@ -510,7 +510,7 @@ function ResultCard({ result, agentName, onTryAnother, onScrollToEngagement, onR
       </div>
 
       <p className="text-[11px] text-muted-foreground/70 text-center pt-2 border-t border-border">
-        This is a live simulation demo. Real Unfold HR agents can take autonomous actions, integrate with your HRIS/ATS, and run continuously.
+        This is a live simulation. Real agents run autonomously and integrate with your tools.
       </p>
     </div>
   );
