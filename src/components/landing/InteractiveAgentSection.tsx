@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { RevealDiv } from "@/components/RevealDiv";
 import {
-  Users, Search, Rocket, Target, Shield,
+  Users, Search, Rocket, Target, Shield, Ear,
   ChevronRight, RotateCcw, Bookmark, ArrowRight
 } from "lucide-react";
 
@@ -16,7 +16,7 @@ interface SnapshotResult {
   confidence: { level: string; score: number; reason: string };
 }
 
-type AgentId = "workforce" | "recruiting" | "onboarding" | "performance" | "compliance";
+type AgentId = "workforce" | "recruiting" | "onboarding" | "performance" | "compliance" | "listening";
 
 interface AgentDef {
   id: AgentId;
@@ -31,6 +31,7 @@ const AGENTS: AgentDef[] = [
   { id: "onboarding", name: "Onboarding", icon: <Rocket className="w-4 h-4" />, shortDesc: "Create personalized onboarding plans, checklists, timelines, and success metrics for new hires." },
   { id: "performance", name: "Performance Review", icon: <Target className="w-4 h-4" />, shortDesc: "Analyze performance data and generate fair reviews with development plans and risk flags." },
   { id: "compliance", name: "Compliance Risk", icon: <Shield className="w-4 h-4" />, shortDesc: "Identify compliance gaps, flag risks, and recommend corrective actions with timelines." },
+  { id: "listening", name: "Employee Listening", icon: <Ear className="w-4 h-4" />, shortDesc: "Analyze employee sentiment, surface engagement trends, and suggest targeted improvements." },
 ];
 
 /* ─── Shared UI helpers ─── */
