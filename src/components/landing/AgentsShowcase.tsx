@@ -7,39 +7,41 @@ const SHOWCASE_AGENTS = [
     outcome: "Get a structured hiring plan with priorities, timelines, and risk flags — in minutes.",
     benefit: "Replace weeks of spreadsheet modeling",
     tag: "Try Free",
-    action: "try-picker",
   },
   {
     icon: "🔍",
     name: "Recruiting & Screening",
     outcome: "Screen candidates, rank by role fit, and generate personalized outreach — automatically.",
     benefit: "Move candidates forward faster",
-    tag: "Coming Soon",
-    action: "agents",
+    tag: "Try Free",
   },
   {
     icon: "🚀",
     name: "Onboarding Agent",
     outcome: "Generate role-specific 30-60-90 day plans, assign tasks, and coordinate across teams.",
     benefit: "Every new hire starts fully prepared",
-    tag: "Coming Soon",
-    action: "agents",
+    tag: "Try Free",
   },
   {
     icon: "🎯",
-    name: "Performance & Engagement",
+    name: "Performance Management",
     outcome: "Draft review narratives, flag rating bias, and turn survey data into manager action plans.",
     benefit: "Fairer, faster review cycles",
-    tag: "Try Free",
-    action: "try-picker",
+    tag: "Featured",
+  },
+  {
+    icon: "👂",
+    name: "Employee Listening",
+    outcome: "Analyze sentiment, surface engagement trends, and suggest targeted improvements.",
+    benefit: "Understand what your workforce really needs",
+    tag: "Featured",
   },
   {
     icon: "⚖️",
-    name: "Compliance Risk Agent",
+    name: "Compliance Risk",
     outcome: "Detect policy gaps, track regulatory changes, and generate audit-ready documentation.",
     benefit: "Reduce compliance risk proactively",
-    tag: "Coming Soon",
-    action: "agents",
+    tag: "Try Free",
   },
 ];
 
@@ -48,6 +50,11 @@ interface AgentsShowcaseProps {
 }
 
 export default function AgentsShowcase({ setPage }: AgentsShowcaseProps) {
+  const scrollToGallery = () => {
+    setPage("home");
+    setTimeout(() => document.getElementById("agent-gallery")?.scrollIntoView({ behavior: "smooth" }), 150);
+  };
+
   return (
     <section className="py-24 md:py-32 bg-card">
       <div className="max-w-7xl mx-auto px-6 md:px-14">
@@ -67,15 +74,15 @@ export default function AgentsShowcase({ setPage }: AgentsShowcaseProps) {
           {SHOWCASE_AGENTS.map((agent, i) => (
             <RevealDiv key={i} delay={i * 0.06}>
               <div
-                onClick={() => setPage(agent.action)}
+                onClick={scrollToGallery}
                 className="bg-background border border-border rounded-2xl p-7 cursor-pointer h-full flex flex-col hover:border-primary/40 hover:-translate-y-1 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5"
               >
                 <div className="flex items-start justify-between mb-4">
                   <span className="text-3xl">{agent.icon}</span>
                   <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full ${
-                    agent.tag === "Try Free"
-                      ? "bg-accent text-primary"
-                      : "bg-muted text-muted-foreground"
+                    agent.tag === "Featured"
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-accent text-primary"
                   }`}>
                     {agent.tag}
                   </span>
@@ -93,10 +100,10 @@ export default function AgentsShowcase({ setPage }: AgentsShowcaseProps) {
         <RevealDiv delay={0.3}>
           <div className="text-center mt-12">
             <button
-              onClick={() => setPage("agents")}
-              className="px-7 py-3.5 rounded-xl bg-card text-foreground font-semibold text-sm border border-border cursor-pointer hover:border-primary hover:text-primary transition-all duration-200"
+              onClick={scrollToGallery}
+              className="px-7 py-3.5 rounded-xl bg-foreground text-background font-semibold text-sm border-none cursor-pointer hover:bg-primary transition-all duration-200"
             >
-              View All Agents →
+              Try All Agents →
             </button>
           </div>
         </RevealDiv>
