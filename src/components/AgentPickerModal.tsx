@@ -8,6 +8,9 @@ const AGENTS = [
   { id: "try-agent", name: "Workforce Planning", desc: "Get a hiring plan aligned to your growth targets and budget constraints." },
   { id: "try-listening-agent", name: "Employee Listening", desc: "Surface what your workforce is really saying — and what to do about it." },
   { id: "try-performance-agent", name: "Performance Management", desc: "Identify performance gaps and get a structured action plan." },
+  { id: "gallery-recruiting", name: "Recruiting Agent", desc: "Screen candidates, rank top talent, and build outreach strategy." },
+  { id: "gallery-onboarding", name: "Onboarding Agent", desc: "Create personalized onboarding plans, checklists, and timelines." },
+  { id: "gallery-compliance", name: "Compliance Risk Agent", desc: "Identify compliance gaps and recommend corrective actions." },
 ];
 
 export default function AgentPickerModal({ open, onClose, onSelect }: AgentPickerModalProps) {
@@ -26,7 +29,16 @@ export default function AgentPickerModal({ open, onClose, onSelect }: AgentPicke
           {AGENTS.map((agent) => (
             <button
               key={agent.id}
-              onClick={() => { onClose(); onSelect(agent.id); }}
+              onClick={() => {
+                onClose();
+                if (agent.id.startsWith("gallery-")) {
+                  // Scroll to homepage gallery
+                  onSelect("home");
+                  setTimeout(() => document.getElementById("agent-gallery")?.scrollIntoView({ behavior: "smooth" }), 150);
+                } else {
+                  onSelect(agent.id);
+                }
+              }}
               className="w-full text-left bg-background border border-border rounded-xl px-5 py-4 cursor-pointer hover:border-foreground transition-colors group"
             >
               <span className="block text-sm font-semibold text-foreground group-hover:text-primary transition-colors">{agent.name}</span>
