@@ -122,14 +122,6 @@ export default function WorkforcePlanningAgent() {
           </div>
         </RevealDiv>
 
-        {/* CTA */}
-        <RevealDiv>
-          <div className="text-center">
-            <button className="px-7 py-3.5 rounded-lg bg-foreground text-background font-semibold text-sm border-none cursor-pointer hover:bg-primary transition-colors">
-              Build this agent →
-            </button>
-          </div>
-        </RevealDiv>
 
       </div>
     </div>
