@@ -8,13 +8,13 @@ interface NavProps {
   currentUser: { email: string; role: string } | null;
 }
 
-const NAV_LINKS: [string, string][] = [
-  ["home", "Platform"],
-  ["agents", "Agents"],
-  ["pricing", "Pricing"],
-  ["integrations", "Integrations"],
-  ["about", "About"],
-  ["contact", "Contact"],
+const NAV_LINKS: [string, string, boolean][] = [
+  ["home", "Platform", false],
+  ["try-agents", "Try Agents", true],
+  ["pricing", "Pricing", false],
+  ["integrations", "Integrations", false],
+  ["about", "About", false],
+  ["contact", "Contact", false],
 ];
 
 export function UnfoldNav({ page, setPage, currentUser }: NavProps) {
@@ -27,7 +27,13 @@ export function UnfoldNav({ page, setPage, currentUser }: NavProps) {
     return () => window.removeEventListener("scroll", h);
   }, []);
 
-  const navigate = (p: string) => {
+  const navigate = (p: string, scrollToGallery = false) => {
+    if (scrollToGallery || p === "try-agents") {
+      setPage("home");
+      setMobileOpen(false);
+      setTimeout(() => document.getElementById("agent-gallery")?.scrollIntoView({ behavior: "smooth" }), 150);
+      return;
+    }
     setPage(p);
     setMobileOpen(false);
   };
@@ -50,10 +56,10 @@ export function UnfoldNav({ page, setPage, currentUser }: NavProps) {
         </button>
 
         <div className="hidden md:flex items-center gap-1">
-          {NAV_LINKS.map(([p, label]) => (
+          {NAV_LINKS.map(([p, label, isScroll]) => (
             <button
               key={p}
-              onClick={() => navigate(p)}
+              onClick={() => navigate(p, !!isScroll)}
               className={`px-4 py-2 text-sm font-medium rounded-lg border-none cursor-pointer transition-colors bg-transparent ${
                 page === p ? "text-foreground" : "text-muted-foreground hover:text-foreground"
               }`}
@@ -104,10 +110,10 @@ export function UnfoldNav({ page, setPage, currentUser }: NavProps) {
       {mobileOpen && (
         <div className="fixed inset-0 z-40 pt-[72px] bg-card backdrop-blur-md animate-fade-in">
           <div className="flex flex-col p-6 gap-2">
-            {NAV_LINKS.map(([p, label]) => (
+            {NAV_LINKS.map(([p, label, isScroll]) => (
               <button
                 key={p}
-                onClick={() => navigate(p)}
+                onClick={() => navigate(p, !!isScroll)}
                 className={`w-full text-left px-4 py-3.5 text-base font-medium rounded-lg border-none cursor-pointer transition-colors ${
                   page === p
                     ? "bg-accent text-primary"
