@@ -687,6 +687,10 @@ export default function InteractiveAgentSection() {
             agentName={activeDef.name}
             onTryAnother={() => { setResult(null); }}
             onScrollToEngagement={scrollToEngagement}
+            onRefine={() => {
+              setResult(null);
+              document.getElementById("agent-gallery")?.scrollIntoView({ behavior: "smooth" });
+            }}
           />
         )}
       </div>
