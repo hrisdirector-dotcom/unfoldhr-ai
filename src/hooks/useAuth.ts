@@ -31,25 +31,20 @@ export function useAuth() {
       }
     );
 
-    Promise.resolve(supabase.auth.getSession()).then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
         supabase.rpc("has_role", {
           _user_id: session.user.id,
           _role: "admin",
-        }).then(({ data }) => {
-          setIsAdmin(!!data);
-          setLoading(false);
-        }).catch(() => {
-          setIsAdmin(false);
+        }).then(({ data, error }) => {
+          setIsAdmin(!error && !!data);
           setLoading(false);
         });
       } else {
         setLoading(false);
       }
-    }).catch(() => {
-      setLoading(false);
     });
 
     return () => subscription.unsubscribe();
