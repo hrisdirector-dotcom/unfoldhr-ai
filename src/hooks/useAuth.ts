@@ -9,41 +9,39 @@ export function useAuth() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-
-        if (session?.user) {
-          try {
-            const { data } = await supabase.rpc("has_role", {
-              _user_id: session.user.id,
-              _role: "admin",
-            });
-            setIsAdmin(!!data);
-          } catch {
-            setIsAdmin(false);
-          }
-        } else {
-          setIsAdmin(false);
-        }
-        setLoading(false);
-      }
-    );
-
+    // First, restore session from storage
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
+
       if (session?.user) {
-        supabase.rpc("has_role", {
-          _user_id: session.user.id,
-          _role: "admin",
-        }).then(({ data, error }) => {
-          setIsAdmin(!error && !!data);
-          setLoading(false);
-        });
+        supabase
+          .rpc("has_role", { _user_id: session.user.id, _role: "admin" })
+          .then(({ data, error }) => {
+            setIsAdmin(!error && !!data);
+            setLoading(false);
+          });
       } else {
         setLoading(false);
+      }
+    });
+
+    // Then listen for subsequent auth changes (sign-in, sign-out, token refresh)
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+
+      if (session?.user) {
+        // Fire-and-forget — do NOT await inside this callback
+        supabase
+          .rpc("has_role", { _user_id: session.user.id, _role: "admin" })
+          .then(({ data, error }) => {
+            setIsAdmin(!error && !!data);
+          });
+      } else {
+        setIsAdmin(false);
       }
     });
 
