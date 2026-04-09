@@ -15,11 +15,15 @@ export function useAuth() {
         setUser(session?.user ?? null);
 
         if (session?.user) {
-          const { data } = await supabase.rpc("has_role", {
-            _user_id: session.user.id,
-            _role: "admin",
-          });
-          setIsAdmin(!!data);
+          try {
+            const { data } = await supabase.rpc("has_role", {
+              _user_id: session.user.id,
+              _role: "admin",
+            });
+            setIsAdmin(!!data);
+          } catch {
+            setIsAdmin(false);
+          }
         } else {
           setIsAdmin(false);
         }
@@ -34,8 +38,8 @@ export function useAuth() {
         supabase.rpc("has_role", {
           _user_id: session.user.id,
           _role: "admin",
-        }).then(({ data }) => {
-          setIsAdmin(!!data);
+        }).then(({ data, error }) => {
+          setIsAdmin(!error && !!data);
           setLoading(false);
         });
       } else {
