@@ -22,6 +22,7 @@ export default function HomePage({ setPage }: HomePageProps) {
   return (
     <div className="bg-background">
       <HeroSection setPage={setPage} />
+      <InteractiveAgentSection />
       <ProblemSolutionSection />
       <HowItWorksSection />
       <AgentsShowcase setPage={setPage} />
