@@ -29,7 +29,7 @@ const MODELS = [
 
 export default function EngagementModels() {
   return (
-    <section className="py-24 md:py-32 bg-background">
+    <section className="py-24 md:py-32 bg-background" id="engagement-models">
       <div className="max-w-7xl mx-auto px-6 md:px-14">
         <RevealDiv>
           <div className="text-center mb-16">
