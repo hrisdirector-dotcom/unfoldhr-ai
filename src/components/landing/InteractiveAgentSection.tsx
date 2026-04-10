@@ -512,7 +512,7 @@ function ResultCard({ result, agentName, onTryAnother, onScrollToEngagement, onR
       </div>
 
       <p className="text-[11px] text-muted-foreground/70 text-center pt-2 border-t border-border">
-        This is a live simulation. Real agents run autonomously and integrate with your tools.
+        Powered by AI. Results are generated in real-time based on your inputs. Production agents integrate with your tools and run autonomously.
       </p>
     </div>
   );
