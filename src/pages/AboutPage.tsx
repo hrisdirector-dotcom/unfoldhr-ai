@@ -13,7 +13,6 @@ const founders = [
       "AI-Driven Workforce Strategy",
       "Enterprise AI Advisory",
       "HRIS & HCM Transformation",
-      "Global Payroll Architecture",
       "Executive Solution Consulting",
       "Workforce Decision Intelligence",
     ],
