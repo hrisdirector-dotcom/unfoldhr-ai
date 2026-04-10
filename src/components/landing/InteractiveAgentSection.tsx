@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { RevealDiv } from "@/components/RevealDiv";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import {
   Users, Search, Rocket, Target, Shield, Ear,
   ChevronRight, RotateCcw, Bookmark, ArrowRight
