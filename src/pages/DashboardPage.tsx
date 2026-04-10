@@ -1,9 +1,7 @@
 import { useState } from "react";
-import { MODULES } from "@/data/modules";
-import { ModuleCard } from "@/components/ModuleCard";
-import { ModuleDrawer } from "@/components/ModuleDrawer";
-import { Toast } from "@/components/Toast";
-import type { Module } from "@/data/modules";
+import { useSavedRuns } from "@/hooks/useSavedRuns";
+import { downloadCSV, downloadPDF } from "@/lib/downloadResult";
+import { Download, Trash2, FileText, ArrowRight, Zap } from "lucide-react";
 
 interface DashboardPageProps {
   currentUser: { email: string; role: string };
@@ -11,14 +9,28 @@ interface DashboardPageProps {
   setPage: (p: string) => void;
 }
 
+const AGENTS_QUICK = [
+  { id: "workforce", name: "Workforce Planning", emoji: "🏗️" },
+  { id: "recruiting", name: "Recruiting", emoji: "🔍" },
+  { id: "onboarding", name: "Onboarding", emoji: "🚀" },
+  { id: "performance", name: "Performance Mgmt", emoji: "🎯" },
+  { id: "listening", name: "Employee Listening", emoji: "💬" },
+  { id: "compliance", name: "Compliance Risk", emoji: "⚖️" },
+];
+
 export default function DashboardPage({ currentUser, onLogout, setPage }: DashboardPageProps) {
-  const [activeMod, setActiveMod] = useState<Module | null>(null);
-  const [toast, setToast] = useState("");
-  const showToast = (msg: string) => { setToast(msg); setTimeout(() => setToast(""), 5000); };
+  const { runs, loading, deleteRun } = useSavedRuns();
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  const goToGallery = () => {
+    setPage("home");
+    setTimeout(() => document.getElementById("agent-gallery")?.scrollIntoView({ behavior: "smooth" }), 200);
+  };
 
   return (
     <div className="bg-background min-h-screen pt-28 pb-16 px-6 md:px-14">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-5xl mx-auto">
+        {/* Header */}
         <div className="flex items-center justify-between mb-10">
           <div>
             <h1 className="font-display text-3xl text-foreground mb-1">Dashboard</h1>
@@ -42,16 +54,143 @@ export default function DashboardPage({ currentUser, onLogout, setPage }: Dashbo
           </div>
         </div>
 
-        <h2 className="font-display text-xl text-foreground mb-5">Your Modules</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {MODULES.map(mod => (
-            <ModuleCard key={mod.id} mod={mod} onClick={() => setActiveMod(mod)} />
-          ))}
+        {/* Upgrade Banner */}
+        <div className="mb-10 bg-card border border-primary/20 rounded-2xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+              <Zap className="w-5 h-5 text-primary" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-foreground">Free Plan</p>
+              <p className="text-xs text-muted-foreground">Upgrade to deploy real agents with your data</p>
+            </div>
+          </div>
+          <button
+            onClick={() => setPage("pricing")}
+            className="px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors cursor-pointer"
+          >
+            View Plans & Upgrade
+          </button>
+        </div>
+
+        {/* Quick Run Section */}
+        <div className="mb-10">
+          <h2 className="font-display text-xl text-foreground mb-4">Run an Agent</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            {AGENTS_QUICK.map(a => (
+              <button
+                key={a.id}
+                onClick={goToGallery}
+                className="flex flex-col items-center gap-2 p-4 rounded-xl border border-border bg-card hover:border-primary/40 hover:bg-muted transition-all cursor-pointer group"
+              >
+                <span className="text-2xl">{a.emoji}</span>
+                <span className="text-xs font-medium text-foreground text-center leading-tight group-hover:text-primary transition-colors">{a.name}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Saved Runs */}
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-display text-xl text-foreground">Saved Results</h2>
+            {runs.length > 0 && (
+              <button
+                onClick={goToGallery}
+                className="text-xs font-medium text-primary hover:underline cursor-pointer inline-flex items-center gap-1"
+              >
+                Run another agent <ArrowRight className="w-3 h-3" />
+              </button>
+            )}
+          </div>
+
+          {loading ? (
+            <div className="text-center py-16">
+              <div className="inline-block w-6 h-6 border-2 border-foreground/20 border-t-foreground rounded-full animate-spin" />
+            </div>
+          ) : runs.length === 0 ? (
+            <div className="text-center py-16 bg-card border border-border rounded-2xl">
+              <FileText className="w-10 h-10 text-muted-foreground/40 mx-auto mb-3" />
+              <p className="text-sm text-muted-foreground mb-1">No saved results yet</p>
+              <p className="text-xs text-muted-foreground/70 mb-4">Run an agent from the gallery and save the results here</p>
+              <button
+                onClick={goToGallery}
+                className="px-5 py-2.5 rounded-xl bg-foreground text-background text-sm font-semibold hover:bg-primary transition-colors cursor-pointer"
+              >
+                Go to Agent Gallery
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {runs.map(run => {
+                const isExpanded = expandedId === run.id;
+                const res = run.result as any;
+                return (
+                  <div key={run.id} className="bg-card border border-border rounded-xl overflow-hidden">
+                    <button
+                      onClick={() => setExpandedId(isExpanded ? null : run.id)}
+                      className="w-full flex items-center justify-between p-4 cursor-pointer bg-transparent border-none text-left"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <span className="text-lg shrink-0">
+                          {AGENTS_QUICK.find(a => a.id === run.agent_type)?.emoji || "🤖"}
+                        </span>
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium text-foreground truncate">
+                            {run.title || run.agent_name}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {run.agent_name} · {new Date(run.created_at).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
+                      <span className="text-xs text-muted-foreground shrink-0">{isExpanded ? "▲" : "▼"}</span>
+                    </button>
+
+                    {isExpanded && (
+                      <div className="border-t border-border p-4 space-y-4 animate-in fade-in-0 slide-in-from-top-2 duration-200">
+                        {res?.summary && (
+                          <p className="text-sm text-foreground leading-relaxed border-l-2 border-primary pl-3">{res.summary}</p>
+                        )}
+
+                        {res?.confidence && (
+                          <div className="flex items-center gap-2">
+                            <span className={`w-2 h-2 rounded-full ${res.confidence.score >= 75 ? "bg-green-500" : res.confidence.score >= 60 ? "bg-yellow-500" : "bg-red-500"}`} />
+                            <span className="text-xs font-medium text-foreground">
+                              {res.confidence.level} confidence ({res.confidence.score}%)
+                            </span>
+                          </div>
+                        )}
+
+                        <div className="flex flex-wrap gap-2 pt-2 border-t border-border">
+                          <button
+                            onClick={() => downloadCSV(run.agent_name, res)}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-background text-xs font-medium text-foreground hover:bg-muted transition-colors cursor-pointer"
+                          >
+                            <Download className="w-3 h-3" /> CSV
+                          </button>
+                          <button
+                            onClick={() => downloadPDF(run.agent_name, res)}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-background text-xs font-medium text-foreground hover:bg-muted transition-colors cursor-pointer"
+                          >
+                            <Download className="w-3 h-3" /> PDF
+                          </button>
+                          <button
+                            onClick={() => deleteRun(run.id)}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-destructive/30 bg-background text-xs font-medium text-destructive hover:bg-destructive/10 transition-colors cursor-pointer ml-auto"
+                          >
+                            <Trash2 className="w-3 h-3" /> Delete
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
-
-      <ModuleDrawer mod={activeMod} onClose={() => setActiveMod(null)} onToast={showToast} />
-      <Toast message={toast} />
     </div>
   );
 }
