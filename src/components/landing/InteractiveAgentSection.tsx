@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { RevealDiv } from "@/components/RevealDiv";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import {
   Users, Search, Rocket, Target, Shield, Ear,
   ChevronRight, RotateCcw, Bookmark, ArrowRight
@@ -510,7 +512,7 @@ function ResultCard({ result, agentName, onTryAnother, onScrollToEngagement, onR
       </div>
 
       <p className="text-[11px] text-muted-foreground/70 text-center pt-2 border-t border-border">
-        This is a live simulation. Real agents run autonomously and integrate with your tools.
+        Powered by AI. Results are generated in real-time based on your inputs. Production agents integrate with your tools and run autonomously.
       </p>
     </div>
   );
@@ -602,19 +604,32 @@ export default function InteractiveAgentSection() {
   const [activeAgent, setActiveAgent] = useState<AgentId>("workforce");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<SnapshotResult | null>(null);
-
-  const handleRun = (agentId: AgentId, fields: Record<string, any>) => {
+  const [error, setError] = useState<string | null>(null);
+  const handleRun = async (agentId: AgentId, fields: Record<string, any>) => {
     setLoading(true);
     setResult(null);
-    setTimeout(() => {
-      setResult(SIMULATORS[agentId](fields));
+    setError(null);
+    try {
+      const { data, error: fnError } = await supabase.functions.invoke("run-agent", {
+        body: { agentType: agentId, inputs: fields },
+      });
+      if (fnError) throw fnError;
+      if (data?.error) throw new Error(data.error);
+      setResult(data as SnapshotResult);
+    } catch (e: any) {
+      console.error("Agent run failed:", e);
+      const msg = e?.message || "Something went wrong — please try again.";
+      setError(msg);
+      toast.error(msg);
+    } finally {
       setLoading(false);
-    }, 2200);
+    }
   };
 
   const handleTabChange = (id: AgentId) => {
     setActiveAgent(id);
     setResult(null);
+    setError(null);
   };
 
   const scrollToEngagement = () => {
@@ -680,15 +695,25 @@ export default function InteractiveAgentSection() {
           </div>
         </RevealDiv>
 
-        {/* Results */}
+        {error && !result && (
+          <div className="mt-8 bg-card border border-destructive/30 rounded-2xl p-6 text-center animate-in fade-in-0 duration-300">
+            <p className="text-sm text-destructive font-medium mb-2">Something went wrong</p>
+            <p className="text-xs text-muted-foreground">{error}</p>
+            <button onClick={() => setError(null)} className="mt-4 px-4 py-2 rounded-xl bg-foreground text-background text-sm font-medium hover:bg-primary transition-colors">
+              Try Again
+            </button>
+          </div>
+        )}
+
         {result && (
           <ResultCard
             result={result}
             agentName={activeDef.name}
-            onTryAnother={() => { setResult(null); }}
+            onTryAnother={() => { setResult(null); setError(null); }}
             onScrollToEngagement={scrollToEngagement}
             onRefine={() => {
               setResult(null);
+              setError(null);
               document.getElementById("agent-gallery")?.scrollIntoView({ behavior: "smooth" });
             }}
           />
