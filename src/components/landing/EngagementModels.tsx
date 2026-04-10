@@ -7,7 +7,8 @@ const STEPS = [
     num: "01",
     icon: Rocket,
     title: "Start Free",
-    desc: "Try any agent instantly in the interactive gallery above. No credit card required. Test workforce planning, recruiting, performance, listening, and compliance agents with your own data.",
+    desc: "Try any agent instantly in the interactive gallery above. No credit card required.",
+    cta: true,
   },
   {
     num: "02",
@@ -26,6 +27,11 @@ const STEPS = [
 export default function EngagementModels() {
   const scrollToGallery = () => {
     document.getElementById("agent-gallery")?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const navigateTo = (page: string) => {
+    window.history.pushState({ page }, "");
+    window.dispatchEvent(new PopStateEvent("popstate", { state: { page } }));
   };
 
   return (
@@ -54,7 +60,12 @@ export default function EngagementModels() {
                   <span className="text-xs font-bold text-primary/60 tracking-widest">{s.num}</span>
                 </div>
                 <h3 className="font-display text-lg text-foreground mb-2">{s.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{s.desc}</p>
+                <p className="text-sm text-muted-foreground leading-relaxed mb-auto">{s.desc}</p>
+                {s.cta && (
+                  <Button className="mt-5 w-full" onClick={() => navigateTo("login")}>
+                    Sign Up to Save Progress
+                  </Button>
+                )}
               </div>
             </RevealDiv>
           ))}
@@ -62,17 +73,11 @@ export default function EngagementModels() {
 
         <RevealDiv delay={0.4}>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-14">
-            <Button
-              size="lg"
-              onClick={() => {
-                window.history.pushState({ page: "pricing" }, "");
-                window.dispatchEvent(new PopStateEvent("popstate", { state: { page: "pricing" } }));
-              }}
-            >
+            <Button size="lg" onClick={() => navigateTo("pricing")}>
               View Pricing &amp; Plans
             </Button>
             <Button variant="outline" size="lg" onClick={scrollToGallery}>
-              Try the Gallery Again
+              Try Gallery
             </Button>
           </div>
         </RevealDiv>
