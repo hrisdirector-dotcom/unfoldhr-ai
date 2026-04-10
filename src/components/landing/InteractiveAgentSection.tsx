@@ -695,15 +695,25 @@ export default function InteractiveAgentSection() {
           </div>
         </RevealDiv>
 
-        {/* Results */}
+        {error && !result && (
+          <div className="mt-8 bg-card border border-destructive/30 rounded-2xl p-6 text-center animate-in fade-in-0 duration-300">
+            <p className="text-sm text-destructive font-medium mb-2">Something went wrong</p>
+            <p className="text-xs text-muted-foreground">{error}</p>
+            <button onClick={() => setError(null)} className="mt-4 px-4 py-2 rounded-xl bg-foreground text-background text-sm font-medium hover:bg-primary transition-colors">
+              Try Again
+            </button>
+          </div>
+        )}
+
         {result && (
           <ResultCard
             result={result}
             agentName={activeDef.name}
-            onTryAnother={() => { setResult(null); }}
+            onTryAnother={() => { setResult(null); setError(null); }}
             onScrollToEngagement={scrollToEngagement}
             onRefine={() => {
               setResult(null);
+              setError(null);
               document.getElementById("agent-gallery")?.scrollIntoView({ behavior: "smooth" });
             }}
           />
