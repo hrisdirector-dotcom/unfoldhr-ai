@@ -2,7 +2,7 @@ import { useState } from "react";
 import { RevealDiv } from "@/components/RevealDiv";
 import DecisionBriefCard from "@/components/DecisionBriefCard";
 import type { DecisionBriefProps } from "@/components/DecisionBriefCard";
-import { generateListeningBrief } from "@/data/listeningAgentData";
+import { supabase } from "@/integrations/supabase/client";
 
 type Step = "start" | "input" | "result";
 
