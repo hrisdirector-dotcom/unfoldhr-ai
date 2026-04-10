@@ -605,13 +605,25 @@ export default function InteractiveAgentSection() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<SnapshotResult | null>(null);
 
-  const handleRun = (agentId: AgentId, fields: Record<string, any>) => {
+  const handleRun = async (agentId: AgentId, fields: Record<string, any>) => {
     setLoading(true);
     setResult(null);
-    setTimeout(() => {
-      setResult(SIMULATORS[agentId](fields));
+    setError(null);
+    try {
+      const { data, error: fnError } = await supabase.functions.invoke("run-agent", {
+        body: { agentType: agentId, inputs: fields },
+      });
+      if (fnError) throw fnError;
+      if (data?.error) throw new Error(data.error);
+      setResult(data as SnapshotResult);
+    } catch (e: any) {
+      console.error("Agent run failed:", e);
+      const msg = e?.message || "Something went wrong — please try again.";
+      setError(msg);
+      toast.error(msg);
+    } finally {
       setLoading(false);
-    }, 2200);
+    }
   };
 
   const handleTabChange = (id: AgentId) => {
