@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { RevealDiv } from "@/components/RevealDiv";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import { downloadCSV, downloadPDF } from "@/lib/downloadResult";
 import {
   Users, Search, Rocket, Target, Shield, Ear,
-  ChevronRight, RotateCcw, Bookmark, ArrowRight
+  ChevronRight, RotateCcw, Bookmark, ArrowRight, Download
 } from "lucide-react";
 
 /* ─── Types ─── */
@@ -426,10 +428,38 @@ function RunButton({ loading, onClick, label }: { loading: boolean; onClick: () 
 
 /* ─── Result card ─── */
 
-function ResultCard({ result, agentName, onTryAnother, onScrollToEngagement, onRefine }: {
-  result: SnapshotResult; agentName: string;
+function ResultCard({ result, agentName, agentId, inputs, onTryAnother, onScrollToEngagement, onRefine }: {
+  result: SnapshotResult; agentName: string; agentId: string; inputs: Record<string, any>;
   onTryAnother: () => void; onScrollToEngagement: () => void; onRefine: () => void;
 }) {
+  const { user } = useAuth();
+  const [saving, setSaving] = useState(false);
+
+  const handleSave = async () => {
+    if (!user) {
+      // Not signed in — scroll to engagement section (which has signup CTA)
+      const el = document.getElementById("engagement-models");
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+      return;
+    }
+    setSaving(true);
+    const title = `${agentName} — ${new Date().toLocaleDateString()}`;
+    const { error } = await supabase.from("saved_agent_runs").insert({
+      user_id: user.id,
+      agent_type: agentId,
+      agent_name: agentName,
+      title,
+      inputs: inputs as any,
+      result: result as any,
+    });
+    setSaving(false);
+    if (error) {
+      toast.error("Failed to save — please try again.");
+    } else {
+      toast.success("Saved to your dashboard!");
+    }
+  };
+
   return (
     <div className="mt-8 bg-card border border-border rounded-2xl p-6 md:p-8 shadow-lg space-y-6 animate-in fade-in-0 slide-in-from-bottom-4 duration-500">
       <div className="flex items-center justify-between flex-wrap gap-2">
@@ -482,7 +512,7 @@ function ResultCard({ result, agentName, onTryAnother, onScrollToEngagement, onR
         <ul className="space-y-2">
           {result.risks.map((r, i) => (
             <li key={i} className="flex items-start gap-2 text-sm text-foreground">
-              <span className="mt-1 w-1.5 h-1.5 rounded-full bg-yellow-500 shrink-0" />
+              <span className="mt-1 w-1.5 h-1.5 rounded-full bg-primary/60 shrink-0" />
               {r}
             </li>
           ))}
@@ -498,16 +528,32 @@ function ResultCard({ result, agentName, onTryAnother, onScrollToEngagement, onR
       {/* Action buttons */}
       <div className="flex flex-wrap gap-3 pt-4 border-t border-border">
         <button onClick={onRefine} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border bg-background text-sm font-medium text-foreground hover:bg-muted transition-colors">
-          <RotateCcw className="w-3.5 h-3.5" /> Refine this recommendation
+          <RotateCcw className="w-3.5 h-3.5" /> Refine
         </button>
         <button onClick={onTryAnother} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border bg-background text-sm font-medium text-foreground hover:bg-muted transition-colors">
           <RotateCcw className="w-3.5 h-3.5" /> Try another agent
         </button>
-        <button className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border bg-background text-sm font-medium text-foreground hover:bg-muted transition-colors">
-          <Bookmark className="w-3.5 h-3.5" /> Save plan
-        </button>
-        <button onClick={onScrollToEngagement} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors">
-          <ArrowRight className="w-3.5 h-3.5" /> Turn into a real deployed agent
+
+        {user ? (
+          <>
+            <button onClick={handleSave} disabled={saving} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border bg-background text-sm font-medium text-foreground hover:bg-muted transition-colors disabled:opacity-60">
+              <Bookmark className="w-3.5 h-3.5" /> {saving ? "Saving..." : "Save to Dashboard"}
+            </button>
+            <button onClick={() => downloadCSV(agentName, result)} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border bg-background text-sm font-medium text-foreground hover:bg-muted transition-colors">
+              <Download className="w-3.5 h-3.5" /> CSV
+            </button>
+            <button onClick={() => downloadPDF(agentName, result)} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border bg-background text-sm font-medium text-foreground hover:bg-muted transition-colors">
+              <Download className="w-3.5 h-3.5" /> PDF
+            </button>
+          </>
+        ) : (
+          <button onClick={handleSave} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-primary/40 bg-primary/5 text-sm font-medium text-primary hover:bg-primary/10 transition-colors">
+            <Bookmark className="w-3.5 h-3.5" /> Sign up to save & download
+          </button>
+        )}
+
+        <button onClick={onScrollToEngagement} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors ml-auto">
+          <ArrowRight className="w-3.5 h-3.5" /> {user ? "Upgrade to deploy" : "Turn into a real agent"}
         </button>
       </div>
 
@@ -604,11 +650,13 @@ export default function InteractiveAgentSection() {
   const [activeAgent, setActiveAgent] = useState<AgentId>("workforce");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<SnapshotResult | null>(null);
+  const [lastInputs, setLastInputs] = useState<Record<string, any>>({});
   const [error, setError] = useState<string | null>(null);
   const handleRun = async (agentId: AgentId, fields: Record<string, any>) => {
     setLoading(true);
     setResult(null);
     setError(null);
+    setLastInputs(fields);
     try {
       const { data, error: fnError } = await supabase.functions.invoke("run-agent", {
         body: { agentType: agentId, inputs: fields },
@@ -709,6 +757,8 @@ export default function InteractiveAgentSection() {
           <ResultCard
             result={result}
             agentName={activeDef.name}
+            agentId={activeAgent}
+            inputs={lastInputs}
             onTryAnother={() => { setResult(null); setError(null); }}
             onScrollToEngagement={scrollToEngagement}
             onRefine={() => {

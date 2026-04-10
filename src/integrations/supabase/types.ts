@@ -101,6 +101,39 @@ export type Database = {
         }
         Relationships: []
       }
+      saved_agent_runs: {
+        Row: {
+          agent_name: string
+          agent_type: string
+          created_at: string
+          id: string
+          inputs: Json
+          result: Json
+          title: string
+          user_id: string
+        }
+        Insert: {
+          agent_name: string
+          agent_type: string
+          created_at?: string
+          id?: string
+          inputs?: Json
+          result?: Json
+          title?: string
+          user_id: string
+        }
+        Update: {
+          agent_name?: string
+          agent_type?: string
+          created_at?: string
+          id?: string
+          inputs?: Json
+          result?: Json
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       submissions: {
         Row: {
           company_name: string | null
