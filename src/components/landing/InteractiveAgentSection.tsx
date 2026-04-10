@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { RevealDiv } from "@/components/RevealDiv";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import { downloadCSV, downloadPDF } from "@/lib/downloadResult";
 import {
   Users, Search, Rocket, Target, Shield, Ear,
-  ChevronRight, RotateCcw, Bookmark, ArrowRight
+  ChevronRight, RotateCcw, Bookmark, ArrowRight, Download
 } from "lucide-react";
 
 /* ─── Types ─── */
