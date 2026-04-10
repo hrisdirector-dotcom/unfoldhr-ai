@@ -650,6 +650,7 @@ export default function InteractiveAgentSection() {
   const [activeAgent, setActiveAgent] = useState<AgentId>("workforce");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<SnapshotResult | null>(null);
+  const [lastInputs, setLastInputs] = useState<Record<string, any>>({});
   const [error, setError] = useState<string | null>(null);
   const handleRun = async (agentId: AgentId, fields: Record<string, any>) => {
     setLoading(true);
