@@ -2,7 +2,7 @@ import { useState } from "react";
 import { RevealDiv } from "@/components/RevealDiv";
 import DecisionBriefCard from "@/components/DecisionBriefCard";
 import type { DecisionBriefProps } from "@/components/DecisionBriefCard";
-import { generateListeningBrief } from "@/data/listeningAgentData";
+import { supabase } from "@/integrations/supabase/client";
 
 type Step = "start" | "input" | "result";
 
@@ -55,10 +55,56 @@ export default function TryListeningAgentPage({ setPage }: TryListeningAgentPage
   const [group, setGroup] = useState(GROUPS[4]);
   const [context, setContext] = useState("");
   const [brief, setBrief] = useState<DecisionBriefProps | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleGenerate = () => {
-    setBrief(generateListeningBrief(size, trend, concern, source, group, context));
+  const handleGenerate = async () => {
+    setLoading(true);
+    setError(null);
     setStep("result");
+
+    try {
+      const { data, error: fnError } = await supabase.functions.invoke("run-agent", {
+        body: {
+          agentType: "listening",
+          inputs: {
+            workforceSize: size,
+            engagementTrend: trend,
+            primaryConcern: concern,
+            feedbackSource: source,
+            mostAffectedGroup: group,
+            additionalContext: context || "No additional context provided",
+          },
+        },
+      });
+
+      if (fnError) throw new Error(fnError.message);
+      if (data?.error) throw new Error(data.error);
+
+      // Map the AI response to DecisionBriefProps
+      const sections = data.sections || [];
+      const primary = sections[0] || { title: "Sentiment Overview", items: [] };
+      const secondary = sections[1] || { title: "Topic Analysis", items: [] };
+      const tertiary = sections[2] || { title: "Recommended Actions", items: [] };
+
+      setBrief({
+        scenario: "Employee Listening Agent",
+        contextLine: data.contextLine || "",
+        summary: data.summary || "",
+        primaryTitle: primary.title,
+        primaryItems: primary.items.map((i: any) => ({ label: i.label, value: i.detail })),
+        secondaryTitle: secondary.title,
+        secondaryItems: secondary.items.map((i: any) => ({ label: i.label, value: i.detail })),
+        tertiaryTitle: tertiary.title,
+        tertiaryItems: tertiary.items.map((i: any) => ({ label: i.label, value: i.detail })),
+        observations: (data.risks || []).map((r: string) => ({ text: r })),
+        confidence: data.confidence ? { level: data.confidence.level, reason: data.confidence.reason } : undefined,
+      });
+    } catch (e: any) {
+      setError(e.message || "Something went wrong — please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -128,38 +174,65 @@ export default function TryListeningAgentPage({ setPage }: TryListeningAgentPage
           </RevealDiv>
         )}
 
-        {step === "result" && brief && (
+        {step === "result" && (
           <div className="space-y-10">
-            <RevealDiv>
-              <DecisionBriefCard {...brief} />
-            </RevealDiv>
+            {loading && (
+              <RevealDiv>
+                <div className="text-center py-20 space-y-4">
+                  <div className="inline-block w-8 h-8 border-2 border-foreground/20 border-t-foreground rounded-full animate-spin" />
+                  <p className="text-sm text-muted-foreground">Agent thinking…</p>
+                </div>
+              </RevealDiv>
+            )}
 
-            <RevealDiv delay={0.15}>
-              <div className="flex flex-col items-center gap-4">
-                <p className="text-sm text-muted-foreground">Ready to get started on your AI Agent journey?</p>
-                <button
-                  onClick={() => setPage("contact")}
-                  className="px-8 py-4 rounded-lg bg-foreground text-background font-semibold text-sm cursor-pointer hover:bg-primary transition-colors"
-                >
-                  Contact Us Now
-                </button>
-                <button
-                  onClick={() => {
-                    setStep("input");
-                    setBrief(null);
-                  }}
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer bg-transparent border-none"
-                >
-                  ← Try different inputs
-                </button>
-                <button
-                  onClick={() => setPage("try-picker")}
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer bg-transparent border-none"
-                >
-                  ← Try a different agent
-                </button>
-              </div>
-            </RevealDiv>
+            {error && !loading && (
+              <RevealDiv>
+                <div className="text-center py-16 space-y-4">
+                  <p className="text-sm text-destructive">{error}</p>
+                  <button
+                    onClick={handleGenerate}
+                    className="px-6 py-3 rounded-lg bg-foreground text-background font-semibold text-sm cursor-pointer hover:bg-primary transition-colors"
+                  >
+                    Try Again
+                  </button>
+                </div>
+              </RevealDiv>
+            )}
+
+            {brief && !loading && !error && (
+              <>
+                <RevealDiv>
+                  <DecisionBriefCard {...brief} />
+                </RevealDiv>
+
+                <RevealDiv delay={0.15}>
+                  <div className="flex flex-col items-center gap-4">
+                    <p className="text-sm text-muted-foreground">Ready to get started on your AI Agent journey?</p>
+                    <button
+                      onClick={() => setPage("contact")}
+                      className="px-8 py-4 rounded-lg bg-foreground text-background font-semibold text-sm cursor-pointer hover:bg-primary transition-colors"
+                    >
+                      Contact Us Now
+                    </button>
+                    <button
+                      onClick={() => {
+                        setStep("input");
+                        setBrief(null);
+                      }}
+                      className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer bg-transparent border-none"
+                    >
+                      ← Try different inputs
+                    </button>
+                    <button
+                      onClick={() => setPage("try-picker")}
+                      className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer bg-transparent border-none"
+                    >
+                      ← Try a different agent
+                    </button>
+                  </div>
+                </RevealDiv>
+              </>
+            )}
           </div>
         )}
       </div>
