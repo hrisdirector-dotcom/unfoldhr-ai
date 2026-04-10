@@ -116,23 +116,6 @@ export default function AboutPage() {
             ))}
           </div>
         </RevealDiv>
-
-        <RevealDiv delay={0.3}>
-          <h2 className="font-display text-2xl text-foreground mb-6">Trust signals</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              { metric: "12", label: "HR Modules" },
-              { metric: "36", label: "Agent Prompts" },
-              { metric: "23", label: "API Integrations" },
-              { metric: "2–4wk", label: "Avg Delivery" },
-            ].map((s) => (
-              <div key={s.label} className="bg-background border border-border rounded-xl p-5 text-center">
-                <div className="font-display text-2xl text-foreground mb-1">{s.metric}</div>
-                <div className="text-xs text-muted-foreground font-medium">{s.label}</div>
-              </div>
-            ))}
-          </div>
-        </RevealDiv>
       </div>
     </div>
   );
