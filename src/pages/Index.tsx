@@ -35,6 +35,14 @@ const Index = () => {
       return;
     }
 
+    // Redirect legacy "agents" route to homepage gallery
+    if (p === "agents" || p === "try-agents") {
+      setPage("home");
+      window.history.replaceState({ page: "home" }, "");
+      setTimeout(() => document.getElementById("agent-gallery")?.scrollIntoView({ behavior: "smooth" }), 150);
+      return;
+    }
+
     setPage(p);
     if (p !== "agent-detail") setAgentId(undefined);
 
