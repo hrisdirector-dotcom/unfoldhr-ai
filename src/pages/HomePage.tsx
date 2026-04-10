@@ -28,6 +28,7 @@ export default function HomePage({ setPage }: HomePageProps) {
       <ProblemSolutionSection />
       <HowItWorksSection />
       <AgentsShowcase setPage={setPage} />
+      <RealResultsSection />
       <EngagementModels />
       <TrustSection />
       <FinalCTA setPage={setPage} showToast={showToast} />
