@@ -55,10 +55,56 @@ export default function TryListeningAgentPage({ setPage }: TryListeningAgentPage
   const [group, setGroup] = useState(GROUPS[4]);
   const [context, setContext] = useState("");
   const [brief, setBrief] = useState<DecisionBriefProps | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleGenerate = () => {
-    setBrief(generateListeningBrief(size, trend, concern, source, group, context));
+  const handleGenerate = async () => {
+    setLoading(true);
+    setError(null);
     setStep("result");
+
+    try {
+      const { data, error: fnError } = await supabase.functions.invoke("run-agent", {
+        body: {
+          agentType: "listening",
+          inputs: {
+            workforceSize: size,
+            engagementTrend: trend,
+            primaryConcern: concern,
+            feedbackSource: source,
+            mostAffectedGroup: group,
+            additionalContext: context || "No additional context provided",
+          },
+        },
+      });
+
+      if (fnError) throw new Error(fnError.message);
+      if (data?.error) throw new Error(data.error);
+
+      // Map the AI response to DecisionBriefProps
+      const sections = data.sections || [];
+      const primary = sections[0] || { title: "Sentiment Overview", items: [] };
+      const secondary = sections[1] || { title: "Topic Analysis", items: [] };
+      const tertiary = sections[2] || { title: "Recommended Actions", items: [] };
+
+      setBrief({
+        scenario: "Employee Listening Agent",
+        contextLine: data.contextLine || "",
+        summary: data.summary || "",
+        primaryTitle: primary.title,
+        primaryItems: primary.items.map((i: any) => ({ label: i.label, value: i.detail })),
+        secondaryTitle: secondary.title,
+        secondaryItems: secondary.items.map((i: any) => ({ label: i.label, value: i.detail })),
+        tertiaryTitle: tertiary.title,
+        tertiaryItems: tertiary.items.map((i: any) => ({ label: i.label, value: i.detail })),
+        observations: (data.risks || []).map((r: string) => ({ text: r })),
+        confidence: data.confidence ? { level: data.confidence.level, reason: data.confidence.reason } : undefined,
+      });
+    } catch (e: any) {
+      setError(e.message || "Something went wrong — please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
