@@ -629,6 +629,7 @@ export default function InteractiveAgentSection() {
   const handleTabChange = (id: AgentId) => {
     setActiveAgent(id);
     setResult(null);
+    setError(null);
   };
 
   const scrollToEngagement = () => {
