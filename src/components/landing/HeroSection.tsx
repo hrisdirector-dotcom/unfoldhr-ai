@@ -77,7 +77,7 @@ export default function HeroSection({ setPage }: HeroSectionProps) {
                 Try an Agent — Free
               </button>
               <button
-                onClick={() => setPage("agents")}
+                onClick={() => document.getElementById("agent-gallery")?.scrollIntoView({ behavior: "smooth" })}
                 className="px-7 py-3.5 rounded-xl bg-card text-foreground font-semibold text-sm border border-border cursor-pointer hover:border-primary hover:text-primary transition-all duration-200"
               >
                 Explore Agents
@@ -106,14 +106,14 @@ export default function HeroSection({ setPage }: HeroSectionProps) {
           </RevealDiv>
         </div>
 
-        {/* Right: Decision Snapshot Demo */}
+        {/* Right: Quick visual proof */}
         <RevealDiv delay={0.3} className="hidden lg:block">
           <div className="bg-card border border-border rounded-2xl p-6 space-y-5 shadow-lg">
             <div className="flex items-center justify-between">
               <p className="text-xs font-bold uppercase tracking-[3px] text-primary">Decision Snapshot</p>
-              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-accent text-accent-foreground">Live Preview</span>
+              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-muted text-muted-foreground">Preview</span>
             </div>
-            <p className="text-xs text-muted-foreground">120 employees · 25% growth target · Fixed hiring budget</p>
+            <p className="text-xs text-muted-foreground">120 employees · 25% growth · Fixed budget</p>
 
             <div className="grid grid-cols-3 gap-3">
               <div className="bg-background border border-border rounded-xl p-4">
@@ -134,7 +134,7 @@ export default function HeroSection({ setPage }: HeroSectionProps) {
               </div>
               <div className="bg-background border border-border rounded-xl p-4">
                 <p className="text-xs font-bold uppercase tracking-[2px] text-muted-foreground mb-3">Risk</p>
-                <p className="text-sm text-foreground leading-relaxed">Engineering hiring bottleneck in Q2–Q3</p>
+                <p className="text-sm text-foreground leading-relaxed">Engineering bottleneck Q2–Q3</p>
                 <div className="mt-2 flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-yellow-500" />
                   <span className="text-[10px] text-muted-foreground font-medium">Medium confidence</span>
@@ -143,10 +143,10 @@ export default function HeroSection({ setPage }: HeroSectionProps) {
             </div>
 
             <button
-              onClick={() => setPage("try-picker")}
+              onClick={() => document.getElementById("agent-gallery")?.scrollIntoView({ behavior: "smooth" })}
               className="w-full py-3 rounded-xl bg-foreground text-background font-semibold text-sm border-none cursor-pointer hover:bg-primary transition-all duration-200"
             >
-              Try this agent →
+              Try it yourself →
             </button>
           </div>
         </RevealDiv>
