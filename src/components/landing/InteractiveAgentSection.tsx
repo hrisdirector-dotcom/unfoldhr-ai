@@ -656,6 +656,7 @@ export default function InteractiveAgentSection() {
     setLoading(true);
     setResult(null);
     setError(null);
+    setLastInputs(fields);
     try {
       const { data, error: fnError } = await supabase.functions.invoke("run-agent", {
         body: { agentType: agentId, inputs: fields },
@@ -756,6 +757,8 @@ export default function InteractiveAgentSection() {
           <ResultCard
             result={result}
             agentName={activeDef.name}
+            agentId={activeAgent}
+            inputs={lastInputs}
             onTryAnother={() => { setResult(null); setError(null); }}
             onScrollToEngagement={scrollToEngagement}
             onRefine={() => {
