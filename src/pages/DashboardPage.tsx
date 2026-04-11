@@ -1,7 +1,10 @@
 import { useState } from "react";
-import { useSavedRuns } from "@/hooks/useSavedRuns";
+import { useSavedRuns, SavedRun } from "@/hooks/useSavedRuns";
 import { downloadCSV, downloadPDF } from "@/lib/downloadResult";
-import { Download, Trash2, FileText, ArrowRight, Zap } from "lucide-react";
+import { Download, Trash2, FileText, ArrowRight, Zap, Presentation } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import BrandingModal, { BrandConfig } from "@/components/BrandingModal";
+import ExecutiveDeckPage from "@/pages/ExecutiveDeckPage";
 
 interface DashboardPageProps {
   currentUser: { email: string; role: string };
@@ -18,14 +21,38 @@ const AGENTS_QUICK = [
   { id: "compliance", name: "Compliance Risk", emoji: "⚖️" },
 ];
 
+// TODO: Replace with real subscription lookup when billing is integrated
+const USER_TIER: "free" | "growth" | "enterprise" = "free";
+
 export default function DashboardPage({ currentUser, onLogout, setPage }: DashboardPageProps) {
   const { runs, loading, deleteRun } = useSavedRuns();
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [brandingRun, setBrandingRun] = useState<SavedRun | null>(null);
+  const [deckRun, setDeckRun] = useState<{ run: SavedRun; brand: BrandConfig } | null>(null);
+
+  const isPaid = USER_TIER !== "free";
 
   const goToGallery = () => {
     setPage("home");
     setTimeout(() => document.getElementById("agent-gallery")?.scrollIntoView({ behavior: "smooth" }), 200);
   };
+
+  const handleGenerateDeck = (brand: BrandConfig) => {
+    if (!brandingRun) return;
+    setDeckRun({ run: brandingRun, brand });
+    setBrandingRun(null);
+  };
+
+  // Show executive deck fullscreen
+  if (deckRun) {
+    return (
+      <ExecutiveDeckPage
+        run={deckRun.run}
+        brand={deckRun.brand}
+        onClose={() => setDeckRun(null)}
+      />
+    );
+  }
 
   return (
     <div className="bg-background min-h-screen pt-28 pb-16 px-6 md:px-14">
@@ -61,16 +88,22 @@ export default function DashboardPage({ currentUser, onLogout, setPage }: Dashbo
               <Zap className="w-5 h-5 text-primary" />
             </div>
             <div>
-              <p className="text-sm font-semibold text-foreground">Free Plan</p>
-              <p className="text-xs text-muted-foreground">Upgrade to deploy real agents with your data</p>
+              <p className="text-sm font-semibold text-foreground">
+                {isPaid ? "Growth Plan" : "Free Plan"}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {isPaid ? "Executive Decks & full agent access unlocked" : "Upgrade to deploy real agents with your data"}
+              </p>
             </div>
           </div>
-          <button
-            onClick={() => setPage("pricing")}
-            className="px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors cursor-pointer"
-          >
-            View Plans & Upgrade
-          </button>
+          {!isPaid && (
+            <button
+              onClick={() => setPage("pricing")}
+              className="px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors cursor-pointer"
+            >
+              View Plans & Upgrade
+            </button>
+          )}
         </div>
 
         {/* Quick Run Section */}
@@ -163,6 +196,30 @@ export default function DashboardPage({ currentUser, onLogout, setPage }: Dashbo
                         )}
 
                         <div className="flex flex-wrap gap-2 pt-2 border-t border-border">
+                          {/* Generate Executive Deck */}
+                          {isPaid ? (
+                            <button
+                              onClick={() => setBrandingRun(run)}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-colors cursor-pointer"
+                            >
+                              <Presentation className="w-3 h-3" /> Generate Executive Deck
+                            </button>
+                          ) : (
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <button
+                                  disabled
+                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-muted text-xs font-medium text-muted-foreground cursor-not-allowed opacity-60"
+                                >
+                                  <Presentation className="w-3 h-3" /> Generate Executive Deck
+                                </button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Upgrade to Growth plan to unlock Executive Decks</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          )}
+
                           <button
                             onClick={() => downloadCSV(run.agent_name, res)}
                             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-background text-xs font-medium text-foreground hover:bg-muted transition-colors cursor-pointer"
@@ -191,6 +248,13 @@ export default function DashboardPage({ currentUser, onLogout, setPage }: Dashbo
           )}
         </div>
       </div>
+
+      {/* Branding modal */}
+      <BrandingModal
+        open={!!brandingRun}
+        onClose={() => setBrandingRun(null)}
+        onGenerate={handleGenerateDeck}
+      />
     </div>
   );
 }
