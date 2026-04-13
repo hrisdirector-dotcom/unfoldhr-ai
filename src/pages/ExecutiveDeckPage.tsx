@@ -500,10 +500,29 @@ export default function ExecutiveDeckPage({ run, brand, onClose }: ExecutiveDeck
           </button>
           <span className="text-sm font-semibold text-foreground">{run.title || agentLabel} — Executive Deck</span>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <span className="text-xs text-muted-foreground">
             {currentSlide + 1} / {totalSlides}
           </span>
+          <button
+            onClick={() => {
+              const popout = window.open("", "_blank", "width=1280,height=720,menubar=no,toolbar=no,location=no,status=no");
+              if (popout) {
+                // Copy stylesheets
+                const stylesheets = Array.from(document.querySelectorAll('link[rel="stylesheet"], style'))
+                  .map(el => el.outerHTML).join("\n");
+                const slideContainer = containerRef.current;
+                if (slideContainer) {
+                  popout.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${run.title || agentLabel} — Executive Deck</title>${stylesheets}</head><body>${slideContainer.innerHTML}</body></html>`);
+                  popout.document.close();
+                }
+              }
+            }}
+            className="p-2 rounded-lg hover:bg-muted transition-colors cursor-pointer"
+            title="Open in new window"
+          >
+            <ExternalLink className="w-4 h-4 text-foreground" />
+          </button>
           <button onClick={toggleFullscreen} className="p-2 rounded-lg hover:bg-muted transition-colors cursor-pointer">
             {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
           </button>
