@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import type { BrandConfig } from "@/components/BrandingModal";
 import {
-  ChevronLeft, ChevronRight, X, Maximize2, Minimize2,
+  ChevronLeft, ChevronRight, X, Maximize2, Minimize2, ExternalLink,
   TrendingUp, TrendingDown, Minus, AlertTriangle, CheckCircle2,
   Clock, DollarSign, Users, Target, Shield, BarChart3, Zap,
 } from "lucide-react";
