@@ -304,7 +304,7 @@ export default function ExecutiveDeckPage({ run, brand, onClose }: ExecutiveDeck
             <h2 className="text-3xl font-bold mb-8" style={{ color: primary }}>Key Metrics at a Glance</h2>
             <div className="flex-1 grid grid-cols-2 md:grid-cols-3 gap-4 content-center">
               {metrics.map((m) => {
-                const val = extractMetricValue(res, m.key);
+                const val = extractMetricValue(res, m.key, agentType);
                 const color = getMetricColor(val);
                 return (
                   <div key={m.key} className="p-5 rounded-xl border border-border bg-card flex flex-col gap-3">
