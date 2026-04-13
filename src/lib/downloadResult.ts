@@ -36,7 +36,7 @@ export function downloadCSV(agentName: string, result: Record<string, any>) {
   URL.revokeObjectURL(url);
 }
 
-/* ─── Brand Palette (unfoldHR) ─── */
+/* ─── Brand Palette (unfoldHR) ─── v2 */
 
 const NAVY = "#1a2e4a";
 const VIOLET = "#6b5dd3";
