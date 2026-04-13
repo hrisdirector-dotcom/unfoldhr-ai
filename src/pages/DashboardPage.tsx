@@ -30,7 +30,7 @@ export default function DashboardPage({ currentUser, onLogout, setPage }: Dashbo
   const [brandingRun, setBrandingRun] = useState<SavedRun | null>(null);
   const [deckRun, setDeckRun] = useState<{ run: SavedRun; brand: BrandConfig } | null>(null);
 
-  const isPaid = USER_TIER !== "free";
+  const isPaid = USER_TIER !== "free" || currentUser.role === "admin";
 
   const goToGallery = () => {
     setPage("home");
