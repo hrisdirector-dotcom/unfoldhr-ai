@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import type { BrandConfig } from "@/components/BrandingModal";
 import {
-  ChevronLeft, ChevronRight, X, Maximize2, Minimize2,
+  ChevronLeft, ChevronRight, X, Maximize2, Minimize2, ExternalLink,
   TrendingUp, TrendingDown, Minus, AlertTriangle, CheckCircle2,
   Clock, DollarSign, Users, Target, Shield, BarChart3, Zap,
 } from "lucide-react";
@@ -70,16 +70,87 @@ const AGENT_LABELS: Record<string, string> = {
 
 /* ── helpers ── */
 
-function extractMetricValue(result: any, key: string): string {
-  // Try to find in sections
+function extractMetricValue(result: any, key: string, agentType: string): string {
+  const confidence = result?.confidence;
+  const sections = result?.sections || [];
+  const timeline = result?.timeline || [];
+  const risks = result?.risks || [];
+
+  // Confidence is universal
+  if (key === "confidence" && confidence) {
+    return `${confidence.score ?? confidence.level ?? "—"}%`;
+  }
+
+  // Workforce-specific derived metrics
+  if (agentType === "workforce") {
+    const hiringSection = sections.find((s: any) => s.title?.toLowerCase().includes("hiring") && !s.title?.toLowerCase().includes("timeline"));
+    const budgetSection = sections.find((s: any) => s.title?.toLowerCase().includes("budget"));
+    const timelineSection = sections.find((s: any) => s.title?.toLowerCase().includes("timeline"));
+
+    if (key === "headcount" && hiringSection) {
+      const totalHires = (hiringSection.items || []).length;
+      const deptSummary = (hiringSection.items || []).slice(0, 3).map((i: any) => {
+        const match = i.detail?.match(/(\d+)\s*new\s*(hires|professionals|team members|specialists)/i);
+        return match ? parseInt(match[1]) : 0;
+      });
+      const total = deptSummary.reduce((a: number, b: number) => a + b, 0);
+      return total > 0 ? `+${total} across ${totalHires} depts` : `${totalHires} departments`;
+    }
+    if (key === "budget" && budgetSection) {
+      const items = budgetSection.items || [];
+      const topItem = items[0];
+      return topItem ? topItem.label : "See budget section";
+    }
+    if (key === "time") {
+      return timeline.length > 0 ? `${timeline.length} phases` : "—";
+    }
+    if (key === "risk") {
+      if (risks.length >= 4) return "Elevated";
+      if (risks.length >= 2) return "Moderate";
+      if (risks.length >= 1) return "Low";
+      return "Minimal";
+    }
+    if (key === "roi") {
+      const score = confidence?.score || 0;
+      if (score >= 80) return "Strong positive";
+      if (score >= 60) return "Moderate positive";
+      return "Under evaluation";
+    }
+  }
+
+  // Generic: try to match by section/item labels
   if (result?.sections) {
     for (const s of result.sections) {
       for (const item of s.items || []) {
-        if (item.label?.toLowerCase().includes(key.toLowerCase())) return item.detail || item.value || "—";
+        if (item.label?.toLowerCase().includes(key.toLowerCase())) return item.detail?.slice(0, 60) || item.value || "—";
       }
     }
   }
-  if (key === "confidence" && result?.confidence) return `${result.confidence.score || result.confidence.level || "—"}%`;
+
+  // Fallback: try to derive from risks/timeline for other agent types
+  if (key === "risk" || key === "riskScore") {
+    if (risks.length >= 4) return "Elevated";
+    if (risks.length >= 2) return "Moderate";
+    return risks.length >= 1 ? "Low" : "Minimal";
+  }
+  if (key === "time" || key === "timeToFill" || key === "remediationTime" || key === "productivity") {
+    return timeline.length > 0 ? `${timeline.length} phases` : "—";
+  }
+  if (key === "roi" || key === "savings" || key === "devRoi") {
+    const score = confidence?.score || 0;
+    if (score >= 80) return "Strong positive";
+    if (score >= 60) return "Moderate positive";
+    return "Under evaluation";
+  }
+
+  // Try sections by title matching
+  for (const s of sections) {
+    if (s.title?.toLowerCase().includes(key.toLowerCase())) {
+      const count = (s.items || []).length;
+      return count > 0 ? `${count} items identified` : "—";
+    }
+  }
+
   return "—";
 }
 
@@ -233,7 +304,7 @@ export default function ExecutiveDeckPage({ run, brand, onClose }: ExecutiveDeck
             <h2 className="text-3xl font-bold mb-8" style={{ color: primary }}>Key Metrics at a Glance</h2>
             <div className="flex-1 grid grid-cols-2 md:grid-cols-3 gap-4 content-center">
               {metrics.map((m) => {
-                const val = extractMetricValue(res, m.key);
+                const val = extractMetricValue(res, m.key, agentType);
                 const color = getMetricColor(val);
                 return (
                   <div key={m.key} className="p-5 rounded-xl border border-border bg-card flex flex-col gap-3">
@@ -429,10 +500,29 @@ export default function ExecutiveDeckPage({ run, brand, onClose }: ExecutiveDeck
           </button>
           <span className="text-sm font-semibold text-foreground">{run.title || agentLabel} — Executive Deck</span>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <span className="text-xs text-muted-foreground">
             {currentSlide + 1} / {totalSlides}
           </span>
+          <button
+            onClick={() => {
+              const popout = window.open("", "_blank", "width=1280,height=720,menubar=no,toolbar=no,location=no,status=no");
+              if (popout) {
+                // Copy stylesheets
+                const stylesheets = Array.from(document.querySelectorAll('link[rel="stylesheet"], style'))
+                  .map(el => el.outerHTML).join("\n");
+                const slideContainer = containerRef.current;
+                if (slideContainer) {
+                  popout.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${run.title || agentLabel} — Executive Deck</title>${stylesheets}</head><body>${slideContainer.innerHTML}</body></html>`);
+                  popout.document.close();
+                }
+              }
+            }}
+            className="p-2 rounded-lg hover:bg-muted transition-colors cursor-pointer"
+            title="Open in new window"
+          >
+            <ExternalLink className="w-4 h-4 text-foreground" />
+          </button>
           <button onClick={toggleFullscreen} className="p-2 rounded-lg hover:bg-muted transition-colors cursor-pointer">
             {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
           </button>
