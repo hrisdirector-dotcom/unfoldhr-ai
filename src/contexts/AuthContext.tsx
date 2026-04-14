@@ -21,8 +21,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   const checkRole = useCallback((userId: string) => {
-    supabase
-      .rpc("has_role", { _user_id: userId, _role: "admin" })
+    Promise.resolve(
+      supabase.rpc("has_role", { _user_id: userId, _role: "admin" })
+    )
       .then(({ data, error }) => {
         setIsAdmin(!error && !!data);
       })
