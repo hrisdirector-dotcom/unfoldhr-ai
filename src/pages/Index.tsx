@@ -110,11 +110,17 @@ const Index = () => {
     return () => window.removeEventListener("popstate", onPopState);
   }, []);
 
+  // Redirect unauthenticated users away from protected pages
+  // AND redirect authenticated users away from login page
   useEffect(() => {
-    if (!loading && !user && (page === "dashboard" || page === "admin")) {
+    if (loading) return;
+    if (!user && (page === "dashboard" || page === "admin")) {
       setPage("login");
     }
-  }, [user, loading, page]);
+    if (user && page === "login") {
+      navigateTo("dashboard", true);
+    }
+  }, [user, loading, page, navigateTo]);
 
   if (loading) {
     return (

@@ -34,11 +34,7 @@ export default function AuthPage({ onLogin, setPage }: AuthPageProps) {
           return;
         }
       }
-      // After successful auth, check role via a short delay for state to settle
-      setTimeout(() => {
-        onLogin({ email, role: isAdmin ? "admin" : "user" });
-        setPage("dashboard");
-      }, 500);
+      // Navigation is handled reactively by Index via useAuth state change
     } finally {
       setLoading(false);
     }
