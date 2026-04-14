@@ -141,7 +141,18 @@ const Index = () => {
       {page === "contact" && <ContactPage />}
       {page === "login" && <AuthPage onLogin={handleLogin} setPage={navigateTo} />}
       {page === "dashboard" && currentUser && (
-        <DashboardPage currentUser={currentUser} onLogout={handleLogout} setPage={navigateTo} />
+        <DashboardPage
+          currentUser={currentUser}
+          onLogout={handleLogout}
+          setPage={navigateTo}
+          onGenerateDeck={(run, branding) => {
+            setDeckState({ run, branding });
+            navigateTo("executive-deck");
+          }}
+        />
+      )}
+      {page === "executive-deck" && deckState && (
+        <ExecutiveDeckPage run={deckState.run} branding={deckState.branding} onBack={() => navigateTo("dashboard")} />
       )}
       {page === "admin" && isAdmin && <AdminDashboard onBack={() => navigateTo("dashboard")} onLogout={handleLogout} />}
 
