@@ -25,8 +25,8 @@ const AGENTS_QUICK = [
   { id: "compliance", name: "Compliance Risk", emoji: "⚖️" },
 ];
 
-// For now, free users can't generate decks. This would check subscription tier.
-const isPaidUser = (_role: string) => false;
+// Paid users and admins can generate decks.
+const isPaidUser = (role: string) => role === "admin";
 
 export default function DashboardPage({ currentUser, onLogout, setPage, onGenerateDeck }: DashboardPageProps) {
   const { runs, loading, deleteRun } = useSavedRuns();
