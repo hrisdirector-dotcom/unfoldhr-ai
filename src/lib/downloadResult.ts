@@ -38,16 +38,17 @@ export function downloadCSV(agentName: string, result: Record<string, any>) {
 
 /* ─── Branded PDF Export via jsPDF ─── */
 
-const BRAND_NAVY = [28, 35, 48] as const;   // #1c2330
-const BRAND_BLUE = [43, 92, 230] as const;  // #2B5CE6
-const BRAND_TEAL = [16, 185, 129] as const; // emerald-500
-const WHITE = [255, 255, 255] as const;
-const LIGHT_GRAY = [245, 245, 250] as const;
-const TEXT_PRIMARY = [30, 30, 40] as const;
-const TEXT_SECONDARY = [100, 100, 115] as const;
-const RISK_HIGH = [220, 38, 38] as const;
-const RISK_MEDIUM = [234, 179, 8] as const;
-const RISK_LOW = [34, 197, 94] as const;
+type RGB = [number, number, number];
+const BRAND_NAVY: RGB = [28, 35, 48];
+const BRAND_BLUE: RGB = [43, 92, 230];
+const BRAND_TEAL: RGB = [16, 185, 129];
+const WHITE: RGB = [255, 255, 255];
+const LIGHT_GRAY: RGB = [245, 245, 250];
+const TEXT_PRIMARY: RGB = [30, 30, 40];
+const TEXT_SECONDARY: RGB = [100, 100, 115];
+const RISK_HIGH: RGB = [220, 38, 38];
+const RISK_MEDIUM: RGB = [234, 179, 8];
+const RISK_LOW: RGB = [34, 197, 94];
 
 const PAGE_W = 210;
 const PAGE_H = 297;
