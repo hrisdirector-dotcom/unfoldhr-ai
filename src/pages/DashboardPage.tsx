@@ -1,12 +1,19 @@
 import { useState } from "react";
-import { useSavedRuns } from "@/hooks/useSavedRuns";
+import { useSavedRuns, SavedRun } from "@/hooks/useSavedRuns";
 import { downloadCSV, downloadPDF } from "@/lib/downloadResult";
-import { Download, Trash2, FileText, ArrowRight, Zap } from "lucide-react";
+import BrandingModal from "@/components/BrandingModal";
+import { Download, Trash2, FileText, ArrowRight, Zap, Presentation } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface DashboardPageProps {
   currentUser: { email: string; role: string };
   onLogout: () => void;
   setPage: (p: string) => void;
+  onGenerateDeck?: (run: SavedRun, branding: { logoUrl: string | null; primaryColor: string; accentColor: string }) => void;
 }
 
 const AGENTS_QUICK = [
@@ -18,13 +25,31 @@ const AGENTS_QUICK = [
   { id: "compliance", name: "Compliance Risk", emoji: "⚖️" },
 ];
 
-export default function DashboardPage({ currentUser, onLogout, setPage }: DashboardPageProps) {
+// For now, free users can't generate decks. This would check subscription tier.
+const isPaidUser = (_role: string) => false;
+
+export default function DashboardPage({ currentUser, onLogout, setPage, onGenerateDeck }: DashboardPageProps) {
   const { runs, loading, deleteRun } = useSavedRuns();
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [brandingRun, setBrandingRun] = useState<SavedRun | null>(null);
+
+  const paid = isPaidUser(currentUser.role);
 
   const goToGallery = () => {
     setPage("home");
     setTimeout(() => document.getElementById("agent-gallery")?.scrollIntoView({ behavior: "smooth" }), 200);
+  };
+
+  const handleDeckClick = (run: SavedRun) => {
+    if (!paid) return;
+    setBrandingRun(run);
+  };
+
+  const handleBrandingGenerate = (branding: { logoUrl: string | null; primaryColor: string; accentColor: string }) => {
+    if (brandingRun && onGenerateDeck) {
+      onGenerateDeck(brandingRun, branding);
+    }
+    setBrandingRun(null);
   };
 
   return (
@@ -175,6 +200,31 @@ export default function DashboardPage({ currentUser, onLogout, setPage }: Dashbo
                           >
                             <Download className="w-3 h-3" /> PDF
                           </button>
+
+                          {/* Executive Deck button */}
+                          {paid ? (
+                            <button
+                              onClick={() => handleDeckClick(run)}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-colors cursor-pointer"
+                            >
+                              <Presentation className="w-3 h-3" /> Generate Executive Deck
+                            </button>
+                          ) : (
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <button
+                                  disabled
+                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-muted text-muted-foreground text-xs font-medium cursor-not-allowed opacity-60"
+                                >
+                                  <Presentation className="w-3 h-3" /> Executive Deck
+                                </button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Upgrade to Growth or above to unlock Executive Decks</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          )}
+
                           <button
                             onClick={() => deleteRun(run.id)}
                             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-destructive/30 bg-background text-xs font-medium text-destructive hover:bg-destructive/10 transition-colors cursor-pointer ml-auto"
@@ -191,6 +241,12 @@ export default function DashboardPage({ currentUser, onLogout, setPage }: Dashbo
           )}
         </div>
       </div>
+
+      <BrandingModal
+        open={!!brandingRun}
+        onClose={() => setBrandingRun(null)}
+        onGenerate={handleBrandingGenerate}
+      />
     </div>
   );
 }
