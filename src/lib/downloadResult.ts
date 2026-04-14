@@ -94,7 +94,7 @@ function sectionHeading(doc: jsPDF, text: string, y: number): number {
   return y + 8;
 }
 
-function riskColor(tag: string): readonly [number, number, number] {
+function riskColor(tag: string): RGB {
   const t = (tag || "").toLowerCase();
   if (t.includes("high") || t.includes("critical")) return RISK_HIGH;
   if (t.includes("medium") || t.includes("moderate")) return RISK_MEDIUM;
