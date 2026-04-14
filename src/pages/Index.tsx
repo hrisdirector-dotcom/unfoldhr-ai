@@ -13,7 +13,9 @@ import TryListeningAgentPage from "@/pages/TryListeningAgentPage";
 import TryPerformanceAgentPage from "@/pages/TryPerformanceAgentPage";
 import PricingPage from "@/pages/PricingPage";
 import WorkforcePlanningAgent from "@/pages/WorkforcePlanningAgent";
+import ExecutiveDeckPage from "@/pages/ExecutiveDeckPage";
 import OnboardingWalkthrough from "@/components/OnboardingWalkthrough";
+import type { SavedRun } from "@/hooks/useSavedRuns";
 
 const Index = () => {
   const [page, setPage] = useState(() => {
@@ -25,6 +27,7 @@ const Index = () => {
     return state?.agentId;
   });
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [deckState, setDeckState] = useState<{ run: SavedRun; branding: { logoUrl: string | null; primaryColor: string; accentColor: string } } | null>(null);
   const { user, isAdmin, loading, signOut } = useAuth();
 
   const currentUser = user ? { email: user.email || "", role: isAdmin ? "admin" : "user" } : null;
