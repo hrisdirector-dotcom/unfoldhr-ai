@@ -13,7 +13,9 @@ import TryListeningAgentPage from "@/pages/TryListeningAgentPage";
 import TryPerformanceAgentPage from "@/pages/TryPerformanceAgentPage";
 import PricingPage from "@/pages/PricingPage";
 import WorkforcePlanningAgent from "@/pages/WorkforcePlanningAgent";
+import ExecutiveDeckPage from "@/pages/ExecutiveDeckPage";
 import OnboardingWalkthrough from "@/components/OnboardingWalkthrough";
+import type { SavedRun } from "@/hooks/useSavedRuns";
 
 const Index = () => {
   const [page, setPage] = useState(() => {
@@ -25,6 +27,7 @@ const Index = () => {
     return state?.agentId;
   });
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [deckState, setDeckState] = useState<{ run: SavedRun; branding: { logoUrl: string | null; primaryColor: string; accentColor: string } } | null>(null);
   const { user, isAdmin, loading, signOut } = useAuth();
 
   const currentUser = user ? { email: user.email || "", role: isAdmin ? "admin" : "user" } : null;
@@ -138,7 +141,18 @@ const Index = () => {
       {page === "contact" && <ContactPage />}
       {page === "login" && <AuthPage onLogin={handleLogin} setPage={navigateTo} />}
       {page === "dashboard" && currentUser && (
-        <DashboardPage currentUser={currentUser} onLogout={handleLogout} setPage={navigateTo} />
+        <DashboardPage
+          currentUser={currentUser}
+          onLogout={handleLogout}
+          setPage={navigateTo}
+          onGenerateDeck={(run, branding) => {
+            setDeckState({ run, branding });
+            navigateTo("executive-deck");
+          }}
+        />
+      )}
+      {page === "executive-deck" && deckState && (
+        <ExecutiveDeckPage run={deckState.run} branding={deckState.branding} onBack={() => navigateTo("dashboard")} />
       )}
       {page === "admin" && isAdmin && <AdminDashboard onBack={() => navigateTo("dashboard")} onLogout={handleLogout} />}
 
