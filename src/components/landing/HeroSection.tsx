@@ -70,15 +70,8 @@ export default function HeroSection({ setPage }: HeroSectionProps) {
           <RevealDiv delay={0.3}>
             <div className="flex flex-wrap gap-3">
               <button
-                data-tour="try-agent"
-                onClick={() => setPage("try-picker")}
-                className="px-7 py-3.5 rounded-xl bg-foreground text-background font-semibold text-sm border-none cursor-pointer hover:bg-primary transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
-              >
-                Try an Agent — Free
-              </button>
-              <button
                 onClick={() => document.getElementById("agent-gallery")?.scrollIntoView({ behavior: "smooth" })}
-                className="px-7 py-3.5 rounded-xl bg-card text-foreground font-semibold text-sm border border-border cursor-pointer hover:border-primary hover:text-primary transition-all duration-200"
+                className="px-7 py-3.5 rounded-xl bg-foreground text-background font-semibold text-sm border-none cursor-pointer hover:bg-foreground/90 transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
               >
                 Explore Agents
               </button>
