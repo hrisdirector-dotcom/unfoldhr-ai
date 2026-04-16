@@ -10,7 +10,7 @@ const SIZES = ["Under 50", "50–200", "200–500", "500+"];
 const TRENDS = ["Improving", "Flat", "Declining"];
 const CONCERNS = ["Attrition", "Manager effectiveness", "Culture"];
 const SOURCES = ["Engagement survey", "Pulse survey", "Exit interviews", "Manager feedback"];
-const GROUPS = ["Managers", "High performers", "New hires", "Frontline teams", "Broadly distributed"];
+const GROUPS = ["Managers", "High performers", "New hires", "Frontline teams", "Broadly distributed", "Other"];
 
 interface OptionGroupProps {
   label: string;
@@ -53,6 +53,8 @@ export default function TryListeningAgentPage({ setPage }: TryListeningAgentPage
   const [concern, setConcern] = useState(CONCERNS[0]);
   const [source, setSource] = useState(SOURCES[0]);
   const [group, setGroup] = useState(GROUPS[4]);
+  const [customGroup, setCustomGroup] = useState("");
+  const [participation, setParticipation] = useState("");
   const [context, setContext] = useState("");
   const [brief, setBrief] = useState<DecisionBriefProps | null>(null);
   const [loading, setLoading] = useState(false);
@@ -64,6 +66,7 @@ export default function TryListeningAgentPage({ setPage }: TryListeningAgentPage
     setStep("result");
 
     try {
+      const resolvedGroup = group === "Other" ? (customGroup.trim() || "Other") : group;
       const { data, error: fnError } = await supabase.functions.invoke("run-agent", {
         body: {
           agentType: "listening",
@@ -72,7 +75,8 @@ export default function TryListeningAgentPage({ setPage }: TryListeningAgentPage
             engagementTrend: trend,
             primaryConcern: concern,
             feedbackSource: source,
-            mostAffectedGroup: group,
+            mostAffectedGroup: resolvedGroup,
+            surveyParticipationRate: participation ? `${participation}%` : "Not provided",
             additionalContext: context || "No additional context provided",
           },
         },

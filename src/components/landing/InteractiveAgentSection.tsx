@@ -566,16 +566,28 @@ function ResultCard({ result, agentName, agentId, inputs, onTryAnother, onScroll
 
 function ListeningForm({ onRun, loading }: { onRun: (f: Record<string, any>) => void; loading: boolean }) {
   const [department, setDepartment] = useState("Engineering");
+  const [customDepartment, setCustomDepartment] = useState("");
   const [timePeriod, setTimePeriod] = useState("Last quarter");
+  const [participation, setParticipation] = useState("");
   const [topics, setTopics] = useState("");
   const [notes, setNotes] = useState("");
+  const resolvedDepartment = department === "Other" ? (customDepartment.trim() || "Other") : department;
   return (
     <div className="space-y-5">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <div><label className={labelCls}>Department or Team</label>
           <select value={department} onChange={e => setDepartment(e.target.value)} className={`${inputCls} appearance-none cursor-pointer`}>
-            {["Engineering", "Sales", "Marketing", "Operations", "HR", "Customer Support", "Company-wide"].map(d => <option key={d}>{d}</option>)}
+            {["Engineering", "Sales", "Marketing", "Operations", "HR", "Customer Support", "Company-wide", "Other"].map(d => <option key={d}>{d}</option>)}
           </select>
+          {department === "Other" && (
+            <input
+              type="text"
+              value={customDepartment}
+              onChange={e => setCustomDepartment(e.target.value)}
+              placeholder="Specify department or team name"
+              className={`${inputCls} mt-2`}
+            />
+          )}
         </div>
         <div><label className={labelCls}>Time Period</label>
           <select value={timePeriod} onChange={e => setTimePeriod(e.target.value)} className={`${inputCls} appearance-none cursor-pointer`}>
@@ -583,9 +595,26 @@ function ListeningForm({ onRun, loading }: { onRun: (f: Record<string, any>) => 
           </select>
         </div>
       </div>
+      <div>
+        <label className={labelCls}>Survey Participation Rate (%)</label>
+        <input
+          type="number"
+          min={0}
+          max={100}
+          value={participation}
+          onChange={e => {
+            const v = e.target.value;
+            if (v === "") return setParticipation("");
+            const n = Math.max(0, Math.min(100, Number(v)));
+            setParticipation(String(n));
+          }}
+          placeholder="e.g., 72"
+          className={inputCls}
+        />
+      </div>
       <div><label className={labelCls}>Key Topics to Analyze</label><textarea value={topics} onChange={e => setTopics(e.target.value)} placeholder="e.g., Burnout, manager effectiveness, career growth, remote work satisfaction..." rows={2} className={textareaCls} /></div>
       <div><label className={labelCls}>Additional Notes</label><textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="e.g., Recent layoffs, new leadership, post-merger..." rows={2} className={textareaCls} /></div>
-      <RunButton loading={loading} onClick={() => onRun({ department, timePeriod, topics, notes })} label="Run Listening Agent" />
+      <RunButton loading={loading} onClick={() => onRun({ department: resolvedDepartment, timePeriod, participationRate: participation ? `${participation}%` : "Not provided", topics, notes })} label="Run Listening Agent" />
     </div>
   );
 }

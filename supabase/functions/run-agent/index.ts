@@ -88,7 +88,7 @@ Return ONLY valid JSON matching this schema:
 
 Include sections for: Identified Compliance Gaps, Recommended Corrective Actions, and Compliance Monitoring Plan. Be specific about regulations and potential penalties.`,
 
-  listening: `You are an expert employee engagement analyst. Given a department, time period, and topics to analyze, produce a structured sentiment analysis and action plan.
+  listening: `You are an expert employee engagement analyst. Given a department or team (which may be a custom user-provided name), time period, survey participation rate, and topics to analyze, produce a structured sentiment analysis and action plan. Consider the survey participation rate when assessing data reliability and confidence — lower participation should reduce confidence and be noted as a risk. Reference the specific department/team name (including custom names) throughout the analysis.
 
 Return ONLY valid JSON matching this schema:
 {
