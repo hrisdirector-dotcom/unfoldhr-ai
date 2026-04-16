@@ -10,7 +10,7 @@ const SIZES = ["Under 50", "50–200", "200–500", "500+"];
 const TRENDS = ["Improving", "Flat", "Declining"];
 const CONCERNS = ["Attrition", "Manager effectiveness", "Culture"];
 const SOURCES = ["Engagement survey", "Pulse survey", "Exit interviews", "Manager feedback"];
-const GROUPS = ["Managers", "High performers", "New hires", "Frontline teams", "Broadly distributed"];
+const GROUPS = ["Managers", "High performers", "New hires", "Frontline teams", "Broadly distributed", "Other"];
 
 interface OptionGroupProps {
   label: string;
@@ -53,6 +53,8 @@ export default function TryListeningAgentPage({ setPage }: TryListeningAgentPage
   const [concern, setConcern] = useState(CONCERNS[0]);
   const [source, setSource] = useState(SOURCES[0]);
   const [group, setGroup] = useState(GROUPS[4]);
+  const [customGroup, setCustomGroup] = useState("");
+  const [participation, setParticipation] = useState("");
   const [context, setContext] = useState("");
   const [brief, setBrief] = useState<DecisionBriefProps | null>(null);
   const [loading, setLoading] = useState(false);
@@ -64,6 +66,7 @@ export default function TryListeningAgentPage({ setPage }: TryListeningAgentPage
     setStep("result");
 
     try {
+      const resolvedGroup = group === "Other" ? (customGroup.trim() || "Other") : group;
       const { data, error: fnError } = await supabase.functions.invoke("run-agent", {
         body: {
           agentType: "listening",
@@ -72,7 +75,8 @@ export default function TryListeningAgentPage({ setPage }: TryListeningAgentPage
             engagementTrend: trend,
             primaryConcern: concern,
             feedbackSource: source,
-            mostAffectedGroup: group,
+            mostAffectedGroup: resolvedGroup,
+            surveyParticipationRate: participation ? `${participation}%` : "Not provided",
             additionalContext: context || "No additional context provided",
           },
         },
@@ -149,6 +153,42 @@ export default function TryListeningAgentPage({ setPage }: TryListeningAgentPage
               <OptionGroup label="Primary Concern" options={CONCERNS} selected={concern} onSelect={setConcern} />
               <OptionGroup label="Feedback Source" options={SOURCES} selected={source} onSelect={setSource} />
               <OptionGroup label="Most Affected Group" options={GROUPS} selected={group} onSelect={setGroup} />
+
+              {group === "Other" && (
+                <div>
+                  <p className="text-xs font-medium uppercase tracking-[1.5px] text-muted-foreground mb-3">
+                    Specify Department or Team
+                  </p>
+                  <input
+                    type="text"
+                    value={customGroup}
+                    onChange={(e) => setCustomGroup(e.target.value)}
+                    placeholder="e.g., Field Operations, EMEA Sales"
+                    className="w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-foreground transition-colors"
+                  />
+                </div>
+              )}
+
+              <div>
+                <p className="text-xs font-medium uppercase tracking-[1.5px] text-muted-foreground mb-3">
+                  Survey Participation Rate (%)
+                  <span className="normal-case tracking-normal font-normal ml-1 opacity-70">(optional)</span>
+                </p>
+                <input
+                  type="number"
+                  min={0}
+                  max={100}
+                  value={participation}
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    if (v === "") return setParticipation("");
+                    const n = Math.max(0, Math.min(100, Number(v)));
+                    setParticipation(String(n));
+                  }}
+                  placeholder="e.g., 72"
+                  className="w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-foreground transition-colors"
+                />
+              </div>
 
               <div>
                 <p className="text-xs font-medium uppercase tracking-[1.5px] text-muted-foreground mb-3">
