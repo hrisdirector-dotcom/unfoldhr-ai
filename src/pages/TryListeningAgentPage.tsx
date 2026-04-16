@@ -154,6 +154,42 @@ export default function TryListeningAgentPage({ setPage }: TryListeningAgentPage
               <OptionGroup label="Feedback Source" options={SOURCES} selected={source} onSelect={setSource} />
               <OptionGroup label="Most Affected Group" options={GROUPS} selected={group} onSelect={setGroup} />
 
+              {group === "Other" && (
+                <div>
+                  <p className="text-xs font-medium uppercase tracking-[1.5px] text-muted-foreground mb-3">
+                    Specify Department or Team
+                  </p>
+                  <input
+                    type="text"
+                    value={customGroup}
+                    onChange={(e) => setCustomGroup(e.target.value)}
+                    placeholder="e.g., Field Operations, EMEA Sales"
+                    className="w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-foreground transition-colors"
+                  />
+                </div>
+              )}
+
+              <div>
+                <p className="text-xs font-medium uppercase tracking-[1.5px] text-muted-foreground mb-3">
+                  Survey Participation Rate (%)
+                  <span className="normal-case tracking-normal font-normal ml-1 opacity-70">(optional)</span>
+                </p>
+                <input
+                  type="number"
+                  min={0}
+                  max={100}
+                  value={participation}
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    if (v === "") return setParticipation("");
+                    const n = Math.max(0, Math.min(100, Number(v)));
+                    setParticipation(String(n));
+                  }}
+                  placeholder="e.g., 72"
+                  className="w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-foreground transition-colors"
+                />
+              </div>
+
               <div>
                 <p className="text-xs font-medium uppercase tracking-[1.5px] text-muted-foreground mb-3">
                   What are you seeing in your organization right now?
