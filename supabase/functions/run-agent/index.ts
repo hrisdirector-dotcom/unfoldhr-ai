@@ -6,6 +6,36 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+/* ─────────────────────────────────────────────────────────────────────
+ * NON-FABRICATION RULE — appended to every agent prompt.
+ * Mirrors the client-side sanitizer in src/lib/sanitizeAgentOutput.ts.
+ * ───────────────────────────────────────────────────────────────────── */
+const NON_FABRICATION_RULE = `
+
+CRITICAL OUTPUT INTEGRITY RULES — APPLY TO EVERY FIELD YOU PRODUCE:
+
+1. NEVER invent specific numbers. Only use exact figures the user typed in the inputs above. This includes:
+   - percentages (e.g. "25%", "+8 points")
+   - employee / hire / position counts (e.g. "8 hires", "+3 engineers")
+   - currency amounts (e.g. "$680K", "$1.2M")
+   - durations or date ranges (e.g. "30-45 days", "Q1", "Week 1-2")
+   - benchmark deltas, ratios, multipliers (e.g. "8/10", "2.5x", "industry benchmark: 85%")
+   - ROI / savings figures
+2. Replace every quantitative claim that is NOT directly supplied by the user with qualitative executive language. Use phrases like:
+   "elevated share", "early-phase focus", "mid-cycle window", "leadership-level gap", "above-target pressure",
+   "limited pipeline", "stronger demand in revenue-generating roles", "targeted hiring focus",
+   "within a meaningful budget envelope", "directional improvement".
+3. For phasing in 'timeline', use qualitative phase labels: "Early phase", "Mid phase", "Final phase"
+   (or "Early window" / "Mid window" / "Final window"). Set 'pct' as an EQUAL share across phases
+   (e.g. for 3 phases use 33 / 34 / 33). Do NOT vary 'pct' to imply quantitative weight.
+4. For 'confidence', return only a qualitative 'level' of "High", "Medium", or "Low" plus a short qualitative 'reason'.
+   You may include 'score' but it must mirror the level (High≈80, Medium≈70, Low≈55) — UIs will not display the score.
+5. Do NOT include disclaimers about missing data ("insufficient data", "no data provided",
+   "based on modeled patterns", "cannot determine exact values"). Produce a confident qualitative brief.
+6. Keep every section executive-ready and structured. Allowed sections include: Summary, Recommendation,
+   Risks, Observations, Next Actions, Hiring Focus, Workflow Priorities, Key Themes.
+`.trim();
+
 const SYSTEM_PROMPTS: Record<string, string> = {
   workforce: `You are an expert HR workforce planning consultant. Given organizational context (employee count, growth targets, budget type, timeframe), produce a structured hiring recommendation.
 
@@ -16,93 +46,226 @@ Return ONLY valid JSON matching this schema:
   "sections": [
     {
       "title": "section name",
-      "items": [{ "label": "item name", "detail": "description", "tag": "Critical|High|Medium|Standard" }]
+      "items": [{ "label": "item name", "detail": "qualitative description", "tag": "Critical|High|Medium|Standard" }]
     }
   ],
-  "timeline": [{ "phase": "phase name", "pct": 0-100, "focus": "what to focus on" }],
-  "risks": ["risk statement 1", "risk statement 2", ...],
-  "confidence": { "level": "High|Medium|Low", "score": 50-95, "reason": "why this confidence level" }
+  "timeline": [{ "phase": "Early phase|Mid phase|Final phase", "pct": 33, "focus": "qualitative focus area" }],
+  "risks": ["qualitative risk statement 1", ...],
+  "confidence": { "level": "High|Medium|Low", "score": 70, "reason": "qualitative reasoning" }
 }
 
-Include sections for: Recommended Hiring by Department (5-6 departments with hire counts), Hiring Timeline (3-4 phases), and Budget Allocation. Include 3-5 risks. Be specific with numbers based on the inputs. Make recommendations practical and actionable.`,
+Include sections for: Recommended Hiring Focus by Department (departments ordered by priority — NO hire counts unless the user gave them), Hiring Phases, and Budget Allocation Focus. Include 3-5 risks. Keep every recommendation qualitative and outcome-led.`,
 
   recruiting: `You are an expert recruiting strategist. Given a role, number of positions, required skills, and budget, produce a structured recruiting plan.
 
 Return ONLY valid JSON matching this schema:
 {
   "contextLine": "brief summary of inputs",
-  "summary": "2-3 sentence executive summary",
+  "summary": "2-3 sentence qualitative executive summary",
   "sections": [
-    { "title": "section name", "items": [{ "label": "item name", "detail": "description", "tag": "Critical|High|Medium|Standard|Primary|Optional" }] }
+    { "title": "section name", "items": [{ "label": "item name", "detail": "qualitative description", "tag": "Critical|High|Medium|Standard|Primary|Optional" }] }
   ],
-  "timeline": [{ "phase": "phase name", "pct": 0-100, "focus": "focus area" }],
-  "risks": ["risk 1", "risk 2", ...],
-  "confidence": { "level": "High|Medium|Low", "score": 50-95, "reason": "reasoning" }
+  "timeline": [{ "phase": "Early phase|Mid phase|Final phase", "pct": 33, "focus": "focus area" }],
+  "risks": ["risk 1", ...],
+  "confidence": { "level": "High|Medium|Low", "score": 70, "reason": "qualitative reasoning" }
 }
 
-Include sections for: Candidate Sourcing Strategy, Screening Framework, and Suggested Interview Questions. Be specific to the role and skills provided.`,
+Include sections for: Candidate Sourcing Strategy, Screening Framework, and Suggested Interview Questions. Be specific qualitatively to the role and skills provided.`,
 
-  onboarding: `You are an expert onboarding specialist. Given a new hire role, department, start date, and priorities, produce a structured 90-day onboarding plan.
+  onboarding: `You are an expert onboarding specialist. Given a new hire role, department, start date, and priorities, produce a structured onboarding plan.
 
 Return ONLY valid JSON matching this schema:
 {
   "contextLine": "brief summary of inputs",
-  "summary": "2-3 sentence executive summary",
+  "summary": "2-3 sentence qualitative executive summary",
   "sections": [
-    { "title": "section name", "items": [{ "label": "item name", "detail": "description", "tag": "Foundation|Immersion|Contribution|Acceleration|Independence|Priority|Recommended" }] }
+    { "title": "section name", "items": [{ "label": "milestone phase", "detail": "qualitative description", "tag": "Foundation|Immersion|Contribution|Acceleration|Independence|Priority|Recommended" }] }
   ],
-  "risks": ["risk 1", "risk 2", ...],
-  "confidence": { "level": "High|Medium|Low", "score": 50-95, "reason": "reasoning" }
+  "risks": ["risk 1", ...],
+  "confidence": { "level": "High|Medium|Low", "score": 70, "reason": "qualitative reasoning" }
 }
 
-Include sections for: Onboarding Milestones (Day 1-5, Day 6-14, Day 15-30, Day 31-60, Day 61-90) and Success Metrics. Tailor to the specific department and role.`,
+Include sections for: Onboarding Milestones (use qualitative phase labels — "Initial days", "Early period", "Mid period", "Final period", "Full ownership") and Success Signals (qualitative — no benchmark percentages or rating scales).`,
 
   performance: `You are an expert performance management consultant. Given an employee role, review period, achievements, and concerns, produce a structured performance assessment.
 
 Return ONLY valid JSON matching this schema:
 {
   "contextLine": "brief summary of inputs",
-  "summary": "2-3 sentence executive summary with overall rating",
+  "summary": "2-3 sentence qualitative executive summary including an overall qualitative rating",
   "sections": [
-    { "title": "section name", "items": [{ "label": "item name", "detail": "description", "tag": "Critical|High|Standard|Priority|Recommended|Watch" }] }
+    { "title": "section name", "items": [{ "label": "item name", "detail": "qualitative description", "tag": "Critical|High|Standard|Priority|Recommended|Watch" }] }
   ],
-  "risks": ["risk 1", "risk 2", ...],
-  "confidence": { "level": "High|Medium|Low", "score": 50-95, "reason": "reasoning" }
+  "risks": ["risk 1", ...],
+  "confidence": { "level": "High|Medium|Low", "score": 70, "reason": "qualitative reasoning" }
 }
 
-Include sections for: Performance Assessment, Development Plan, and Compensation & Retention Signals. Be balanced and constructive.`,
+Include sections for: Performance Assessment, Development Plan, and Compensation & Retention Signals. Be balanced and constructive. Avoid invented metrics.`,
 
   compliance: `You are an expert HR compliance analyst. Given a compliance area, number of employees affected, and specific regulations, produce a structured compliance risk assessment.
 
 Return ONLY valid JSON matching this schema:
 {
   "contextLine": "brief summary of inputs",
-  "summary": "2-3 sentence executive summary with urgency level",
+  "summary": "2-3 sentence qualitative executive summary with urgency level",
   "sections": [
-    { "title": "section name", "items": [{ "label": "item name", "detail": "description", "tag": "Critical|High|Medium|Immediate|30 days" }] }
+    { "title": "section name", "items": [{ "label": "item name", "detail": "qualitative description", "tag": "Critical|High|Medium|Immediate|Near-term" }] }
   ],
-  "timeline": [{ "phase": "phase name", "pct": 0-100, "focus": "focus area" }],
-  "risks": ["risk 1", "risk 2", ...],
-  "confidence": { "level": "High|Medium|Low", "score": 50-95, "reason": "reasoning" }
+  "timeline": [{ "phase": "Early phase|Mid phase|Final phase", "pct": 33, "focus": "focus area" }],
+  "risks": ["risk 1", ...],
+  "confidence": { "level": "High|Medium|Low", "score": 70, "reason": "qualitative reasoning" }
 }
 
-Include sections for: Identified Compliance Gaps, Recommended Corrective Actions, and Compliance Monitoring Plan. Be specific about regulations and potential penalties.`,
+Include sections for: Identified Compliance Gaps, Recommended Corrective Actions, and Compliance Monitoring Plan. Reference specific regulations qualitatively. Avoid invented penalty amounts.`,
 
   listening: `You are an expert employee engagement analyst. Given a department or team (which may be a custom user-provided name), time period, survey participation rate, and topics to analyze, produce a structured sentiment analysis and action plan. Consider the survey participation rate when assessing data reliability and confidence — lower participation should reduce confidence and be noted as a risk. Reference the specific department/team name (including custom names) throughout the analysis.
 
 Return ONLY valid JSON matching this schema:
 {
   "contextLine": "brief summary of inputs",
-  "summary": "2-3 sentence executive summary with engagement score",
+  "summary": "2-3 sentence qualitative executive summary including overall engagement direction",
   "sections": [
-    { "title": "section name", "items": [{ "label": "item name", "detail": "description", "tag": "Critical|High|Medium|Standard|Immediate|30 days" }] }
+    { "title": "section name", "items": [{ "label": "item name", "detail": "qualitative description", "tag": "Critical|High|Medium|Standard|Immediate|Near-term" }] }
   ],
-  "risks": ["risk 1", "risk 2", ...],
-  "confidence": { "level": "High|Medium|Low", "score": 50-95, "reason": "reasoning" }
+  "risks": ["risk 1", ...],
+  "confidence": { "level": "High|Medium|Low", "score": 70, "reason": "qualitative reasoning" }
 }
 
-Include sections for: Sentiment Overview, Topic Analysis, and Recommended Actions. Be specific about engagement metrics and interventions.`,
+Include sections for: Sentiment Overview, Topic Analysis, and Recommended Actions. Use qualitative engagement direction (e.g. "above expectation", "trending lower") rather than invented scores. The only number you may include is the user-provided survey participation rate.`,
 };
+
+/* ─────────────────────────────────────────────────────────────────────
+ * Server-side sanitizer (defense-in-depth).
+ * Mirrors src/lib/sanitizeAgentOutput.ts so a misbehaving model can't
+ * leak fabricated numbers even if the prompt rule is ignored.
+ * ───────────────────────────────────────────────────────────────────── */
+
+function extractUserNumbers(inputs: unknown): Set<string> {
+  const allowed = new Set<string>();
+  const visit = (val: unknown) => {
+    if (val == null) return;
+    if (typeof val === "number" && Number.isFinite(val)) return allowed.add(String(val));
+    if (typeof val === "string") {
+      const m = val.match(/\d+(?:\.\d+)?/g);
+      if (m) m.forEach((x) => allowed.add(x));
+      return;
+    }
+    if (Array.isArray(val)) return val.forEach(visit);
+    if (typeof val === "object") return Object.values(val as Record<string, unknown>).forEach(visit);
+  };
+  visit(inputs);
+  return allowed;
+}
+
+const PCT = ["an elevated share", "a meaningful share", "a notable share"];
+const COUNT = ["targeted hiring focus", "a focused set of roles", "a meaningful concentration"];
+const MONEY = ["within a meaningful budget envelope", "with material budget allocation"];
+const DURATION = ["an early phase", "a mid-cycle window", "an extended phase"];
+const BENCH = ["directional improvement", "a positive shift", "a notable lift"];
+const RATIO = ["a strong rating", "a meaningful score"];
+const MULT = ["a notable multiplier effect", "an outsized impact"];
+
+let seed = 0;
+const pick = (a: string[]) => a[(seed++) % a.length];
+
+const FAB_SENTENCE: RegExp[] = [
+  /\bindustry benchmark[^.]*\d[^.]*\./gi,
+  /\baverages?\s+\d+[-–]?\d*\s+(?:days?|weeks?|months?)[^.]*\./gi,
+  /\b\d+(?:\.\d+)?\s*[xX×]\s+(?:flight|attrition|retention|turnover)[^.]*\./gi,
+];
+const DISCLAIMERS: RegExp[] = [
+  /\bbased on modeled (?:patterns|workforce planning patterns)[^.]*\./gi,
+  /\b(?:not actual|no actual) (?:organizational )?data[^.]*\./gi,
+  /\binsufficient data[^.]*\./gi,
+  /\bno data provided[^.]*\./gi,
+  /\bcannot determine exact values?[^.]*\./gi,
+  /\blimited data[^.]*\./gi,
+];
+
+function sanitizeStr(s: string, allowed: Set<string>): string {
+  if (!s) return s;
+  let o = s;
+  for (const p of FAB_SENTENCE) o = o.replace(p, "");
+  for (const p of DISCLAIMERS) o = o.replace(p, "");
+  const ok = (n: string) => allowed.has(n) || allowed.has(n.replace(/^0+/, "") || "0");
+
+  o = o.replace(/\$\s*\d[\d,]*(?:\.\d+)?\s*[KMmk]?(?:\s*[-–]\s*\d[\d,]*(?:\.\d+)?\s*[KMmk]?)?/g, (m) => {
+    const ns = m.match(/\d+(?:\.\d+)?/g) || [];
+    return ns.every(ok) ? m : pick(MONEY);
+  });
+  o = o.replace(/\b\d+(?:\.\d+)?(?:\s*[-–]\s*\d+(?:\.\d+)?)?\s*%/g, (m) => {
+    const ns = m.match(/\d+(?:\.\d+)?/g) || [];
+    return ns.every(ok) ? m : pick(PCT);
+  });
+  o = o.replace(/\b\d+(?:\.\d+)?\s*[xX×]\b/g, (m) => {
+    const ns = m.match(/\d+(?:\.\d+)?/g) || [];
+    return ns.every(ok) ? m : pick(MULT);
+  });
+  o = o.replace(/\b(?:Q|Quarter\s+|Week\s+|Day\s+|Month\s+|Year\s+)\d+(?:\s*[-–]\s*\d+)?\b/gi, (m) => {
+    const ns = m.match(/\d+/g) || [];
+    if (ns.every(ok)) return m;
+    const l = m.toLowerCase();
+    if (l.startsWith("q") || l.startsWith("quarter")) return pick(["Early phase", "Mid phase", "Final phase"]);
+    if (l.startsWith("week")) return pick(["Early window", "Mid window", "Final window"]);
+    if (l.startsWith("day")) return pick(["Initial days", "Early period", "Mid period", "Final period"]);
+    if (l.startsWith("month")) return pick(["Early month", "Mid month", "Final month"]);
+    return pick(DURATION);
+  });
+  o = o.replace(/\b\d+(?:\s*[-–]\s*\d+)?\s+(days?|weeks?|months?|years?)\b/gi, (m) => {
+    const ns = m.match(/\d+/g) || [];
+    return ns.every(ok) ? m : pick(DURATION);
+  });
+  o = o.replace(/\b\d+\+?\s*\/\s*\d+\b/g, (m) => {
+    const ns = m.match(/\d+/g) || [];
+    return ns.every(ok) ? m : pick(RATIO);
+  });
+  o = o.replace(/[+\-]\s*\d+(?:\.\d+)?\s*(?:points?|pts?|bps)\b/gi, (m) => {
+    const ns = m.match(/\d+(?:\.\d+)?/g) || [];
+    return ns.every(ok) ? m : pick(BENCH);
+  });
+  o = o.replace(/[+\-]?\s*\d+\s+(hires?|engineers?|reps?|managers?|candidates?|positions?|roles?|employees?|people|new hires?|leaders?|partners?)\b/gi, (m) => {
+    const ns = m.match(/\d+/g) || [];
+    return ns.every(ok) ? m : pick(COUNT);
+  });
+  o = o.replace(/\s+[—–-]\s*$/g, "").replace(/\(\s*\)/g, "").replace(/\s{2,}/g, " ").trim();
+  return o;
+}
+
+function sanitizeResult(result: any, inputs: unknown): any {
+  if (!result || typeof result !== "object") return result;
+  const allowed = extractUserNumbers(inputs);
+  seed = 0;
+  const c = (v: unknown) => (typeof v === "string" ? sanitizeStr(v, allowed) : v);
+  const out: any = { ...result };
+  if (typeof out.contextLine === "string") out.contextLine = c(out.contextLine);
+  if (typeof out.summary === "string") out.summary = c(out.summary);
+  if (Array.isArray(out.sections)) {
+    out.sections = out.sections.map((sec: any) => ({
+      ...sec,
+      items: Array.isArray(sec.items)
+        ? sec.items.map((it: any) => ({ ...it, label: c(it.label), detail: c(it.detail) }))
+        : sec.items,
+    }));
+  }
+  if (Array.isArray(out.timeline)) {
+    // Normalize pct to equal share so the bar isn't a quantitative claim
+    const n = out.timeline.length || 1;
+    const equal = Math.round(100 / n);
+    out.timeline = out.timeline.map((t: any) => ({
+      ...t,
+      phase: c(t.phase),
+      focus: c(t.focus),
+      pct: equal,
+    }));
+  }
+  if (Array.isArray(out.risks)) {
+    out.risks = out.risks.map((r: string) => c(r) as string).filter((r: string) => r && r.length > 0);
+  }
+  if (out.confidence) {
+    out.confidence = { ...out.confidence, reason: c(out.confidence.reason) };
+  }
+  return out;
+}
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -119,20 +282,21 @@ serve(async (req) => {
       });
     }
 
-    const systemPrompt = SYSTEM_PROMPTS[agentType];
-    if (!systemPrompt) {
+    const basePrompt = SYSTEM_PROMPTS[agentType];
+    if (!basePrompt) {
       return new Response(JSON.stringify({ error: `Unknown agent type: ${agentType}` }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+    const systemPrompt = `${basePrompt}\n${NON_FABRICATION_RULE}`;
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    const userMessage = `Here are the inputs for this ${agentType} analysis:\n\n${JSON.stringify(inputs, null, 2)}\n\nGenerate a detailed, specific recommendation based on these inputs. Use realistic numbers and specific actionable advice.`;
+    const userMessage = `Here are the inputs for this ${agentType} analysis:\n\n${JSON.stringify(inputs, null, 2)}\n\nGenerate a detailed qualitative recommendation. Only use numbers the user explicitly provided above; everything else must be qualitative.`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -177,7 +341,6 @@ serve(async (req) => {
       throw new Error("No content in AI response");
     }
 
-    // Parse JSON from the response (strip markdown code fences if present)
     let jsonStr = content.trim();
     if (jsonStr.startsWith("```")) {
       jsonStr = jsonStr.replace(/^```(?:json)?\s*\n?/, "").replace(/\n?```\s*$/, "");
@@ -185,7 +348,11 @@ serve(async (req) => {
 
     const result = JSON.parse(jsonStr);
 
-    return new Response(JSON.stringify(result), {
+    // Defense-in-depth: sanitize before returning so the client receives
+    // an already-clean payload regardless of model behavior.
+    const safe = sanitizeResult(result, inputs);
+
+    return new Response(JSON.stringify(safe), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
