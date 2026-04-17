@@ -158,20 +158,16 @@ function sanitizeString(input: string, allowed: Set<string>): string {
     }
   );
 
-  // Date ranges with units: "30-45 days", "Week 1-2", "Day 1-5", "Month 1", "Q1"
+  // Structural time references (Q1-Q4, Week/Day/Month/Year/Phase N, 30-60-90 plans)
+  // are ALLOWED per the controlled-numeric-reasoning policy and pass through unchanged.
   out = out.replace(
-    /\b(?:Q|Quarter\s+|Week\s+|Day\s+|Month\s+|Year\s+)\d+(?:\s*[-–]\s*\d+)?\b/gi,
-    (m) => {
-      const nums = m.match(/\d+/g) || [];
-      if (nums.every(isAllowed)) return m;
-      // Map to qualitative phase labels
-      const lower = m.toLowerCase();
-      if (lower.startsWith("q") || lower.startsWith("quarter")) return pick(["Early phase", "Mid phase", "Final phase"]);
-      if (lower.startsWith("week")) return pick(["Early window", "Mid window", "Final window"]);
-      if (lower.startsWith("day")) return pick(["Initial days", "Early period", "Mid period", "Final period"]);
-      if (lower.startsWith("month")) return pick(["Early month", "Mid month", "Final month"]);
-      return pick(DURATION_PHRASES);
-    }
+    /\b(?:Q|Quarter\s+|Week\s+|Day\s+|Month\s+|Year\s+|Phase\s+)\d+(?:\s*[-–]\s*\d+)?\b/gi,
+    (m) => m
+  );
+  // 30-60-90 day plans (and 60-90 / 30-60 variants) — structural shorthand allowed.
+  out = out.replace(
+    /\b(?:30[-–]60[-–]90|60[-–]90|30[-–]60)\s*(?:day|days)?\b/gi,
+    (m) => m
   );
 
   // Standalone duration phrases: "30-45 days", "60-90 days", "12 months"
