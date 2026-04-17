@@ -23,7 +23,7 @@ const RISKS = [
 
 export default function ExampleOutputSection() {
   return (
-    <section className="py-16 md:py-24 bg-background relative overflow-hidden">
+    <section id="sample-output" className="py-16 md:py-24 bg-background relative overflow-hidden">
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
         style={{ backgroundImage: "radial-gradient(circle at 1px 1px, hsl(var(--foreground)) 1px, transparent 0)", backgroundSize: "24px 24px" }}
       />
