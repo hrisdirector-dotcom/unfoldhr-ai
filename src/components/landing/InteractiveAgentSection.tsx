@@ -437,9 +437,10 @@ function ResultCard({ result, agentName, agentId, inputs, onTryAnother, onScroll
 
   const handleSave = async () => {
     if (!user) {
-      // Not signed in — scroll to engagement section (which has signup CTA)
-      const el = document.getElementById("engagement-models");
-      if (el) el.scrollIntoView({ behavior: "smooth" });
+      // Not signed in — route to the auth page so the user can sign up
+      window.history.pushState({ page: "login" }, "");
+      window.dispatchEvent(new PopStateEvent("popstate", { state: { page: "login" } }));
+      window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
     setSaving(true);
