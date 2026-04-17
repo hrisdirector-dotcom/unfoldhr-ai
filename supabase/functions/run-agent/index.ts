@@ -223,16 +223,11 @@ function sanitizeStr(s: string, allowed: Set<string>): string {
     const ns = m.match(/\d+(?:\.\d+)?/g) || [];
     return ns.every(ok) ? m : pick(MULT);
   });
-  o = o.replace(/\b(?:Q|Quarter\s+|Week\s+|Day\s+|Month\s+|Year\s+)\d+(?:\s*[-–]\s*\d+)?\b/gi, (m) => {
-    const ns = m.match(/\d+/g) || [];
-    if (ns.every(ok)) return m;
-    const l = m.toLowerCase();
-    if (l.startsWith("q") || l.startsWith("quarter")) return pick(["Early phase", "Mid phase", "Final phase"]);
-    if (l.startsWith("week")) return pick(["Early window", "Mid window", "Final window"]);
-    if (l.startsWith("day")) return pick(["Initial days", "Early period", "Mid period", "Final period"]);
-    if (l.startsWith("month")) return pick(["Early month", "Mid month", "Final month"]);
-    return pick(DURATION);
-  });
+  // Structural time references (Q1-Q4, Week/Day/Month/Year/Phase 1-12, 30/60/90-day plans)
+  // are ALLOWED per the controlled-numeric-reasoning policy and pass through unchanged.
+  o = o.replace(/\b(Q|Quarter\s+|Week\s+|Day\s+|Month\s+|Year\s+|Phase\s+)\d+(?:\s*[-–]\s*\d+)?\b/gi, (m) => m);
+  // 30-60-90 day plans / "Day 30" / "30 day plan" — structural shorthand allowed.
+  o = o.replace(/\b(?:30[-–]60[-–]90|60[-–]90|30[-–]60)\s*(?:day|days)?\b/gi, (m) => m);
   o = o.replace(/\b\d+(?:\s*[-–]\s*\d+)?\s+(days?|weeks?|months?|years?)\b/gi, (m) => {
     const ns = m.match(/\d+/g) || [];
     return ns.every(ok) ? m : pick(DURATION);
