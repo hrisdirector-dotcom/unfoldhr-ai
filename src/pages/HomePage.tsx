@@ -3,6 +3,7 @@ import { Toast } from "@/components/Toast";
 import HeroSection from "@/components/landing/HeroSection";
 import PatternBreak from "@/components/landing/PatternBreak";
 import WhereAIFitsSection from "@/components/landing/WhereAIFitsSection";
+import RealWorldDecisionsSection from "@/components/landing/RealWorldDecisionsSection";
 import ScenarioToDecisionSection from "@/components/landing/ScenarioToDecisionSection";
 import ExampleOutputSection from "@/components/landing/ExampleOutputSection";
 import TryItYourselfCTA from "@/components/landing/TryItYourselfCTA";
@@ -25,6 +26,7 @@ export default function HomePage({ setPage }: HomePageProps) {
       <HeroSection setPage={setPage} />
       <PatternBreak />
       <WhereAIFitsSection />
+      <RealWorldDecisionsSection />
       <ScenarioToDecisionSection />
       <ExampleOutputSection />
       <TryItYourselfCTA />
