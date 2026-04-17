@@ -52,37 +52,37 @@ export default function WorkforcePlanningAgent() {
         <RevealDiv>
           <AgentDemo
             situation={[
-              "Workforce of 120 employees",
-              "Planning for 30% growth next year",
-              "Operating within a $2.4M annual hiring budget",
+              "Mid-size workforce in growth mode",
+              "Planning for an ambitious growth target next year",
+              "Operating within a defined annual hiring budget",
             ]}
             question="How should we structure hiring to support growth while staying within budget and avoiding risk?"
             plan={
               <div className="space-y-6">
                 <div>
-                  <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">Headcount Plan</h4>
+                  <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">Hiring Focus</h4>
                   <div className="space-y-1.5 text-sm text-foreground">
-                    <p>Engineering — 14 hires</p>
-                    <p>Sales — 10 hires</p>
-                    <p>Marketing — 3 hires</p>
-                    <p>Product — 3 hires</p>
-                    <p>HR &amp; Support — 6 hires</p>
+                    <p>Engineering — phase in to prevent capacity bottlenecks</p>
+                    <p>Sales — front-load to support revenue expansion</p>
+                    <p>Marketing — add selectively to support growth narrative</p>
+                    <p>Product — scale alongside engineering</p>
+                    <p>HR &amp; Support — expand as workforce grows</p>
                   </div>
                 </div>
                 <div>
-                  <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">Hiring Timeline</h4>
+                  <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">Hiring Phases</h4>
                   <div className="space-y-1.5 text-sm text-foreground">
-                    <p>Q1 — 12 hires · $680K</p>
-                    <p>Q2 — 10 hires · $580K</p>
-                    <p>Q3 — 9 hires · $540K</p>
-                    <p>Q4 — 5 hires (buffer + backfills) · $600K</p>
+                    <p>Early phase — concentrate on revenue-generating roles</p>
+                    <p>Mid phase — expand technical and delivery capacity</p>
+                    <p>Later phase — add operational and support functions</p>
+                    <p>Ongoing — backfill and adjust based on attrition patterns</p>
                   </div>
                 </div>
                 <div>
                   <h4 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">Risks Identified</h4>
                   <div className="space-y-1.5 text-sm text-muted-foreground">
-                    <p>Engineering hiring in Q1 depends on updated job descriptions</p>
-                    <p>Q4 buffer may be insufficient if attrition exceeds 8%</p>
+                    <p>Engineering hiring depends on updated job descriptions and recruiter capacity</p>
+                    <p>Later-phase buffer may be insufficient if attrition runs above forecast</p>
                   </div>
                 </div>
               </div>

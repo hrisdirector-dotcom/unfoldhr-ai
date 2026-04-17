@@ -1,29 +1,32 @@
 import jsPDF from "jspdf";
+import { sanitizeResult, qualitativeConfidence } from "@/lib/sanitizeAgentOutput";
 
-/* ─── CSV Export (unchanged) ─── */
-export function downloadCSV(agentName: string, result: Record<string, any>) {
+/* ─── CSV Export ─── */
+export function downloadCSV(agentName: string, result: Record<string, any>, inputs: Record<string, any> = {}) {
+  const safe = sanitizeResult(result, inputs);
   const rows: string[][] = [["Section", "Label", "Detail", "Tag"]];
 
-  if (result.summary) {
-    rows.push(["Summary", result.summary, "", ""]);
+  if (safe.summary) {
+    rows.push(["Summary", safe.summary, "", ""]);
   }
 
-  (result.sections || []).forEach((sec: any) => {
+  (safe.sections || []).forEach((sec: any) => {
     (sec.items || []).forEach((item: any) => {
       rows.push([sec.title, item.label, item.detail, item.tag || ""]);
     });
   });
 
-  (result.timeline || []).forEach((t: any) => {
-    rows.push(["Timeline", t.phase, t.focus, `${t.pct}%`]);
+  (safe.timeline || []).forEach((t: any) => {
+    rows.push(["Timeline", t.phase, t.focus, ""]);
   });
 
-  (result.risks || []).forEach((r: string, i: number) => {
+  (safe.risks || []).forEach((r: string, i: number) => {
     rows.push(["Risks", `Risk ${i + 1}`, r, ""]);
   });
 
-  if (result.confidence) {
-    rows.push(["Confidence", result.confidence.level, result.confidence.reason, `${result.confidence.score}%`]);
+  if (safe.confidence) {
+    const q = qualitativeConfidence(safe.confidence.level, safe.confidence.score);
+    rows.push(["Confidence", q.level, safe.confidence.reason || "", ""]);
   }
 
   const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
@@ -63,11 +66,8 @@ function addFooter(doc: jsPDF, pageNum: number, totalPages: number) {
   doc.setFontSize(7.5);
   doc.setTextColor(...TEXT_SECONDARY);
   doc.setFont("helvetica", "normal");
-  // Left: branding
   doc.text(FOOTER_TEXT, M_LEFT, FOOTER_Y);
-  // Right: page number
   doc.text(`Page ${pageNum} of ${totalPages}`, PAGE_W - M_RIGHT, FOOTER_Y, { align: "right" });
-  // Top rule
   doc.setDrawColor(220, 220, 230);
   doc.setLineWidth(0.3);
   doc.line(M_LEFT, FOOTER_Y - 4, PAGE_W - M_RIGHT, FOOTER_Y - 4);
@@ -101,20 +101,17 @@ function riskColor(tag: string): RGB {
   return RISK_LOW;
 }
 
-export function downloadPDF(agentName: string, result: Record<string, any>) {
+export function downloadPDF(agentName: string, result: Record<string, any>, inputs: Record<string, any> = {}) {
+  const safe = sanitizeResult(result, inputs);
   const doc = new jsPDF({ unit: "mm", format: "a4" });
   const dateStr = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 
   // ─── PAGE 1: Cover ───
-  // Full navy background
   doc.setFillColor(...BRAND_NAVY);
   doc.rect(0, 0, PAGE_W, PAGE_H, "F");
-
-  // Accent stripe
   doc.setFillColor(...BRAND_BLUE);
   doc.rect(0, 0, 6, PAGE_H, "F");
 
-  // Title block
   doc.setFont("helvetica", "bold");
   doc.setFontSize(32);
   doc.setTextColor(...WHITE);
@@ -125,26 +122,22 @@ export function downloadPDF(agentName: string, result: Record<string, any>) {
     ty += 14;
   });
 
-  // Subtitle
   doc.setFont("helvetica", "normal");
   doc.setFontSize(14);
   doc.setTextColor(180, 190, 210);
   doc.text("Decision Intelligence Report", M_LEFT + 8, ty + 6);
 
-  // Date
   doc.setFontSize(11);
   doc.setTextColor(140, 150, 170);
   doc.text(dateStr, M_LEFT + 8, ty + 18);
 
-  // Context line
-  if (result.contextLine) {
+  if (safe.contextLine) {
     doc.setFontSize(10);
     doc.setTextColor(160, 170, 190);
-    const ctxLines = doc.splitTextToSize(result.contextLine, CONTENT_W - 20);
+    const ctxLines = doc.splitTextToSize(safe.contextLine, CONTENT_W - 20);
     doc.text(ctxLines, M_LEFT + 8, ty + 30);
   }
 
-  // Footer on cover
   doc.setFontSize(9);
   doc.setTextColor(100, 110, 130);
   doc.text("Powered by unfoldHR AI", M_LEFT + 8, PAGE_H - 30);
@@ -156,13 +149,12 @@ export function downloadPDF(agentName: string, result: Record<string, any>) {
   doc.addPage();
   let y = M_TOP;
 
-  // ── Summary ──
-  if (result.summary) {
+  if (safe.summary) {
     y = sectionHeading(doc, "Executive Summary", y);
     doc.setFont("helvetica", "normal");
     doc.setFontSize(10.5);
     doc.setTextColor(...TEXT_PRIMARY);
-    const summaryLines = doc.splitTextToSize(result.summary, CONTENT_W);
+    const summaryLines = doc.splitTextToSize(safe.summary, CONTENT_W);
     summaryLines.forEach((line: string) => {
       y = checkPage(doc, y, 6);
       doc.text(line, M_LEFT, y);
@@ -171,49 +163,46 @@ export function downloadPDF(agentName: string, result: Record<string, any>) {
     y += 8;
   }
 
-  // ── Confidence Score ──
-  if (result.confidence) {
+  // ── Confidence (qualitative only — no numeric score) ──
+  if (safe.confidence) {
     y = checkPage(doc, y, 35);
-    // Box
     doc.setFillColor(...LIGHT_GRAY);
     doc.roundedRect(M_LEFT, y - 4, CONTENT_W, 28, 3, 3, "F");
 
-    const conf = result.confidence;
-    const scoreColor = conf.score >= 75 ? BRAND_TEAL : conf.score >= 60 ? RISK_MEDIUM : RISK_HIGH;
+    const q = qualitativeConfidence(safe.confidence.level, safe.confidence.score);
+    const scoreColor = q.level === "High" ? BRAND_TEAL : q.level === "Medium" ? RISK_MEDIUM : RISK_HIGH;
 
-    // Score circle
     const cx = M_LEFT + 18;
     const cy2 = y + 10;
     doc.setFillColor(...scoreColor);
     doc.circle(cx, cy2, 10, "F");
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(14);
+    doc.setFontSize(16);
     doc.setTextColor(...WHITE);
-    doc.text(`${conf.score}%`, cx, cy2 + 1.5, { align: "center" });
+    doc.text(q.initial, cx, cy2 + 2, { align: "center" });
 
-    // Label
     doc.setFont("helvetica", "bold");
     doc.setFontSize(12);
     doc.setTextColor(...TEXT_PRIMARY);
-    doc.text(`Confidence: ${conf.level}`, M_LEFT + 34, y + 7);
+    doc.text(`${q.level} Confidence`, M_LEFT + 34, y + 7);
 
     doc.setFont("helvetica", "normal");
     doc.setFontSize(9.5);
     doc.setTextColor(...TEXT_SECONDARY);
-    const reasonLines = doc.splitTextToSize(conf.reason, CONTENT_W - 42);
-    doc.text(reasonLines, M_LEFT + 34, y + 14);
+    if (safe.confidence.reason) {
+      const reasonLines = doc.splitTextToSize(safe.confidence.reason, CONTENT_W - 42);
+      doc.text(reasonLines, M_LEFT + 34, y + 14);
+    }
 
     y += 34;
   }
 
-  // ── Sections (Key Themes, Recommendations, etc.) ──
-  (result.sections || []).forEach((sec: any) => {
+  (safe.sections || []).forEach((sec: any) => {
     y = sectionHeading(doc, sec.title, y);
 
     (sec.items || []).forEach((item: any) => {
       y = checkPage(doc, y, 16);
 
-      // Tag pill
       if (item.tag) {
         const tagCol = riskColor(item.tag);
         const tagW = doc.getTextWidth(item.tag) + 6;
@@ -226,14 +215,12 @@ export function downloadPDF(agentName: string, result: Record<string, any>) {
         y += 5;
       }
 
-      // Label
       doc.setFont("helvetica", "bold");
       doc.setFontSize(10);
       doc.setTextColor(...TEXT_PRIMARY);
       doc.text(`•  ${item.label}`, M_LEFT + 2, y);
       y += 5;
 
-      // Detail
       doc.setFont("helvetica", "normal");
       doc.setFontSize(9.5);
       doc.setTextColor(...TEXT_SECONDARY);
@@ -248,11 +235,10 @@ export function downloadPDF(agentName: string, result: Record<string, any>) {
     y += 4;
   });
 
-  // ── Timeline ──
-  if (result.timeline?.length) {
-    y = sectionHeading(doc, "Implementation Timeline", y);
+  // ── Timeline (qualitative phases — no pct labels) ──
+  if (safe.timeline?.length) {
+    y = sectionHeading(doc, "Implementation Phases", y);
 
-    // Table header
     y = checkPage(doc, y, 12);
     doc.setFillColor(...BRAND_NAVY);
     doc.roundedRect(M_LEFT, y - 4, CONTENT_W, 8, 1.5, 1.5, "F");
@@ -261,10 +247,10 @@ export function downloadPDF(agentName: string, result: Record<string, any>) {
     doc.setTextColor(...WHITE);
     doc.text("PHASE", M_LEFT + 4, y);
     doc.text("FOCUS", M_LEFT + 55, y);
-    doc.text("WEIGHT", PAGE_W - M_RIGHT - 4, y, { align: "right" });
     y += 8;
 
-    result.timeline.forEach((t: any, i: number) => {
+    const equalPct = 100 / safe.timeline.length;
+    safe.timeline.forEach((t: any, i: number) => {
       y = checkPage(doc, y, 10);
       if (i % 2 === 0) {
         doc.setFillColor(248, 248, 252);
@@ -277,39 +263,33 @@ export function downloadPDF(agentName: string, result: Record<string, any>) {
 
       doc.setFont("helvetica", "normal");
       doc.setTextColor(...TEXT_SECONDARY);
-      const focusLines = doc.splitTextToSize(t.focus, 80);
-      doc.text(focusLines[0], M_LEFT + 55, y);
+      const focusLines = doc.splitTextToSize(t.focus || "", 80);
+      doc.text(focusLines[0] || "", M_LEFT + 55, y);
 
-      // Progress bar
+      // Equal-share visual progress (no % label)
       const barX = PAGE_W - M_RIGHT - 30;
-      const barW = 22;
+      const barW = 28;
       doc.setFillColor(230, 230, 240);
       doc.roundedRect(barX, y - 2.5, barW, 4, 1, 1, "F");
       doc.setFillColor(...BRAND_BLUE);
-      doc.roundedRect(barX, y - 2.5, barW * (t.pct / 100), 4, 1, 1, "F");
-      doc.setFontSize(7.5);
-      doc.setTextColor(...TEXT_PRIMARY);
-      doc.text(`${t.pct}%`, PAGE_W - M_RIGHT - 2, y, { align: "right" });
+      doc.roundedRect(barX, y - 2.5, barW * (equalPct / 100), 4, 1, 1, "F");
 
       y += 10;
     });
     y += 6;
   }
 
-  // ── Risks ──
-  if (result.risks?.length) {
+  if (safe.risks?.length) {
     y = sectionHeading(doc, "Risks & Observations", y);
 
-    result.risks.forEach((r: string) => {
+    safe.risks.forEach((r: string) => {
       y = checkPage(doc, y, 14);
 
-      // Risk card
       doc.setFillColor(255, 250, 245);
       doc.setDrawColor(240, 200, 160);
       doc.setLineWidth(0.3);
       doc.roundedRect(M_LEFT, y - 4, CONTENT_W, 11, 2, 2, "FD");
 
-      // Warning icon
       doc.setFillColor(234, 179, 8);
       doc.circle(M_LEFT + 7, y + 1.5, 2.5, "F");
       doc.setFont("helvetica", "bold");
@@ -317,7 +297,6 @@ export function downloadPDF(agentName: string, result: Record<string, any>) {
       doc.setTextColor(...WHITE);
       doc.text("!", M_LEFT + 7, y + 2.5, { align: "center" });
 
-      // Text
       doc.setFont("helvetica", "normal");
       doc.setFontSize(9.5);
       doc.setTextColor(...TEXT_PRIMARY);
@@ -328,7 +307,6 @@ export function downloadPDF(agentName: string, result: Record<string, any>) {
     y += 4;
   }
 
-  // ── Add footers to all pages ──
   const totalPages = doc.getNumberOfPages();
   for (let i = 2; i <= totalPages; i++) {
     doc.setPage(i);

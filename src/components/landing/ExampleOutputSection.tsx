@@ -2,29 +2,28 @@ import { RevealDiv } from "@/components/RevealDiv";
 import { ArrowDown } from "lucide-react";
 
 const TIMELINE = [
-  { phase: "Q1 — Early phase", pct: 43, focus: "Revenue-generating roles" },
-  { phase: "Q2 — Mid phase", pct: 30, focus: "Technical & delivery" },
-  { phase: "Q3 — Final phase", pct: 27, focus: "Support & backfill" },
+  { phase: "Early phase", focus: "Revenue-generating roles" },
+  { phase: "Mid phase", focus: "Technical & delivery capacity" },
+  { phase: "Final phase", focus: "Support & operational backfill" },
 ];
 
 const HIRING = [
-  { dept: "Sales & Revenue", count: 9, tag: "Critical" },
-  { dept: "Engineering", count: 8, tag: "High" },
-  { dept: "Operations", count: 6, tag: "Medium" },
-  { dept: "HR & People", count: 5, tag: "Medium" },
-  { dept: "Support", count: 3, tag: "Standard" },
+  { dept: "Sales & Revenue", focus: "Front-load to support growth", tag: "Critical" },
+  { dept: "Engineering", focus: "Phase in to avoid bottlenecks", tag: "High" },
+  { dept: "Operations", focus: "Scale alongside workforce", tag: "Medium" },
+  { dept: "HR & People", focus: "Expand to support onboarding", tag: "Medium" },
+  { dept: "Support", focus: "Add as demand stabilizes", tag: "Standard" },
 ];
 
 const RISKS = [
-  "Fixed budget constrains phased hiring flexibility",
-  "High volume requires dedicated recruiting capacity",
-  "Engineering roles face competitive market pressure",
+  "Budget sensitivity may limit ability to hire ahead of demand",
+  "Higher hiring volume requires dedicated recruiting capacity",
+  "Engineering roles may face elevated competitive pressure",
 ];
 
 export default function ExampleOutputSection() {
   return (
     <section className="py-16 md:py-24 bg-background relative overflow-hidden">
-      {/* Subtle background texture */}
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
         style={{ backgroundImage: "radial-gradient(circle at 1px 1px, hsl(var(--foreground)) 1px, transparent 0)", backgroundSize: "24px 24px" }}
       />
@@ -46,7 +45,6 @@ export default function ExampleOutputSection() {
 
         <RevealDiv delay={0.08}>
           <div className="relative bg-card border border-border rounded-2xl p-5 md:p-6 shadow-sm max-w-2xl mx-auto">
-            {/* Example badge */}
             <span className="absolute -top-2.5 right-5 text-[9px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-muted text-muted-foreground border border-border">
               Example
             </span>
@@ -59,40 +57,36 @@ export default function ExampleOutputSection() {
             </div>
 
             <p className="text-[11px] text-muted-foreground mb-3">
-              120 employees · 25% growth · Fixed budget · 3 quarters
+              Mid-size organization · Growth-focused planning cycle · Budget-aware
             </p>
 
-            {/* Summary */}
             <p className="text-xs text-foreground leading-relaxed border-l-2 border-primary pl-3 mb-5">
-              Hiring approximately 30 roles over 3 quarters. Prioritize revenue-generating positions early,
-              followed by technical capacity, with support phased in later.
+              Hiring should prioritize revenue-generating roles in the early phase,
+              followed by technical capacity in the middle, with support functions phased in later as operational demand increases.
             </p>
 
-            {/* Two-column layout */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
-              {/* Hiring Plan */}
               <div className="bg-background border border-border rounded-xl p-3.5">
-                <p className="text-[10px] font-bold uppercase tracking-[2px] text-muted-foreground mb-2.5">Recommended Hiring Plan</p>
+                <p className="text-[10px] font-bold uppercase tracking-[2px] text-muted-foreground mb-2.5">Recommended Hiring Focus</p>
                 <div className="space-y-1.5">
                   {HIRING.map((h) => (
-                    <div key={h.dept} className="flex items-center justify-between">
-                      <span className="text-xs text-foreground">{h.dept}</span>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-semibold text-primary">+{h.count}</span>
-                        <span className={`text-[8px] font-bold uppercase px-1.5 py-0.5 rounded-full ${
-                          h.tag === "Critical" ? "bg-primary/10 text-primary"
-                          : h.tag === "High" ? "bg-accent text-accent-foreground"
-                          : "bg-muted text-muted-foreground"
-                        }`}>{h.tag}</span>
+                    <div key={h.dept} className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <p className="text-xs text-foreground font-medium leading-tight">{h.dept}</p>
+                        <p className="text-[10px] text-muted-foreground leading-tight mt-0.5">{h.focus}</p>
                       </div>
+                      <span className={`text-[8px] font-bold uppercase px-1.5 py-0.5 rounded-full shrink-0 ${
+                        h.tag === "Critical" ? "bg-primary/10 text-primary"
+                        : h.tag === "High" ? "bg-accent text-accent-foreground"
+                        : "bg-muted text-muted-foreground"
+                      }`}>{h.tag}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* Timeline */}
               <div className="bg-background border border-border rounded-xl p-3.5">
-                <p className="text-[10px] font-bold uppercase tracking-[2px] text-muted-foreground mb-2.5">Phased Timeline</p>
+                <p className="text-[10px] font-bold uppercase tracking-[2px] text-muted-foreground mb-2.5">Hiring Phases</p>
                 <div className="space-y-2.5">
                   {TIMELINE.map((t) => (
                     <div key={t.phase}>
@@ -100,7 +94,7 @@ export default function ExampleOutputSection() {
                         <span className="text-xs font-medium text-foreground">{t.phase}</span>
                       </div>
                       <div className="h-1.5 bg-muted rounded-full overflow-hidden mb-0.5">
-                        <div className="h-full bg-primary rounded-full transition-all duration-700" style={{ width: `${t.pct}%` }} />
+                        <div className="h-full bg-primary rounded-full transition-all duration-700" style={{ width: `${100 / TIMELINE.length}%` }} />
                       </div>
                       <span className="text-[10px] text-muted-foreground">{t.focus}</span>
                     </div>
@@ -109,7 +103,6 @@ export default function ExampleOutputSection() {
               </div>
             </div>
 
-            {/* Risks + Confidence in one row */}
             <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-3">
               <div className="bg-background border border-border rounded-xl p-3.5">
                 <p className="text-[10px] font-bold uppercase tracking-[2px] text-muted-foreground mb-2">Key Risks & Observations</p>
@@ -126,14 +119,9 @@ export default function ExampleOutputSection() {
               <div className="bg-background border border-border rounded-xl p-3.5 flex flex-col items-center justify-center min-w-[120px]">
                 <p className="text-[10px] font-bold uppercase tracking-[2px] text-muted-foreground mb-2">Confidence</p>
                 <div className="relative w-14 h-14">
-                  <svg className="w-14 h-14 -rotate-90" viewBox="0 0 56 56">
-                    <circle cx="28" cy="28" r="24" fill="none" stroke="hsl(var(--muted))" strokeWidth="4" />
-                    <circle cx="28" cy="28" r="24" fill="none" stroke="hsl(var(--primary))" strokeWidth="4"
-                      strokeDasharray={`${74 * 1.508} ${150.8 - 74 * 1.508}`}
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                  <span className="absolute inset-0 flex items-center justify-center text-sm font-bold text-foreground">74%</span>
+                  <div className="w-14 h-14 rounded-full bg-primary/10 border-2 border-primary/30 flex items-center justify-center">
+                    <span className="text-base font-bold text-primary">M</span>
+                  </div>
                 </div>
                 <span className="text-[10px] text-muted-foreground mt-1">Medium</span>
               </div>
@@ -141,7 +129,6 @@ export default function ExampleOutputSection() {
           </div>
         </RevealDiv>
 
-        {/* Transition */}
         <RevealDiv delay={0.15}>
           <div className="text-center mt-8 flex flex-col items-center gap-2">
             <p className="text-xs font-medium text-muted-foreground tracking-wide">
