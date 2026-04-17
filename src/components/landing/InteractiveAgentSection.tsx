@@ -711,7 +711,8 @@ export default function InteractiveAgentSection() {
   };
 
   const scrollToEngagement = () => {
-    document.getElementById("engagement-models")?.scrollIntoView({ behavior: "smooth" });
+    const target = document.getElementById("final-cta") || document.getElementById("agent-gallery");
+    target?.scrollIntoView({ behavior: "smooth" });
   };
 
   const activeDef = AGENTS.find(a => a.id === activeAgent)!;
