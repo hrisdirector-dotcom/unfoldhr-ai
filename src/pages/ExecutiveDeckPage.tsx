@@ -1,5 +1,6 @@
 import { ArrowLeft, Share2, TrendingUp, TrendingDown, Minus, Shield, Target, AlertTriangle, CheckCircle, Clock, Users, BarChart3, Zap, DollarSign, Star, Activity } from "lucide-react";
 import type { SavedRun } from "@/hooks/useSavedRuns";
+import { sanitizeResult, qualitativeConfidence } from "@/lib/sanitizeAgentOutput";
 
 interface ExecutiveDeckPageProps {
   run: SavedRun;
@@ -84,7 +85,7 @@ function getContrastText(hex: string) {
 }
 
 export default function ExecutiveDeckPage({ run, branding, onBack }: ExecutiveDeckPageProps) {
-  const res = run.result as any;
+  const res = sanitizeResult(run.result as any, run.inputs);
   const dateStr = new Date(run.created_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
   const pc = branding.primaryColor;
   const ac = branding.accentColor;
@@ -94,6 +95,7 @@ export default function ExecutiveDeckPage({ run, branding, onBack }: ExecutiveDe
   const risks = res?.risks || [];
   const timeline = res?.timeline || [];
   const confidence = res?.confidence;
+  const qConf = confidence ? qualitativeConfidence(confidence.level, confidence.score) : null;
 
   // Extract metric-like items from sections
   const metricItems = sections.flatMap((s: any) => s.items || []).slice(0, 6);
@@ -139,14 +141,16 @@ export default function ExecutiveDeckPage({ run, branding, onBack }: ExecutiveDe
           {res?.summary && (
             <p className="text-lg leading-relaxed text-foreground max-w-3xl mt-6">{res.summary}</p>
           )}
-          {confidence && (
+          {qConf && (
             <div className="mt-8 inline-flex items-center gap-4 rounded-2xl border border-border bg-card p-5">
-              <div className="w-16 h-16 rounded-full flex items-center justify-center text-xl font-bold" style={{ backgroundColor: pc, color: getContrastText(pc) }}>
-                {confidence.score}%
+              <div className="w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold" style={{ backgroundColor: pc, color: getContrastText(pc) }}>
+                {qConf.initial}
               </div>
               <div>
-                <p className="text-sm font-semibold text-foreground">{confidence.level} Confidence</p>
-                <p className="text-sm text-muted-foreground max-w-sm">{confidence.reason}</p>
+                <p className="text-sm font-semibold text-foreground">{qConf.level} Confidence</p>
+                {confidence?.reason && (
+                  <p className="text-sm text-muted-foreground max-w-sm">{confidence.reason}</p>
+                )}
               </div>
             </div>
           )}
@@ -236,22 +240,25 @@ export default function ExecutiveDeckPage({ run, branding, onBack }: ExecutiveDe
           ))}
           {timeline.length > 0 && (
             <div className="mt-8">
-              <h3 className="text-base font-semibold text-foreground mb-4">Implementation Timeline</h3>
+              <h3 className="text-base font-semibold text-foreground mb-4">Implementation Phases</h3>
               <div className="space-y-3">
-                {timeline.map((t: any, i: number) => (
-                  <div key={i} className="flex items-center gap-4 rounded-xl border border-border bg-card p-4">
-                    <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 font-bold text-sm" style={{ backgroundColor: ac, color: getContrastText(ac) }}>
-                      {t.pct}%
+                {timeline.map((t: any, i: number) => {
+                  const equalPct = 100 / timeline.length;
+                  return (
+                    <div key={i} className="flex items-center gap-4 rounded-xl border border-border bg-card p-4">
+                      <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 font-bold text-xs" style={{ backgroundColor: ac, color: getContrastText(ac) }}>
+                        {i + 1}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-semibold text-foreground">{t.phase}</p>
+                        <p className="text-sm text-muted-foreground">{t.focus}</p>
+                      </div>
+                      <div className="w-24 h-2 rounded-full bg-muted overflow-hidden shrink-0">
+                        <div className="h-full rounded-full" style={{ width: `${equalPct}%`, backgroundColor: pc }} />
+                      </div>
                     </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-semibold text-foreground">{t.phase}</p>
-                      <p className="text-sm text-muted-foreground">{t.focus}</p>
-                    </div>
-                    <div className="w-24 h-2 rounded-full bg-muted overflow-hidden shrink-0">
-                      <div className="h-full rounded-full" style={{ width: `${t.pct}%`, backgroundColor: pc }} />
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}
@@ -292,7 +299,7 @@ export default function ExecutiveDeckPage({ run, branding, onBack }: ExecutiveDe
           <div className="mt-6 rounded-2xl p-8 text-center" style={{ backgroundColor: `${pc}08`, border: `1px solid ${pc}20` }}>
             <p className="text-lg font-semibold text-foreground mb-2">Ready to move from recommendation to execution?</p>
             <p className="text-sm text-muted-foreground max-w-xl mx-auto mb-6">
-              This analysis is based on modeled patterns. Deploy live agents with your real organizational data to get continuously updated recommendations.
+              Deploy live agents connected to your tools to turn this qualitative recommendation into continuously refreshed, action-ready guidance.
             </p>
             <div className="flex justify-center gap-3">
               <button className="px-6 py-3 rounded-xl text-sm font-semibold transition-colors cursor-pointer" style={{ backgroundColor: pc, color: getContrastText(pc) }}>
