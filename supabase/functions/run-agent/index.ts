@@ -12,28 +12,50 @@ const corsHeaders = {
  * ───────────────────────────────────────────────────────────────────── */
 const NON_FABRICATION_RULE = `
 
-CRITICAL OUTPUT INTEGRITY RULES — APPLY TO EVERY FIELD YOU PRODUCE:
+CONTROLLED NUMERIC REASONING — APPLY TO EVERY FIELD YOU PRODUCE:
 
-1. NEVER invent specific numbers. Only use exact figures the user typed in the inputs above. This includes:
-   - percentages (e.g. "25%", "+8 points")
-   - employee / hire / position counts (e.g. "8 hires", "+3 engineers")
-   - currency amounts (e.g. "$680K", "$1.2M")
-   - durations or date ranges (e.g. "30-45 days", "Q1", "Week 1-2")
-   - benchmark deltas, ratios, multipliers (e.g. "8/10", "2.5x", "industry benchmark: 85%")
-   - ROI / savings figures
-2. Replace every quantitative claim that is NOT directly supplied by the user with qualitative executive language. Use phrases like:
-   "elevated share", "early-phase focus", "mid-cycle window", "leadership-level gap", "above-target pressure",
-   "limited pipeline", "stronger demand in revenue-generating roles", "targeted hiring focus",
-   "within a meaningful budget envelope", "directional improvement".
-3. For phasing in 'timeline', use qualitative phase labels: "Early phase", "Mid phase", "Final phase"
-   (or "Early window" / "Mid window" / "Final window"). Set 'pct' as an EQUAL share across phases
-   (e.g. for 3 phases use 33 / 34 / 33). Do NOT vary 'pct' to imply quantitative weight.
-4. For 'confidence', return only a qualitative 'level' of "High", "Medium", or "Low" plus a short qualitative 'reason'.
-   You may include 'score' but it must mirror the level (High≈80, Medium≈70, Low≈55) — UIs will not display the score.
-5. Do NOT include disclaimers about missing data ("insufficient data", "no data provided",
+A. NUMBERS ARE ONLY ALLOWED IF THEY FALL INTO ONE OF THESE THREE CATEGORIES:
+   1. Explicitly provided by the user in the inputs above (you may reference them directly, but do NOT
+      expand, sum, derive, or infer beyond them).
+        ✓ User said "10 reps" → "Hiring is concentrated around 10 roles"
+        ✗ "You need 3 more hires" / "This results in 15 total roles"
+   2. Structural time references that carry no quantitative claim:
+        ✓ "Q1", "Q2", "30-60-90 day plan", "Week 1", "Phase 1", "Day 1"
+   3. Qualitative ranges (words, not numbers) chosen from the controlled vocabulary in section C.
+
+B. NEVER invent or hallucinate the following — all are STRICTLY DISALLOWED unless the user typed them:
+   - percentages, growth rates, ROI estimates, cost savings, calculated totals
+   - headcount / hire / position counts not provided by the user
+   - currency amounts ($X, $XK, $XM)
+   - exact-value timelines ("12-week ramp", "45 days to fill")
+   - survey metrics, performance scores, ratings (e.g. "8/10", "4.2/5")
+   - benchmark deltas / multipliers ("+8 points", "2.5x", "industry benchmark: 85%")
+   Examples that are NOT allowed: "15% increase", "8 hires needed", "$1.2M impact",
+   "Q2 hiring spike of 12 roles".
+
+C. CONTROLLED QUALITATIVE RANGE VOCABULARY — use these in place of invented numbers:
+   - Magnitude: "moderate expansion", "significant scaling", "targeted growth",
+     "elevated share", "meaningful concentration", "limited footprint"
+   - Timing: "early-stage", "mid-cycle", "later-stage constraint",
+     "Early phase", "Mid phase", "Final phase"
+   - Volume / demand: "concentrated demand", "distributed demand", "limited capacity",
+     "above-target pressure", "stronger demand in revenue-generating roles"
+   - Direction: "directional improvement", "trending lower", "above expectation"
+   - Budget: "within a meaningful budget envelope", "with material budget allocation"
+
+D. STRUCTURAL FIELDS:
+   - 'timeline': use qualitative phase labels ("Early phase", "Mid phase", "Final phase" or
+     "Early window" / "Mid window" / "Final window"). Set 'pct' as an EQUAL share across phases
+     (3 phases → 33 / 34 / 33). Do NOT vary 'pct' to imply quantitative weight.
+   - 'confidence': return qualitative 'level' ("High" | "Medium" | "Low") plus a short qualitative
+     'reason'. You may include 'score' but it must mirror the level (High≈80, Medium≈70, Low≈55) —
+     UIs will not display the score.
+
+E. NEVER include disclaimers about missing data ("insufficient data", "no data provided",
    "based on modeled patterns", "cannot determine exact values"). Produce a confident qualitative brief.
-6. Keep every section executive-ready and structured. Allowed sections include: Summary, Recommendation,
-   Risks, Observations, Next Actions, Hiring Focus, Workflow Priorities, Key Themes.
+
+F. Allowed section titles: Summary, Recommendation, Risks, Observations, Next Actions,
+   Hiring Focus, Workflow Priorities, Key Themes.
 `.trim();
 
 const SYSTEM_PROMPTS: Record<string, string> = {
