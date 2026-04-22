@@ -30,7 +30,7 @@ export default function HomePage({ setPage }: HomePageProps) {
       <ScenarioToDecisionSection />
       <ExampleOutputSection />
       <TryItYourselfCTA />
-      <InteractiveAgentSection />
+      <InteractiveAgentSection setPage={setPage} />
       <AgentsShowcase setPage={setPage} />
       <TrustSection />
       <FinalCTA setPage={setPage} showToast={showToast} />
