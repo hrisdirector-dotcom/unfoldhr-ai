@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { downloadCSV, downloadPDF } from "@/lib/downloadResult";
 import {
-  Users, Search, Rocket, Target, Shield, Ear, MapPin,
+  Users, Search, Rocket, Target, Ear, MapPin,
   ChevronRight, RotateCcw, Bookmark, ArrowRight, Download
 } from "lucide-react";
 
