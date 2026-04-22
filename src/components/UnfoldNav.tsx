@@ -95,7 +95,7 @@ export function UnfoldNav({ page, setPage, currentUser }: NavProps) {
             Request a Build
           </button>
           <a
-            href="https://calendly.com/unfoldhr"
+            href="https://calendly.com/eric-weaver-unfoldhrai/unfold-hr-ai-demo"
             target="_blank"
             rel="noopener noreferrer"
             className="px-5 py-2.5 text-sm font-semibold rounded-lg cursor-pointer bg-primary text-primary-foreground border-none hover:bg-primary/90 transition-colors inline-flex items-center"
@@ -159,7 +159,7 @@ export function UnfoldNav({ page, setPage, currentUser }: NavProps) {
               Request a Build
             </button>
             <a
-              href="https://calendly.com/unfoldhr"
+              href="https://calendly.com/eric-weaver-unfoldhrai/unfold-hr-ai-demo"
               target="_blank"
               rel="noopener noreferrer"
               className="w-full px-4 py-3.5 text-base font-semibold rounded-lg cursor-pointer bg-primary text-primary-foreground border-none transition-colors text-center"
