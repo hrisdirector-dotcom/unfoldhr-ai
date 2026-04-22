@@ -45,7 +45,6 @@ const AGENTS: AgentDef[] = [
     name: "US Workforce Complexity & Risk Model",
     icon: <MapPin className="w-4 h-4" />,
     shortDesc: "Map state footprint, payroll model, and operational gaps into a clear US Workforce Decision Brief.",
-    navigateTo: "try-us-workforce-agent",
   },
 ];
 
