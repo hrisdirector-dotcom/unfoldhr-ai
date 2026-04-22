@@ -745,6 +745,16 @@ const SIMULATORS: Partial<Record<AgentId, (f: Record<string, any>) => SnapshotRe
   listening: simulateListening,
 };
 
+const AGENT_TYPE_MAP: Record<AgentId, string> = {
+  workforce: "workforce",
+  recruiting: "recruiting",
+  onboarding: "onboarding",
+  performance: "performance",
+  compliance: "compliance",
+  listening: "listening",
+  "us-workforce-complexity": "us-workforce",
+};
+
 interface InteractiveAgentSectionProps {
   setPage?: (p: string) => void;
 }
