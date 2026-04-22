@@ -772,7 +772,7 @@ export default function InteractiveAgentSection({ setPage }: InteractiveAgentSec
     setLastInputs(fields);
     try {
       const { data, error: fnError } = await supabase.functions.invoke("run-agent", {
-        body: { agentType: agentId, inputs: fields },
+        body: { agentType: AGENT_TYPE_MAP[agentId] ?? agentId, inputs: fields },
       });
       if (fnError) throw fnError;
       if (data?.error) throw new Error(data.error);
@@ -859,6 +859,7 @@ export default function InteractiveAgentSection({ setPage }: InteractiveAgentSec
             {activeAgent === "performance" && <PerformanceForm onRun={f => handleRun("performance", f)} loading={loading} />}
             {activeAgent === "compliance" && <ComplianceForm onRun={f => handleRun("compliance", f)} loading={loading} />}
             {activeAgent === "listening" && <ListeningForm onRun={f => handleRun("listening", f)} loading={loading} />}
+            {activeAgent === "us-workforce-complexity" && <USWorkforceForm onRun={f => handleRun("us-workforce-complexity", f)} loading={loading} />}
           </div>
         </RevealDiv>
 
