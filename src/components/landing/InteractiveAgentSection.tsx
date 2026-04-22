@@ -45,7 +45,6 @@ const AGENTS: AgentDef[] = [
     name: "US Workforce Complexity & Risk Model",
     icon: <MapPin className="w-4 h-4" />,
     shortDesc: "Map state footprint, payroll model, and operational gaps into a clear US Workforce Decision Brief.",
-    navigateTo: "try-us-workforce-agent",
   },
 ];
 
@@ -418,6 +417,68 @@ function ComplianceForm({ onRun, loading }: { onRun: (f: Record<string, any>) =>
   );
 }
 
+const US_FOOTPRINTS = ["1 state", "2–5 states", "6–15 states", "16+ states"];
+const US_STRUCTURES = ["Mostly W2", "Mostly contractors", "Balanced W2 / contractor mix", "Highly distributed (W2 + 1099 + agency)"];
+const US_OWNERSHIP = ["In-house", "Fully outsourced", "Hybrid (in-house + provider)"];
+const US_TAX = ["Single-state, simple", "Multi-state, no local taxes", "Multi-state with local taxes", "Multi-state + local + reciprocity"];
+const US_BENEFITS = ["Standard, single carrier", "Multiple plans, single carrier", "Multi-carrier, multi-plan", "Highly customized by group"];
+const US_DECISIONS = [
+  "Expand into new US states",
+  "Consolidate payroll providers",
+  "Evaluate compliance risk",
+  "Improve payroll operations",
+  "Reduce cost or inefficiency",
+  "Prepare for scale or acquisition",
+];
+
+function USWorkforceForm({ onRun, loading }: { onRun: (f: Record<string, any>) => void; loading: boolean }) {
+  const [decision, setDecision] = useState(US_DECISIONS[0]);
+  const [stateFootprint, setStateFootprint] = useState(US_FOOTPRINTS[1]);
+  const [workforceStructure, setWorkforceStructure] = useState(US_STRUCTURES[0]);
+  const [payrollOwnershipModel, setPayrollOwnershipModel] = useState(US_OWNERSHIP[2]);
+  const [taxComplexity, setTaxComplexity] = useState(US_TAX[1]);
+  const [benefitsComplexity, setBenefitsComplexity] = useState(US_BENEFITS[1]);
+  const [additionalContext, setAdditionalContext] = useState("");
+  return (
+    <div className="space-y-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <div><label className={labelCls}>Decision To Make</label>
+          <select value={decision} onChange={e => setDecision(e.target.value)} className={`${inputCls} appearance-none cursor-pointer`}>
+            {US_DECISIONS.map(d => <option key={d}>{d}</option>)}
+          </select>
+        </div>
+        <div><label className={labelCls}>State Footprint</label>
+          <select value={stateFootprint} onChange={e => setStateFootprint(e.target.value)} className={`${inputCls} appearance-none cursor-pointer`}>
+            {US_FOOTPRINTS.map(s => <option key={s}>{s}</option>)}
+          </select>
+        </div>
+        <div><label className={labelCls}>Workforce Structure</label>
+          <select value={workforceStructure} onChange={e => setWorkforceStructure(e.target.value)} className={`${inputCls} appearance-none cursor-pointer`}>
+            {US_STRUCTURES.map(s => <option key={s}>{s}</option>)}
+          </select>
+        </div>
+        <div><label className={labelCls}>Payroll Ownership Model</label>
+          <select value={payrollOwnershipModel} onChange={e => setPayrollOwnershipModel(e.target.value)} className={`${inputCls} appearance-none cursor-pointer`}>
+            {US_OWNERSHIP.map(s => <option key={s}>{s}</option>)}
+          </select>
+        </div>
+        <div><label className={labelCls}>Tax Complexity</label>
+          <select value={taxComplexity} onChange={e => setTaxComplexity(e.target.value)} className={`${inputCls} appearance-none cursor-pointer`}>
+            {US_TAX.map(s => <option key={s}>{s}</option>)}
+          </select>
+        </div>
+        <div><label className={labelCls}>Benefits Complexity</label>
+          <select value={benefitsComplexity} onChange={e => setBenefitsComplexity(e.target.value)} className={`${inputCls} appearance-none cursor-pointer`}>
+            {US_BENEFITS.map(s => <option key={s}>{s}</option>)}
+          </select>
+        </div>
+      </div>
+      <div><label className={labelCls}>Additional Context</label><textarea value={additionalContext} onChange={e => setAdditionalContext(e.target.value)} placeholder="e.g., Recently acquired a 40-person team in two new states; payroll close has slipped two cycles..." rows={3} className={textareaCls} /></div>
+      <RunButton loading={loading} onClick={() => onRun({ decision, stateFootprint, workforceStructure, payrollOwnershipModel, taxComplexity, benefitsComplexity, operationalChallenges: ["None specified"], additionalContext: additionalContext || "No additional context provided" })} label="Run US Workforce Agent" />
+    </div>
+  );
+}
+
 function RunButton({ loading, onClick, label }: { loading: boolean; onClick: () => void; label: string }) {
   return (
     <button onClick={onClick} disabled={loading}
@@ -684,6 +745,16 @@ const SIMULATORS: Partial<Record<AgentId, (f: Record<string, any>) => SnapshotRe
   listening: simulateListening,
 };
 
+const AGENT_TYPE_MAP: Record<AgentId, string> = {
+  workforce: "workforce",
+  recruiting: "recruiting",
+  onboarding: "onboarding",
+  performance: "performance",
+  compliance: "compliance",
+  listening: "listening",
+  "us-workforce-complexity": "us-workforce",
+};
+
 interface InteractiveAgentSectionProps {
   setPage?: (p: string) => void;
 }
@@ -701,7 +772,7 @@ export default function InteractiveAgentSection({ setPage }: InteractiveAgentSec
     setLastInputs(fields);
     try {
       const { data, error: fnError } = await supabase.functions.invoke("run-agent", {
-        body: { agentType: agentId, inputs: fields },
+        body: { agentType: AGENT_TYPE_MAP[agentId] ?? agentId, inputs: fields },
       });
       if (fnError) throw fnError;
       if (data?.error) throw new Error(data.error);
@@ -788,6 +859,7 @@ export default function InteractiveAgentSection({ setPage }: InteractiveAgentSec
             {activeAgent === "performance" && <PerformanceForm onRun={f => handleRun("performance", f)} loading={loading} />}
             {activeAgent === "compliance" && <ComplianceForm onRun={f => handleRun("compliance", f)} loading={loading} />}
             {activeAgent === "listening" && <ListeningForm onRun={f => handleRun("listening", f)} loading={loading} />}
+            {activeAgent === "us-workforce-complexity" && <USWorkforceForm onRun={f => handleRun("us-workforce-complexity", f)} loading={loading} />}
           </div>
         </RevealDiv>
 
