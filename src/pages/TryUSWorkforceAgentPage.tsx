@@ -116,11 +116,54 @@ export default function TryUSWorkforceAgentPage({ setPage }: TryUSWorkforceAgent
   const [context, setContext] = useState("");
 
   const [brief, setBrief] = useState<DecisionBriefProps | null>(null);
+  const [rawResult, setRawResult] = useState<Record<string, any> | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  const { user } = useAuth();
+
+  const agentName = "US Workforce Complexity & Risk Model";
+  const agentId = "us-workforce-complexity";
 
   const totalPhases = 4;
   const progress = useMemo(() => Math.round(((phase + 1) / totalPhases) * 100), [phase]);
+
+  const buildInputs = () => ({
+    decision: decision?.label,
+    stateFootprint: footprint,
+    workforceStructure: structure,
+    payrollOwnershipModel: ownership,
+    taxComplexity,
+    benefitsComplexity: benefits,
+    operationalChallenges: challenges.length > 0 ? challenges : ["None specified"],
+    additionalContext: context || "No additional context provided",
+  });
+
+  const handleSave = async () => {
+    if (!rawResult) return;
+    if (!user) {
+      toast.info("Sign in to save runs to your dashboard.");
+      setPage("login");
+      return;
+    }
+    setSaving(true);
+    const title = `${agentName} — ${new Date().toLocaleDateString()}`;
+    const { error: saveErr } = await supabase.from("saved_agent_runs").insert({
+      user_id: user.id,
+      agent_type: agentId,
+      agent_name: agentName,
+      title,
+      inputs: buildInputs() as any,
+      result: rawResult as any,
+    });
+    setSaving(false);
+    if (saveErr) {
+      toast.error("Failed to save — please try again.");
+    } else {
+      toast.success("Saved to your dashboard!");
+    }
+  };
 
   const toggleChallenge = (v: string) => {
     setChallenges((prev) => (prev.includes(v) ? prev.filter((x) => x !== v) : [...prev, v]));
