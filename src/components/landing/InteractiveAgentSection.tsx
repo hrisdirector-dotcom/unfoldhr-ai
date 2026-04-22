@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { downloadCSV, downloadPDF } from "@/lib/downloadResult";
 import {
-  Users, Search, Rocket, Target, Shield, Ear,
+  Users, Search, Rocket, Target, Ear, MapPin,
   ChevronRight, RotateCcw, Bookmark, ArrowRight, Download
 } from "lucide-react";
 
@@ -22,7 +22,7 @@ interface SnapshotResult {
 
 type RefineState = "idle" | "refining" | "done";
 
-type AgentId = "workforce" | "recruiting" | "onboarding" | "performance" | "compliance" | "listening";
+type AgentId = "workforce" | "recruiting" | "onboarding" | "performance" | "compliance" | "listening" | "us-workforce-complexity";
 
 interface AgentDef {
   id: AgentId;
@@ -30,6 +30,8 @@ interface AgentDef {
   icon: React.ReactNode;
   shortDesc: string;
   featured?: boolean;
+  /** When set, clicking the tab navigates to this page instead of rendering an inline form. */
+  navigateTo?: string;
 }
 
 const AGENTS: AgentDef[] = [
@@ -38,7 +40,13 @@ const AGENTS: AgentDef[] = [
   { id: "onboarding", name: "Onboarding", icon: <Rocket className="w-4 h-4" />, shortDesc: "Create personalized onboarding plans, checklists, timelines, and success metrics for new hires." },
   { id: "performance", name: "Performance Mgmt", icon: <Target className="w-4 h-4" />, shortDesc: "Analyze performance data and generate fair reviews with development plans and risk flags.", featured: true },
   { id: "listening", name: "Employee Listening", icon: <Ear className="w-4 h-4" />, shortDesc: "Analyze employee sentiment, surface engagement trends, and suggest targeted improvements.", featured: true },
-  { id: "compliance", name: "Compliance Risk", icon: <Shield className="w-4 h-4" />, shortDesc: "Identify compliance gaps, flag risks, and recommend corrective actions with timelines." },
+  {
+    id: "us-workforce-complexity",
+    name: "US Workforce Complexity & Risk Model",
+    icon: <MapPin className="w-4 h-4" />,
+    shortDesc: "Map state footprint, payroll model, and operational gaps into a clear US Workforce Decision Brief.",
+    navigateTo: "try-us-workforce-agent",
+  },
 ];
 
 /* ─── Shared UI helpers ─── */
@@ -667,7 +675,7 @@ function simulateListening(f: Record<string, any>): SnapshotResult {
 
 
 
-const SIMULATORS: Record<AgentId, (f: Record<string, any>) => SnapshotResult> = {
+const SIMULATORS: Partial<Record<AgentId, (f: Record<string, any>) => SnapshotResult>> = {
   workforce: simulateWorkforce,
   recruiting: simulateRecruiting,
   onboarding: simulateOnboarding,
@@ -676,7 +684,11 @@ const SIMULATORS: Record<AgentId, (f: Record<string, any>) => SnapshotResult> = 
   listening: simulateListening,
 };
 
-export default function InteractiveAgentSection() {
+interface InteractiveAgentSectionProps {
+  setPage?: (p: string) => void;
+}
+
+export default function InteractiveAgentSection({ setPage }: InteractiveAgentSectionProps = {}) {
   const [activeAgent, setActiveAgent] = useState<AgentId>("workforce");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<SnapshotResult | null>(null);
@@ -704,8 +716,13 @@ export default function InteractiveAgentSection() {
     }
   };
 
-  const handleTabChange = (id: AgentId) => {
-    setActiveAgent(id);
+  const handleTabChange = (agent: AgentDef) => {
+    if (agent.navigateTo && setPage) {
+      setPage(agent.navigateTo);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+    setActiveAgent(agent.id);
     setResult(null);
     setError(null);
   };
@@ -741,7 +758,7 @@ export default function InteractiveAgentSection() {
             {AGENTS.map(agent => (
               <button
                 key={agent.id}
-                onClick={() => handleTabChange(agent.id)}
+                onClick={() => handleTabChange(agent)}
                 className={`relative inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 border ${
                   activeAgent === agent.id
                     ? "bg-foreground text-background border-foreground shadow-lg"
