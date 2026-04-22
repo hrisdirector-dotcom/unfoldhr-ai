@@ -836,6 +836,69 @@ export const AGENTS: Agent[] = [
       "Executive summaries require validation before distribution",
     ],
   },
+  {
+    id: "us-workforce-complexity",
+    icon: "🇺🇸",
+    iconBg: "#eef2ff",
+    name: "US Workforce Complexity & Risk",
+    outcome: "Make confident decisions about US workforce structure, scale, and exposure.",
+    bullets: [
+      "State footprint and compliance exposure",
+      "Workforce structure and ownership tradeoffs",
+      "Operational scalability signals",
+    ],
+    category: "Workforce",
+    valueStatement: "Translate fragmented US workforce realities — multi-state footprint, contractor mix, payroll ownership — into a clear strategic decision.",
+    supportingInsight: "This agent guides leaders through a structured decision conversation, surfacing the risks, tradeoffs, and operational implications that matter most for the decision they're trying to make.",
+    access: "public",
+    viewable: true,
+    runnable: true,
+    briefData: {
+      scenario: "US Workforce Decision",
+      contextLine: "Based on your selected decision context",
+      primaryTitle: "US Workforce Decision Brief",
+      summary: "A structured advisory view of the decision, the risks it carries, and what it means for the organization.",
+      primaryItems: [
+        { label: "Decision Framing", value: "Clarifies the underlying choice and what's actually being decided" },
+        { label: "Recommendation", value: "A clear directional recommendation grounded in your inputs" },
+        { label: "What This Means for You", value: "Operational implications translated into next moves" },
+      ],
+      secondaryTitle: "Risk Areas",
+      secondaryItems: [
+        { label: "Compliance exposure", value: "Multi-state and classification risk surfaced early" },
+        { label: "Operational strain", value: "Where complexity may exceed current capacity" },
+        { label: "Scalability constraints", value: "Where the current model may not extend to the next stage" },
+      ],
+      observations: [
+        { text: "Decision clarity improves when structure, ownership, and exposure are evaluated together" },
+        { text: "Most US workforce risk is invisible until a triggering event — proactive framing reduces surprise" },
+      ],
+      insights: [
+        { text: "Tradeoffs become sharper once the underlying decision is named explicitly" },
+        { text: "Operational implications often outweigh nominal cost differences" },
+      ],
+      confidence: { level: "Medium", reason: "This brief reflects the decision context and structural inputs you provided, not an audit of underlying records." },
+    },
+    businessContext: [
+      "Decision under consideration about US workforce structure, footprint, or operations",
+      "Mix of W2, contractor, or hybrid workforce arrangements",
+      "Multi-state or expanding US footprint with varying compliance exposure",
+    ],
+    howItWorks: [
+      "Asks what decision you're trying to make and adapts the conversation accordingly",
+      "Captures structural inputs progressively — footprint, workforce mix, ownership model, complexity drivers",
+      "Produces a structured decision brief framed for executive review",
+    ],
+    whatYouGet: [
+      "A US Workforce Decision Brief with scenario, framing, recommendation, risks, tradeoffs, and implications",
+      "Risk areas surfaced before they become triggering events",
+      "Clear articulation of operational implications for the path you're considering",
+    ],
+    executionRisks: [
+      "Decision quality depends on accurate framing of the underlying business goal",
+      "Material changes in state footprint or classification mix may shift the recommendation",
+    ],
+  },
 ];
 
 export function getAgentById(id: string): Agent | undefined {

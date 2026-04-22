@@ -13,6 +13,7 @@ import TryListeningAgentPage from "@/pages/TryListeningAgentPage";
 import TryPerformanceAgentPage from "@/pages/TryPerformanceAgentPage";
 import PricingPage from "@/pages/PricingPage";
 import WorkforcePlanningAgent from "@/pages/WorkforcePlanningAgent";
+import TryUSWorkforceAgentPage from "@/pages/TryUSWorkforceAgentPage";
 import ExecutiveDeckPage from "@/pages/ExecutiveDeckPage";
 import OnboardingWalkthrough from "@/components/OnboardingWalkthrough";
 import type { SavedRun } from "@/hooks/useSavedRuns";
@@ -63,6 +64,7 @@ const Index = () => {
       "workforce-planning": "try-agent",
       "employee-listening": "try-listening-agent",
       "performance-management": "try-performance-agent",
+      "us-workforce-complexity": "try-us-workforce-agent",
     };
 
     const route = freeRoutes[id];
@@ -134,6 +136,7 @@ const Index = () => {
       {page === "home" && <HomePage setPage={navigateTo} />}
       {page === "try-listening-agent" && <TryListeningAgentPage setPage={navigateTo} />}
       {page === "try-performance-agent" && <TryPerformanceAgentPage setPage={navigateTo} />}
+      {page === "try-us-workforce-agent" && <TryUSWorkforceAgentPage setPage={navigateTo} />}
       {page === "workforce-planning" && <WorkforcePlanningAgent />}
       {page === "pricing" && <PricingPage setPage={navigateTo} />}
       {page === "about" && <AboutPage />}
