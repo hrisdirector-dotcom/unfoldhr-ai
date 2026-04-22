@@ -1,6 +1,15 @@
 import { RevealDiv } from "@/components/RevealDiv";
 
-const SHOWCASE_AGENTS = [
+interface Agent {
+  icon: string;
+  name: string;
+  outcome: string;
+  benefit: string;
+  tag: "Try Free" | "Featured";
+  pageId?: string;
+}
+
+const SHOWCASE_AGENTS: Agent[] = [
   {
     icon: "🏗️",
     name: "Workforce Planning",
@@ -44,7 +53,7 @@ const SHOWCASE_AGENTS = [
     tag: "Try Free",
   },
   {
-    id: "us-workforce-complexity",
+    pageId: "us-workforce-complexity",
     icon: "🇺🇸",
     name: "US Workforce Complexity & Risk Model",
     outcome: "Map state footprint, payroll model, and operational gaps into a clear decision brief.",
@@ -63,9 +72,9 @@ export default function AgentsShowcase({ setPage }: AgentsShowcaseProps) {
     setTimeout(() => document.getElementById("agent-gallery")?.scrollIntoView({ behavior: "smooth" }), 150);
   };
 
-  const handleCardClick = (agent: typeof SHOWCASE_AGENTS[number]) => {
-    if ("id" in agent && agent.id) {
-      setPage(agent.id);
+  const handleCardClick = (agent: Agent) => {
+    if (agent.pageId) {
+      setPage(agent.pageId);
       return;
     }
     scrollToGallery();
