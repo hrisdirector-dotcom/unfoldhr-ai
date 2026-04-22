@@ -675,7 +675,7 @@ function simulateListening(f: Record<string, any>): SnapshotResult {
 
 
 
-const SIMULATORS: Record<AgentId, (f: Record<string, any>) => SnapshotResult> = {
+const SIMULATORS: Partial<Record<AgentId, (f: Record<string, any>) => SnapshotResult>> = {
   workforce: simulateWorkforce,
   recruiting: simulateRecruiting,
   onboarding: simulateOnboarding,
@@ -684,7 +684,11 @@ const SIMULATORS: Record<AgentId, (f: Record<string, any>) => SnapshotResult> = 
   listening: simulateListening,
 };
 
-export default function InteractiveAgentSection() {
+interface InteractiveAgentSectionProps {
+  setPage?: (p: string) => void;
+}
+
+export default function InteractiveAgentSection({ setPage }: InteractiveAgentSectionProps = {}) {
   const [activeAgent, setActiveAgent] = useState<AgentId>("workforce");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<SnapshotResult | null>(null);
