@@ -479,7 +479,7 @@ function USWorkforceForm({ onRun, loading }: { onRun: (f: Record<string, any>) =
   );
 }
 
-
+function RunButton({ loading, onClick, label }: { loading: boolean; onClick: () => void; label: string }) {
   return (
     <button onClick={onClick} disabled={loading}
       className="w-full py-3.5 rounded-xl bg-foreground text-background font-semibold text-sm border-none cursor-pointer hover:bg-primary transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-70 disabled:cursor-not-allowed">
