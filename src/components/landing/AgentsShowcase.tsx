@@ -63,6 +63,14 @@ export default function AgentsShowcase({ setPage }: AgentsShowcaseProps) {
     setTimeout(() => document.getElementById("agent-gallery")?.scrollIntoView({ behavior: "smooth" }), 150);
   };
 
+  const handleCardClick = (agent: typeof SHOWCASE_AGENTS[number]) => {
+    if ("id" in agent && agent.id) {
+      setPage(agent.id);
+      return;
+    }
+    scrollToGallery();
+  };
+
   return (
     <section className="py-24 md:py-32 bg-card">
       <div className="max-w-7xl mx-auto px-6 md:px-14">
@@ -82,7 +90,7 @@ export default function AgentsShowcase({ setPage }: AgentsShowcaseProps) {
           {SHOWCASE_AGENTS.map((agent, i) => (
             <RevealDiv key={i} delay={i * 0.06}>
               <div
-                onClick={scrollToGallery}
+                onClick={() => handleCardClick(agent)}
                 className="bg-background border border-border rounded-2xl p-7 cursor-pointer h-full flex flex-col hover:border-primary/40 hover:-translate-y-1 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5"
               >
                 <div className="flex items-start justify-between mb-4">
