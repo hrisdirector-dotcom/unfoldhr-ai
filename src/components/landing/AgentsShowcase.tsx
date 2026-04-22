@@ -43,6 +43,14 @@ const SHOWCASE_AGENTS = [
     benefit: "Reduce compliance risk proactively",
     tag: "Try Free",
   },
+  {
+    id: "us-workforce-complexity",
+    icon: "🇺🇸",
+    name: "US Workforce Complexity & Risk Model",
+    outcome: "Map state footprint, payroll model, and operational gaps into a clear decision brief.",
+    benefit: "Clarify your US workforce strategy",
+    tag: "Try Free",
+  },
 ];
 
 interface AgentsShowcaseProps {
@@ -53,6 +61,14 @@ export default function AgentsShowcase({ setPage }: AgentsShowcaseProps) {
   const scrollToGallery = () => {
     setPage("home");
     setTimeout(() => document.getElementById("agent-gallery")?.scrollIntoView({ behavior: "smooth" }), 150);
+  };
+
+  const handleCardClick = (agent: typeof SHOWCASE_AGENTS[number]) => {
+    if ("id" in agent && agent.id) {
+      setPage(agent.id);
+      return;
+    }
+    scrollToGallery();
   };
 
   return (
@@ -74,7 +90,7 @@ export default function AgentsShowcase({ setPage }: AgentsShowcaseProps) {
           {SHOWCASE_AGENTS.map((agent, i) => (
             <RevealDiv key={i} delay={i * 0.06}>
               <div
-                onClick={scrollToGallery}
+                onClick={() => handleCardClick(agent)}
                 className="bg-background border border-border rounded-2xl p-7 cursor-pointer h-full flex flex-col hover:border-primary/40 hover:-translate-y-1 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5"
               >
                 <div className="flex items-start justify-between mb-4">

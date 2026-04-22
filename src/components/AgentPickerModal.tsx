@@ -7,6 +7,7 @@ interface AgentPickerModalProps {
 const AGENTS = [
   { id: "try-listening-agent", name: "Employee Listening", desc: "Surface what your workforce is really saying — and what to do about it.", featured: true },
   { id: "try-performance-agent", name: "Performance Management", desc: "Identify performance gaps and get a structured action plan.", featured: true },
+  { id: "us-workforce-complexity", name: "US Workforce Complexity & Risk Model", desc: "Map state footprint, payroll model, and operational gaps into a clear decision brief.", featured: true },
   { id: "gallery", name: "Workforce Planning", desc: "Get a hiring plan aligned to your growth targets and budget constraints." },
   { id: "gallery", name: "Recruiting Agent", desc: "Screen candidates, rank top talent, and build outreach strategy." },
   { id: "gallery", name: "Onboarding Agent", desc: "Create personalized onboarding plans, checklists, and timelines." },
