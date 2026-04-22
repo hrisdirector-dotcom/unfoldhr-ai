@@ -758,7 +758,7 @@ export default function InteractiveAgentSection({ setPage }: InteractiveAgentSec
             {AGENTS.map(agent => (
               <button
                 key={agent.id}
-                onClick={() => handleTabChange(agent.id)}
+                onClick={() => handleTabChange(agent)}
                 className={`relative inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 border ${
                   activeAgent === agent.id
                     ? "bg-foreground text-background border-foreground shadow-lg"
