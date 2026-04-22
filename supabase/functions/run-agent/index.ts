@@ -387,7 +387,33 @@ serve(async (req) => {
       jsonStr = jsonStr.replace(/^```(?:json)?\s*\n?/, "").replace(/\n?```\s*$/, "");
     }
 
-    const result = JSON.parse(jsonStr);
+    // Trim to outermost JSON object in case the model wrapped it in prose.
+    const firstBrace = jsonStr.indexOf("{");
+    const lastBrace = jsonStr.lastIndexOf("}");
+    if (firstBrace > 0 || lastBrace < jsonStr.length - 1) {
+      if (firstBrace !== -1 && lastBrace > firstBrace) {
+        jsonStr = jsonStr.slice(firstBrace, lastBrace + 1);
+      }
+    }
+
+    const tryParse = (s: string) => {
+      try { return { ok: true as const, value: JSON.parse(s) }; }
+      catch (err) { return { ok: false as const, err }; }
+    };
+
+    let parsed = tryParse(jsonStr);
+    if (!parsed.ok) {
+      // Repair pass: strip control chars, remove trailing commas.
+      const repaired = jsonStr
+        .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, "")
+        .replace(/,\s*([}\]])/g, "$1");
+      parsed = tryParse(repaired);
+    }
+    if (!parsed.ok) {
+      console.error("run-agent JSON parse failed. Raw content sample:", jsonStr.slice(0, 500));
+      throw new Error("AI returned invalid JSON. Please try again.");
+    }
+    const result = parsed.value;
 
     // Defense-in-depth: sanitize before returning so the client receives
     // an already-clean payload regardless of model behavior.
