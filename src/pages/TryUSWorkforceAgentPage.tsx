@@ -195,6 +195,8 @@ export default function TryUSWorkforceAgentPage({ setPage }: TryUSWorkforceAgent
       if (fnError) throw new Error(fnError.message);
       if (data?.error) throw new Error(data.error);
 
+      setRawResult(data);
+
       const sections = data.sections || [];
       const framing = sections.find((s: any) => s.title === "Decision Framing") || sections[0] || { title: "Decision Framing", items: [] };
       const recommendation = sections.find((s: any) => s.title === "Recommendation") || sections[1] || { title: "Recommendation", items: [] };
