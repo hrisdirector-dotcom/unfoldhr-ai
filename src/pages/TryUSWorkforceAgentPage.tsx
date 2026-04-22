@@ -437,31 +437,87 @@ export default function TryUSWorkforceAgentPage({ setPage }: TryUSWorkforceAgent
                   <DecisionBriefCard {...brief} />
                 </RevealDiv>
 
-                <RevealDiv delay={0.15}>
-                  <div className="flex flex-col items-center gap-4">
-                    <p className="text-sm text-muted-foreground">Ready to get started on your AI Agent journey?</p>
-                    <button
-                      onClick={() => setPage("contact")}
-                      className="px-8 py-4 rounded-lg bg-foreground text-background font-semibold text-sm cursor-pointer hover:bg-primary transition-colors"
-                    >
-                      Contact Us Now
-                    </button>
-                    <button
-                      onClick={() => {
-                        setStep("guided");
-                        setBrief(null);
-                        setPhase(0);
-                      }}
-                      className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer bg-transparent border-none"
-                    >
-                      ← Try different inputs
-                    </button>
-                    <button
-                      onClick={() => setPage("try-picker")}
-                      className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer bg-transparent border-none"
-                    >
-                      ← Try a different agent
-                    </button>
+                <RevealDiv delay={0.1}>
+                  <div className="bg-card border border-border rounded-2xl p-5 md:p-6">
+                    <p className="text-xs font-bold uppercase tracking-[2px] text-muted-foreground mb-4">
+                      What's next
+                    </p>
+                    <div className="flex flex-wrap gap-3">
+                      <button
+                        onClick={() => {
+                          setStep("guided");
+                          setBrief(null);
+                          setRawResult(null);
+                          setPhase(0);
+                        }}
+                        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border bg-background text-sm font-medium text-foreground hover:bg-muted transition-colors cursor-pointer"
+                      >
+                        <RotateCcw className="w-3.5 h-3.5" /> Refine
+                      </button>
+                      <button
+                        onClick={() => setPage("try-picker")}
+                        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border bg-background text-sm font-medium text-foreground hover:bg-muted transition-colors cursor-pointer"
+                      >
+                        <RotateCcw className="w-3.5 h-3.5" /> Try another agent
+                      </button>
+
+                      {user ? (
+                        <>
+                          <button
+                            onClick={handleSave}
+                            disabled={saving}
+                            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border bg-background text-sm font-medium text-foreground hover:bg-muted transition-colors disabled:opacity-60 cursor-pointer"
+                          >
+                            <Bookmark className="w-3.5 h-3.5" /> {saving ? "Saving…" : "Save to Dashboard"}
+                          </button>
+                          <button
+                            onClick={() => rawResult && downloadCSV(agentName, rawResult, buildInputs())}
+                            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border bg-background text-sm font-medium text-foreground hover:bg-muted transition-colors cursor-pointer"
+                          >
+                            <Download className="w-3.5 h-3.5" /> CSV
+                          </button>
+                          <button
+                            onClick={() => rawResult && downloadPDF(agentName, rawResult, buildInputs())}
+                            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border bg-background text-sm font-medium text-foreground hover:bg-muted transition-colors cursor-pointer"
+                          >
+                            <Download className="w-3.5 h-3.5" /> PDF
+                          </button>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <button
+                                onClick={async () => {
+                                  await handleSave();
+                                  setPage("dashboard");
+                                }}
+                                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors cursor-pointer"
+                              >
+                                <Presentation className="w-3.5 h-3.5" /> Generate Executive Deck
+                              </button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Save this run, then generate the deck from your Dashboard. Available on Growth and above.</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </>
+                      ) : (
+                        <button
+                          onClick={() => setPage("login")}
+                          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-primary/40 bg-primary/5 text-sm font-medium text-primary hover:bg-primary/10 transition-colors cursor-pointer"
+                        >
+                          <Bookmark className="w-3.5 h-3.5" /> Sign in to save & export
+                        </button>
+                      )}
+                    </div>
+
+                    <div className="flex flex-col items-center gap-3 mt-6 pt-5 border-t border-border">
+                      <p className="text-sm text-muted-foreground">Ready to get started on your AI Agent journey?</p>
+                      <button
+                        onClick={() => setPage("contact")}
+                        className="px-6 py-3 rounded-lg bg-foreground text-background font-semibold text-sm cursor-pointer hover:bg-primary transition-colors"
+                      >
+                        Contact Us Now
+                      </button>
+                    </div>
                   </div>
                 </RevealDiv>
               </>
