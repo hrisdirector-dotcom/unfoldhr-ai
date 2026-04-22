@@ -100,6 +100,7 @@ export default function AgentsShowcase({ setPage }: AgentsShowcaseProps) {
             <RevealDiv key={i} delay={i * 0.06}>
               <div
                 onClick={() => handleCardClick(agent)}
+                data-pageid={agent.pageId ?? ""}
                 className="bg-background border border-border rounded-2xl p-7 cursor-pointer h-full flex flex-col hover:border-primary/40 hover:-translate-y-1 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5"
               >
                 <div className="flex items-start justify-between mb-4">
