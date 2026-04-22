@@ -78,7 +78,7 @@ export default function HeroSection({ setPage }: HeroSectionProps) {
               See Example
             </button>
             <a
-              href="https://calendly.com/unfoldhr"
+              href="https://calendly.com/eric-weaver-unfoldhrai/unfold-hr-ai-demo"
               target="_blank"
               rel="noopener noreferrer"
               className="px-7 py-3.5 rounded-xl bg-transparent text-primary font-semibold text-sm border border-primary cursor-pointer hover:bg-primary/10 transition-all duration-200 inline-flex items-center"
