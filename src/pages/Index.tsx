@@ -47,6 +47,17 @@ const Index = () => {
       return;
     }
 
+    // Map free agent IDs to their interactive try-pages
+    const freeAgentRoutes: Record<string, string> = {
+      "workforce-planning": "try-agent",
+      "employee-listening": "try-listening-agent",
+      "performance-management": "try-performance-agent",
+      "us-workforce-complexity": "try-us-workforce-agent",
+    };
+    if (freeAgentRoutes[p]) {
+      p = freeAgentRoutes[p];
+    }
+
     setPage(p);
     if (p !== "agent-detail") setAgentId(undefined);
 
