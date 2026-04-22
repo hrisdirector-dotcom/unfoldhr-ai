@@ -716,8 +716,13 @@ export default function InteractiveAgentSection({ setPage }: InteractiveAgentSec
     }
   };
 
-  const handleTabChange = (id: AgentId) => {
-    setActiveAgent(id);
+  const handleTabChange = (agent: AgentDef) => {
+    if (agent.navigateTo && setPage) {
+      setPage(agent.navigateTo);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+    setActiveAgent(agent.id);
     setResult(null);
     setError(null);
   };
