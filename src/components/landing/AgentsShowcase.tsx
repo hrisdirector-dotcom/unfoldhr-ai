@@ -43,6 +43,14 @@ const SHOWCASE_AGENTS = [
     benefit: "Reduce compliance risk proactively",
     tag: "Try Free",
   },
+  {
+    id: "us-workforce-complexity",
+    icon: "🇺🇸",
+    name: "US Workforce Complexity & Risk Model",
+    outcome: "Map state footprint, payroll model, and operational gaps into a clear decision brief.",
+    benefit: "Clarify your US workforce strategy",
+    tag: "Try Free",
+  },
 ];
 
 interface AgentsShowcaseProps {
