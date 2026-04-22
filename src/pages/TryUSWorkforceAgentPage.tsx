@@ -3,6 +3,11 @@ import { RevealDiv } from "@/components/RevealDiv";
 import DecisionBriefCard from "@/components/DecisionBriefCard";
 import type { DecisionBriefProps } from "@/components/DecisionBriefCard";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
+import { downloadCSV, downloadPDF } from "@/lib/downloadResult";
+import { Bookmark, Download, RotateCcw, Presentation } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 type Step = "start" | "decision" | "guided" | "result";
 
