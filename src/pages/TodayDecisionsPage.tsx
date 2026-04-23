@@ -83,10 +83,25 @@ function buildFromRuns(runs: any[]): DecisionCard[] {
 
 export default function TodayDecisionsPage({ setPage }: TodayDecisionsPageProps) {
   const { runs } = useSavedRuns();
+  const { isAdmin } = useAuth();
   const [decisions, setDecisions] = useState<DecisionCard[] | null>(null);
   const [generating, setGenerating] = useState(false);
+  const [hasUsedFree, setHasUsedFree] = useState(false);
+
+  // Admins (and future paid users) bypass the gate. Everyone else is treated as free tier.
+  const isUnlimited = isAdmin;
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setHasUsedFree(localStorage.getItem(DAILY_BRIEF_USED_KEY) === "true");
+    }
+  }, []);
+
+  const isLocked = !isUnlimited && hasUsedFree;
 
   const handleGenerate = () => {
+    if (isLocked) return;
+
     setGenerating(true);
     setDecisions(null);
 
@@ -100,6 +115,11 @@ export default function TodayDecisionsPage({ setPage }: TodayDecisionsPageProps)
 
       setDecisions([...fromRuns, ...filler].slice(0, 5));
       setGenerating(false);
+
+      if (!isUnlimited) {
+        localStorage.setItem(DAILY_BRIEF_USED_KEY, "true");
+        setHasUsedFree(true);
+      }
     }, 700);
   };
 
