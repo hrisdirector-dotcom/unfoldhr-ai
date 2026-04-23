@@ -32,6 +32,12 @@ export function UnfoldNav({ page, setPage, currentUser }: NavProps) {
       setTimeout(() => document.getElementById("agent-gallery")?.scrollIntoView({ behavior: "smooth" }), 150);
       return;
     }
+    if (p === "how-it-works") {
+      setPage("home");
+      setMobileOpen(false);
+      setTimeout(() => document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" }), 150);
+      return;
+    }
     setPage(p);
     setMobileOpen(false);
   };
