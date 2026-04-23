@@ -87,6 +87,8 @@ export default function TodayDecisionsPage({ setPage }: TodayDecisionsPageProps)
   const [decisions, setDecisions] = useState<DecisionCard[] | null>(null);
   const [generating, setGenerating] = useState(false);
   const [hasUsedFree, setHasUsedFree] = useState(false);
+  const [emailSending, setEmailSending] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
 
   // Admins (and future paid users) bypass the gate. Everyone else is treated as free tier.
   const isUnlimited = isAdmin;
