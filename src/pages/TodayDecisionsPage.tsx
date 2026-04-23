@@ -219,7 +219,7 @@ export default function TodayDecisionsPage({ setPage }: TodayDecisionsPageProps)
               ) : (
                 <>
                   <Sparkles className="w-4 h-4" />
-                  Unlock Daily Decision Brief
+                  Generate Today's Decisions
                 </>
               )}
             </button>
