@@ -33,7 +33,7 @@ export default function DailyDecisionBriefSection({ setPage }: Props) {
   };
 
   return (
-    <section className="py-20 md:py-28 bg-background border-t border-border">
+    <section id="daily-brief-teaser" className="py-20 md:py-28 bg-background border-t border-border">
       <div className="max-w-5xl mx-auto px-6 md:px-14">
         <RevealDiv>
           <div className="text-center mb-12">
