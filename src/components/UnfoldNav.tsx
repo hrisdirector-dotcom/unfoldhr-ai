@@ -9,12 +9,10 @@ interface NavProps {
 }
 
 const NAV_LINKS: [string, string, boolean][] = [
-  ["home", "Platform", false],
-  ["try-agents", "Try Agents", true],
-  ["pricing", "Pricing", false],
+  ["how-it-works", "How It Works", false],
+  ["try-agents", "Try an Agent", true],
   ["integrations", "Integrations", false],
-  ["about", "About", false],
-  ["contact", "Contact", false],
+  ["pricing", "Pricing", false],
 ];
 
 export function UnfoldNav({ page, setPage, currentUser }: NavProps) {
@@ -34,6 +32,12 @@ export function UnfoldNav({ page, setPage, currentUser }: NavProps) {
       setTimeout(() => document.getElementById("agent-gallery")?.scrollIntoView({ behavior: "smooth" }), 150);
       return;
     }
+    if (p === "how-it-works") {
+      setPage("home");
+      setMobileOpen(false);
+      setTimeout(() => document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" }), 150);
+      return;
+    }
     setPage(p);
     setMobileOpen(false);
   };
@@ -50,9 +54,14 @@ export function UnfoldNav({ page, setPage, currentUser }: NavProps) {
           className="flex items-center gap-3 bg-transparent border-none cursor-pointer p-0"
         >
           <UnfoldMark size={28} />
-          <span className="font-display text-lg tracking-tight text-foreground">
-            unfold<span className="text-primary font-display">HR</span>
-          </span>
+          <div className="flex flex-col items-start">
+            <span className="font-display text-lg tracking-tight text-foreground">
+              unfold<span className="text-primary font-display">HR</span>
+            </span>
+            <span className="text-[11px] text-muted-foreground hidden lg:block">
+              Decision Layer for Workforce Intelligence
+            </span>
+          </div>
         </button>
 
         <div className="hidden md:flex items-center gap-1">
@@ -70,38 +79,33 @@ export function UnfoldNav({ page, setPage, currentUser }: NavProps) {
         </div>
 
         <div className="hidden md:flex items-center gap-3">
-          {currentUser ? (
-            <button
-              onClick={() => navigate("dashboard")}
-              className="px-5 py-2.5 text-sm font-semibold rounded-lg cursor-pointer bg-accent text-accent-foreground border border-blue-mid hover:bg-primary hover:text-primary-foreground transition-colors"
-            >
-              My Dashboard
-            </button>
-          ) : (
-            <button
-              onClick={() => navigate("login")}
-              className="px-4 py-2.5 text-sm font-medium rounded-lg cursor-pointer bg-transparent text-muted-foreground border border-border hover:border-foreground hover:text-foreground transition-colors"
-            >
-              Sign In
-            </button>
-          )}
+          {/* Primary CTA - Try an Agent */}
           <button
-            onClick={() => {
-              navigate("home");
-              setTimeout(() => document.getElementById("request")?.scrollIntoView({ behavior: "smooth" }), 100);
-            }}
-            className="px-5 py-2.5 text-sm font-semibold rounded-lg cursor-pointer bg-foreground text-background border-none hover:bg-primary transition-colors"
+            onClick={() => navigate("try-agents", true)}
+            className="px-5 py-2.5 text-sm font-semibold rounded-lg cursor-pointer bg-primary text-primary-foreground border-none hover:bg-primary/90 transition-colors"
           >
-            Request a Build
+            Try an Agent
           </button>
+
+          {/* Secondary CTA - Book a Demo */}
           <a
             href="https://calendly.com/eric-weaver-unfoldhrai/unfold-hr-ai-demo"
             target="_blank"
             rel="noopener noreferrer"
-            className="px-5 py-2.5 text-sm font-semibold rounded-lg cursor-pointer bg-primary text-primary-foreground border-none hover:bg-primary/90 transition-colors inline-flex items-center"
+            className="px-5 py-2.5 text-sm font-semibold rounded-lg cursor-pointer bg-foreground text-background border-none hover:bg-foreground/90 transition-colors inline-flex items-center"
           >
             Book a Demo
           </a>
+
+          {/* Tertiary - Dashboard (if logged in) */}
+          {currentUser && (
+            <button
+              onClick={() => navigate("dashboard")}
+              className="px-4 py-2 text-sm font-medium rounded-lg cursor-pointer bg-transparent text-muted-foreground border border-border hover:text-foreground hover:border-foreground transition-colors"
+            >
+              My Dashboard
+            </button>
+          )}
         </div>
 
         {/* Mobile hamburger */}
@@ -134,38 +138,33 @@ export function UnfoldNav({ page, setPage, currentUser }: NavProps) {
 
             <div className="h-px bg-border my-3" />
 
-            {currentUser ? (
-              <button
-                onClick={() => navigate("dashboard")}
-                className="w-full px-4 py-3.5 text-base font-semibold rounded-lg cursor-pointer bg-accent text-accent-foreground border border-blue-mid transition-colors"
-              >
-                My Dashboard
-              </button>
-            ) : (
-              <button
-                onClick={() => navigate("login")}
-                className="w-full px-4 py-3.5 text-base font-medium rounded-lg cursor-pointer bg-transparent text-foreground border border-border transition-colors"
-              >
-                Sign In
-              </button>
-            )}
+            {/* Primary CTA - Try an Agent */}
             <button
-              onClick={() => {
-                navigate("home");
-                setTimeout(() => document.getElementById("request")?.scrollIntoView({ behavior: "smooth" }), 100);
-              }}
-              className="w-full px-4 py-3.5 text-base font-semibold rounded-lg cursor-pointer bg-foreground text-background border-none transition-colors"
+              onClick={() => navigate("try-agents", true)}
+              className="w-full px-4 py-3.5 text-base font-semibold rounded-lg cursor-pointer bg-primary text-primary-foreground border-none transition-colors"
             >
-              Request a Build
+              Try an Agent
             </button>
+
+            {/* Secondary CTA - Book a Demo */}
             <a
               href="https://calendly.com/eric-weaver-unfoldhrai/unfold-hr-ai-demo"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full px-4 py-3.5 text-base font-semibold rounded-lg cursor-pointer bg-primary text-primary-foreground border-none transition-colors text-center"
+              className="w-full px-4 py-3.5 text-base font-semibold rounded-lg cursor-pointer bg-foreground text-background border-none transition-colors text-center"
             >
               Book a Demo
             </a>
+
+            {/* Tertiary - Dashboard (if logged in) */}
+            {currentUser && (
+              <button
+                onClick={() => navigate("dashboard")}
+                className="w-full px-4 py-3.5 text-base font-medium rounded-lg cursor-pointer bg-transparent text-muted-foreground border border-border transition-colors"
+              >
+                My Dashboard
+              </button>
+            )}
           </div>
         </div>
       )}
