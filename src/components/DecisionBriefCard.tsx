@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import AddToDailyBriefHook from "@/components/AddToDailyBriefHook";
 
 interface BriefLine {
   label: string;
@@ -182,6 +183,9 @@ export default function DecisionBriefCard({
           </div>
         </motion.div>
       )}
+
+      {/* Daily Decision Brief hook */}
+      <AddToDailyBriefHook />
     </motion.div>
   );
 }
