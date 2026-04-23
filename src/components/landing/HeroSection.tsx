@@ -77,6 +77,12 @@ export default function HeroSection({ setPage }: HeroSectionProps) {
             >
               See Example
             </button>
+            <button
+              onClick={() => setPage("snapshot")}
+              className="px-7 py-3.5 rounded-xl bg-card text-foreground font-semibold text-sm border border-border cursor-pointer hover:border-primary/50 hover:bg-accent transition-all duration-200"
+            >
+              View Executive Snapshot
+            </button>
             <a
               href="https://calendly.com/eric-weaver-unfoldhrai/unfold-hr-ai-demo"
               target="_blank"
