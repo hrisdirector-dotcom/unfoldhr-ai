@@ -1,10 +1,13 @@
-import { useState } from "react";
-import { ArrowLeft, Sparkles, AlertTriangle, Lightbulb, Loader2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ArrowLeft, Sparkles, AlertTriangle, Lightbulb, Loader2, Lock, Calendar } from "lucide-react";
 import { useSavedRuns } from "@/hooks/useSavedRuns";
+import { useAuth } from "@/hooks/useAuth";
 
 interface TodayDecisionsPageProps {
   setPage: (p: string) => void;
 }
+
+const DAILY_BRIEF_USED_KEY = "unfold_daily_brief_used";
 
 interface DecisionCard {
   title: string;
@@ -80,10 +83,25 @@ function buildFromRuns(runs: any[]): DecisionCard[] {
 
 export default function TodayDecisionsPage({ setPage }: TodayDecisionsPageProps) {
   const { runs } = useSavedRuns();
+  const { isAdmin } = useAuth();
   const [decisions, setDecisions] = useState<DecisionCard[] | null>(null);
   const [generating, setGenerating] = useState(false);
+  const [hasUsedFree, setHasUsedFree] = useState(false);
+
+  // Admins (and future paid users) bypass the gate. Everyone else is treated as free tier.
+  const isUnlimited = isAdmin;
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setHasUsedFree(localStorage.getItem(DAILY_BRIEF_USED_KEY) === "true");
+    }
+  }, []);
+
+  const isLocked = !isUnlimited && hasUsedFree;
 
   const handleGenerate = () => {
+    if (isLocked) return;
+
     setGenerating(true);
     setDecisions(null);
 
@@ -97,6 +115,11 @@ export default function TodayDecisionsPage({ setPage }: TodayDecisionsPageProps)
 
       setDecisions([...fromRuns, ...filler].slice(0, 5));
       setGenerating(false);
+
+      if (!isUnlimited) {
+        localStorage.setItem(DAILY_BRIEF_USED_KEY, "true");
+        setHasUsedFree(true);
+      }
     }, 700);
   };
 
@@ -130,8 +153,37 @@ export default function TodayDecisionsPage({ setPage }: TodayDecisionsPageProps)
           </p>
         </div>
 
-        {/* Generate button */}
-        {!decisions && (
+        {/* Locked state — free user has already used their one generation */}
+        {!decisions && isLocked && (
+          <div className="bg-card border border-border rounded-2xl p-8 md:p-10 text-center">
+            <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-5">
+              <Calendar className="w-6 h-6 text-primary" />
+            </div>
+            <h2 className="font-display text-2xl md:text-3xl text-foreground mb-3 leading-tight">
+              Get this every morning
+            </h2>
+            <p className="text-sm md:text-base text-foreground/75 mb-7 max-w-md mx-auto leading-relaxed">
+              You've explored individual decisions. Now unlock a structured daily view across your workforce.
+            </p>
+            <div className="flex flex-wrap justify-center gap-3">
+              <button
+                onClick={() => setPage("pricing")}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors cursor-pointer"
+              >
+                Upgrade Plan
+              </button>
+              <button
+                onClick={() => setPage("contact")}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-border bg-background text-sm font-semibold text-foreground hover:bg-muted transition-colors cursor-pointer"
+              >
+                Book a Demo
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Generate button — first run available */}
+        {!decisions && !isLocked && (
           <div className="bg-card border border-border rounded-2xl p-8 text-center">
             <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
               <Sparkles className="w-5 h-5 text-primary" />
@@ -153,10 +205,15 @@ export default function TodayDecisionsPage({ setPage }: TodayDecisionsPageProps)
               ) : (
                 <>
                   <Sparkles className="w-4 h-4" />
-                  Generate Today's Decisions
+                  Unlock Daily Decision Brief
                 </>
               )}
             </button>
+            {!isUnlimited && (
+              <p className="text-[11px] text-muted-foreground mt-4">
+                One free generation included. Upgrade for ongoing daily briefs.
+              </p>
+            )}
           </div>
         )}
 
@@ -209,20 +266,48 @@ export default function TodayDecisionsPage({ setPage }: TodayDecisionsPageProps)
               </div>
             ))}
 
-            <div className="flex justify-center pt-4">
-              <button
-                onClick={handleGenerate}
-                disabled={generating}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border bg-background text-sm font-medium text-foreground hover:bg-muted transition-colors cursor-pointer disabled:opacity-60"
-              >
-                {generating ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <Sparkles className="w-4 h-4" />
-                )}
-                Regenerate
-              </button>
-            </div>
+            {isUnlimited ? (
+              <div className="flex justify-center pt-4">
+                <button
+                  onClick={handleGenerate}
+                  disabled={generating}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border bg-background text-sm font-medium text-foreground hover:bg-muted transition-colors cursor-pointer disabled:opacity-60"
+                >
+                  {generating ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Sparkles className="w-4 h-4" />
+                  )}
+                  Regenerate
+                </button>
+              </div>
+            ) : (
+              <div className="bg-card border border-border rounded-2xl p-6 md:p-7 mt-2 text-center">
+                <div className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[1.5px] text-primary mb-3">
+                  <Lock className="w-3 h-3" /> Daily brief locked
+                </div>
+                <h3 className="font-display text-xl text-foreground mb-2 leading-tight">
+                  Get this every morning
+                </h3>
+                <p className="text-sm text-foreground/75 mb-5 max-w-md mx-auto leading-relaxed">
+                  You've explored individual decisions. Now unlock a structured daily view across your workforce.
+                </p>
+                <div className="flex flex-wrap justify-center gap-3">
+                  <button
+                    onClick={() => setPage("pricing")}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors cursor-pointer"
+                  >
+                    Upgrade Plan
+                  </button>
+                  <button
+                    onClick={() => setPage("contact")}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border bg-background text-sm font-semibold text-foreground hover:bg-muted transition-colors cursor-pointer"
+                  >
+                    Book a Demo
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
