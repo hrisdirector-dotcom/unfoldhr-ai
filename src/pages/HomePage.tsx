@@ -26,6 +26,24 @@ export default function HomePage({ setPage }: HomePageProps) {
       <HeroSection setPage={setPage} />
       <PatternBreak />
       <WhereAIFitsSection />
+      <section className="py-16 md:py-20 bg-background border-t border-border">
+        <div className="max-w-3xl mx-auto px-6 md:px-14 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+          <div className="md:max-w-md">
+            <h3 className="font-display text-xl md:text-2xl text-foreground mb-2 leading-snug">
+              See the one-page executive view
+            </h3>
+            <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
+              A concise snapshot of where UnfoldHRAI fits, how it works, and why it matters.
+            </p>
+          </div>
+          <button
+            onClick={() => setPage("snapshot")}
+            className="self-start md:self-auto shrink-0 px-6 py-3 rounded-xl bg-card text-foreground font-semibold text-sm border border-border hover:border-primary/50 hover:bg-accent transition-all duration-200"
+          >
+            View Executive Snapshot
+          </button>
+        </div>
+      </section>
       <RealWorldDecisionsSection />
       <ScenarioToDecisionSection />
       <ExampleOutputSection />
