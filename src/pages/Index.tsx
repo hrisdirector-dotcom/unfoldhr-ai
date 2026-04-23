@@ -15,6 +15,7 @@ import PricingPage from "@/pages/PricingPage";
 import WorkforcePlanningAgent from "@/pages/WorkforcePlanningAgent";
 import TryUSWorkforceAgentPage from "@/pages/TryUSWorkforceAgentPage";
 import ExecutiveDeckPage from "@/pages/ExecutiveDeckPage";
+import ExecutiveSnapshotPage from "@/pages/ExecutiveSnapshotPage";
 import OnboardingWalkthrough from "@/components/OnboardingWalkthrough";
 import type { SavedRun } from "@/hooks/useSavedRuns";
 
@@ -168,6 +169,7 @@ const Index = () => {
       {page === "executive-deck" && deckState && (
         <ExecutiveDeckPage run={deckState.run} branding={deckState.branding} onBack={() => navigateTo("dashboard")} />
       )}
+      {page === "executive-snapshot" && <ExecutiveSnapshotPage />}
       {page === "admin" && isAdmin && <AdminDashboard onBack={() => navigateTo("dashboard")} onLogout={handleLogout} />}
 
       <AgentPickerModal open={pickerOpen} onClose={() => setPickerOpen(false)} onSelect={navigateTo} />
