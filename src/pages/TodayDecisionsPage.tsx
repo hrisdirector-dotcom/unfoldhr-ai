@@ -127,6 +127,16 @@ export default function TodayDecisionsPage({ setPage }: TodayDecisionsPageProps)
     }, 700);
   };
 
+  const handleSendEmail = () => {
+    if (emailSending || emailSent) return;
+    setEmailSending(true);
+    // Simulate sending — no real email is dispatched yet
+    setTimeout(() => {
+      setEmailSending(false);
+      setEmailSent(true);
+    }, 900);
+  };
+
   const today = new Date().toLocaleDateString(undefined, {
     weekday: "long",
     month: "long",
