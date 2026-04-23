@@ -266,20 +266,48 @@ export default function TodayDecisionsPage({ setPage }: TodayDecisionsPageProps)
               </div>
             ))}
 
-            <div className="flex justify-center pt-4">
-              <button
-                onClick={handleGenerate}
-                disabled={generating}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border bg-background text-sm font-medium text-foreground hover:bg-muted transition-colors cursor-pointer disabled:opacity-60"
-              >
-                {generating ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <Sparkles className="w-4 h-4" />
-                )}
-                Regenerate
-              </button>
-            </div>
+            {isUnlimited ? (
+              <div className="flex justify-center pt-4">
+                <button
+                  onClick={handleGenerate}
+                  disabled={generating}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border bg-background text-sm font-medium text-foreground hover:bg-muted transition-colors cursor-pointer disabled:opacity-60"
+                >
+                  {generating ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Sparkles className="w-4 h-4" />
+                  )}
+                  Regenerate
+                </button>
+              </div>
+            ) : (
+              <div className="bg-card border border-border rounded-2xl p-6 md:p-7 mt-2 text-center">
+                <div className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[1.5px] text-primary mb-3">
+                  <Lock className="w-3 h-3" /> Daily brief locked
+                </div>
+                <h3 className="font-display text-xl text-foreground mb-2 leading-tight">
+                  Get this every morning
+                </h3>
+                <p className="text-sm text-foreground/75 mb-5 max-w-md mx-auto leading-relaxed">
+                  You've explored individual decisions. Now unlock a structured daily view across your workforce.
+                </p>
+                <div className="flex flex-wrap justify-center gap-3">
+                  <button
+                    onClick={() => setPage("pricing")}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors cursor-pointer"
+                  >
+                    Upgrade Plan
+                  </button>
+                  <button
+                    onClick={() => setPage("contact")}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border bg-background text-sm font-semibold text-foreground hover:bg-muted transition-colors cursor-pointer"
+                  >
+                    Book a Demo
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
