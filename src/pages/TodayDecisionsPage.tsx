@@ -153,8 +153,37 @@ export default function TodayDecisionsPage({ setPage }: TodayDecisionsPageProps)
           </p>
         </div>
 
-        {/* Generate button */}
-        {!decisions && (
+        {/* Locked state — free user has already used their one generation */}
+        {!decisions && isLocked && (
+          <div className="bg-card border border-border rounded-2xl p-8 md:p-10 text-center">
+            <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-5">
+              <Calendar className="w-6 h-6 text-primary" />
+            </div>
+            <h2 className="font-display text-2xl md:text-3xl text-foreground mb-3 leading-tight">
+              Get this every morning
+            </h2>
+            <p className="text-sm md:text-base text-foreground/75 mb-7 max-w-md mx-auto leading-relaxed">
+              You've explored individual decisions. Now unlock a structured daily view across your workforce.
+            </p>
+            <div className="flex flex-wrap justify-center gap-3">
+              <button
+                onClick={() => setPage("pricing")}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors cursor-pointer"
+              >
+                Upgrade Plan
+              </button>
+              <button
+                onClick={() => setPage("contact")}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-border bg-background text-sm font-semibold text-foreground hover:bg-muted transition-colors cursor-pointer"
+              >
+                Book a Demo
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Generate button — first run available */}
+        {!decisions && !isLocked && (
           <div className="bg-card border border-border rounded-2xl p-8 text-center">
             <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
               <Sparkles className="w-5 h-5 text-primary" />
@@ -176,10 +205,15 @@ export default function TodayDecisionsPage({ setPage }: TodayDecisionsPageProps)
               ) : (
                 <>
                   <Sparkles className="w-4 h-4" />
-                  Generate Today's Decisions
+                  Unlock Daily Decision Brief
                 </>
               )}
             </button>
+            {!isUnlimited && (
+              <p className="text-[11px] text-muted-foreground mt-4">
+                One free generation included. Upgrade for ongoing daily briefs.
+              </p>
+            )}
           </div>
         )}
 
