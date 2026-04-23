@@ -15,6 +15,7 @@ import PricingPage from "@/pages/PricingPage";
 import WorkforcePlanningAgent from "@/pages/WorkforcePlanningAgent";
 import TryUSWorkforceAgentPage from "@/pages/TryUSWorkforceAgentPage";
 import ExecutiveDeckPage from "@/pages/ExecutiveDeckPage";
+import ExecutiveSnapshotPage from "@/pages/ExecutiveSnapshotPage";
 import OnboardingWalkthrough from "@/components/OnboardingWalkthrough";
 import type { SavedRun } from "@/hooks/useSavedRuns";
 
