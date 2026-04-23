@@ -81,13 +81,6 @@ export default function ExecutiveSnapshotPage() {
 
   return (
     <div className="min-h-screen bg-muted/30 py-8 md:py-12">
-      {/* Toolbar (excluded from PDF) */}
-      <div className="max-w-[900px] mx-auto px-6 mb-5 flex justify-end">
-        <Button onClick={handleDownload} disabled={generating} className="gap-2">
-          <Download className="w-4 h-4" />
-          {generating ? "Generating…" : "Download PDF"}
-        </Button>
-      </div>
 
       {/* Document — sized to roughly A4 portrait ratio for one-page fit */}
       <div
