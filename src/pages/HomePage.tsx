@@ -5,6 +5,7 @@ import PatternBreak from "@/components/landing/PatternBreak";
 import WhereAIFitsSection from "@/components/landing/WhereAIFitsSection";
 import RealWorldDecisionsSection from "@/components/landing/RealWorldDecisionsSection";
 import ScenarioToDecisionSection from "@/components/landing/ScenarioToDecisionSection";
+import DailyDecisionBriefSection from "@/components/landing/DailyDecisionBriefSection";
 import ExampleOutputSection from "@/components/landing/ExampleOutputSection";
 import TryItYourselfCTA from "@/components/landing/TryItYourselfCTA";
 import InteractiveAgentSection from "@/components/landing/InteractiveAgentSection";
@@ -46,6 +47,7 @@ export default function HomePage({ setPage }: HomePageProps) {
       </section>
       <RealWorldDecisionsSection />
       <ScenarioToDecisionSection />
+      <DailyDecisionBriefSection setPage={setPage} />
       <ExampleOutputSection />
       <TryItYourselfCTA />
       <InteractiveAgentSection setPage={setPage} />
