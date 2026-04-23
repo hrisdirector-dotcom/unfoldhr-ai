@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ArrowLeft, Sparkles, AlertTriangle, Lightbulb, Loader2, Lock, Calendar } from "lucide-react";
+import { ArrowLeft, Sparkles, AlertTriangle, Lightbulb, Loader2, Lock, Calendar, Mail, Check } from "lucide-react";
 import { useSavedRuns } from "@/hooks/useSavedRuns";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -87,6 +87,8 @@ export default function TodayDecisionsPage({ setPage }: TodayDecisionsPageProps)
   const [decisions, setDecisions] = useState<DecisionCard[] | null>(null);
   const [generating, setGenerating] = useState(false);
   const [hasUsedFree, setHasUsedFree] = useState(false);
+  const [emailSending, setEmailSending] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
 
   // Admins (and future paid users) bypass the gate. Everyone else is treated as free tier.
   const isUnlimited = isAdmin;
@@ -104,6 +106,8 @@ export default function TodayDecisionsPage({ setPage }: TodayDecisionsPageProps)
 
     setGenerating(true);
     setDecisions(null);
+    setEmailSent(false);
+    setEmailSending(false);
 
     // Simulate brief processing for executive feel
     setTimeout(() => {
@@ -121,6 +125,16 @@ export default function TodayDecisionsPage({ setPage }: TodayDecisionsPageProps)
         setHasUsedFree(true);
       }
     }, 700);
+  };
+
+  const handleSendEmail = () => {
+    if (emailSending || emailSent) return;
+    setEmailSending(true);
+    // Simulate sending — no real email is dispatched yet
+    setTimeout(() => {
+      setEmailSending(false);
+      setEmailSent(true);
+    }, 900);
   };
 
   const today = new Date().toLocaleDateString(undefined, {
@@ -265,6 +279,52 @@ export default function TodayDecisionsPage({ setPage }: TodayDecisionsPageProps)
                 </div>
               </div>
             ))}
+
+            {/* Email opt-in — soft demand validation, no real send yet */}
+            <div className="bg-card border border-border rounded-2xl p-6 md:p-7 text-center">
+              {emailSent ? (
+                <div className="flex flex-col items-center">
+                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mb-3">
+                    <Check className="w-5 h-5 text-primary" />
+                  </div>
+                  <p className="text-sm font-semibold text-foreground mb-1">
+                    Your decision brief has been sent.
+                  </p>
+                  <p className="text-[12px] text-muted-foreground">
+                    Check your inbox shortly.
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
+                    <Mail className="w-5 h-5 text-primary" />
+                  </div>
+                  <p className="text-sm font-semibold text-foreground mb-1">
+                    Want this in your inbox?
+                  </p>
+                  <p className="text-[12px] text-muted-foreground mb-4">
+                    Daily delivery coming soon
+                  </p>
+                  <button
+                    onClick={handleSendEmail}
+                    disabled={emailSending}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors cursor-pointer disabled:opacity-60"
+                  >
+                    {emailSending ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Sending…
+                      </>
+                    ) : (
+                      <>
+                        <Mail className="w-4 h-4" />
+                        Send me this today
+                      </>
+                    )}
+                  </button>
+                </>
+              )}
+            </div>
 
             {isUnlimited ? (
               <div className="flex justify-center pt-4">
