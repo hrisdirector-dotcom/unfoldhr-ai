@@ -129,7 +129,7 @@ const Index = () => {
   }, []);
 
   useEffect(() => {
-    if (!loading && !user && (page === "dashboard" || page === "admin")) {
+    if (!loading && !user && (page === "dashboard" || page === "admin" || page === "today-decisions")) {
       setPage("login");
     }
   }, [user, loading, page]);

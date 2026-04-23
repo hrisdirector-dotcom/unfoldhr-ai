@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useSavedRuns, SavedRun } from "@/hooks/useSavedRuns";
 import { downloadCSV, downloadPDF } from "@/lib/downloadResult";
 import BrandingModal from "@/components/BrandingModal";
-import { Download, Trash2, FileText, ArrowRight, Zap, Presentation } from "lucide-react";
+import { Download, Trash2, FileText, ArrowRight, Zap, Presentation, Sparkles } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
