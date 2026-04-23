@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ArrowLeft, Sparkles, AlertTriangle, Lightbulb, Loader2, Lock, Calendar } from "lucide-react";
+import { ArrowLeft, Sparkles, AlertTriangle, Lightbulb, Loader2, Lock, Calendar, Mail, Check } from "lucide-react";
 import { useSavedRuns } from "@/hooks/useSavedRuns";
 import { useAuth } from "@/hooks/useAuth";
 
