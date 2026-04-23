@@ -52,15 +52,7 @@ export default function HomePage({ setPage }: HomePageProps) {
       <AgentsShowcase setPage={setPage} />
       <TrustSection />
       <FinalCTA setPage={setPage} showToast={showToast} />
-      <Footer />
-      <div className="flex justify-center py-8 bg-background">
-        <button
-          onClick={() => setPage("snapshot")}
-          className="text-sm px-5 py-2 rounded-md border border-border text-foreground/70 hover:text-foreground hover:border-primary/40 transition-colors"
-        >
-          View Executive Snapshot
-        </button>
-      </div>
+      <Footer setPage={setPage} />
       <Toast message={toast} />
     </div>
   );
