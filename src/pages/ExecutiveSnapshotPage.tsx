@@ -243,6 +243,14 @@ export default function ExecutiveSnapshotPage() {
           </p>
         </footer>
       </div>
+
+      {/* Toolbar (excluded from PDF) */}
+      <div className="max-w-[900px] mx-auto px-6 mt-6 flex justify-end">
+        <Button onClick={handleDownload} disabled={generating} className="gap-2">
+          <Download className="w-4 h-4" />
+          {generating ? "Generating…" : "Download PDF"}
+        </Button>
+      </div>
     </div>
   );
 }
