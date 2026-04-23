@@ -169,7 +169,7 @@ const Index = () => {
       {page === "executive-deck" && deckState && (
         <ExecutiveDeckPage run={deckState.run} branding={deckState.branding} onBack={() => navigateTo("dashboard")} />
       )}
-      {page === "executive-snapshot" && <ExecutiveSnapshotPage />}
+      {(page === "executive-snapshot" || page === "snapshot") && <ExecutiveSnapshotPage />}
       {page === "admin" && isAdmin && <AdminDashboard onBack={() => navigateTo("dashboard")} onLogout={handleLogout} />}
 
       <AgentPickerModal open={pickerOpen} onClose={() => setPickerOpen(false)} onSelect={navigateTo} />
