@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useSavedRuns, SavedRun } from "@/hooks/useSavedRuns";
 import { downloadCSV, downloadPDF } from "@/lib/downloadResult";
 import BrandingModal from "@/components/BrandingModal";
-import { Download, Trash2, FileText, ArrowRight, Zap, Presentation } from "lucide-react";
+import { Download, Trash2, FileText, ArrowRight, Zap, Presentation, Sparkles } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -97,6 +97,23 @@ export default function DashboardPage({ currentUser, onLogout, setPage, onGenera
             View Plans & Upgrade
           </button>
         </div>
+
+        {/* Today's Decisions entry point */}
+        <button
+          onClick={() => setPage("today-decisions")}
+          className="w-full mb-10 bg-card border border-border rounded-2xl p-6 flex items-center justify-between gap-4 cursor-pointer hover:border-primary/40 hover:bg-muted/40 transition-all text-left group"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+              <Sparkles className="w-5 h-5 text-primary" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-foreground">Today's Decisions</p>
+              <p className="text-xs text-muted-foreground">A focused brief of the workforce calls that need your attention today</p>
+            </div>
+          </div>
+          <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
+        </button>
 
         {/* Quick Run Section */}
         <div className="mb-10">
