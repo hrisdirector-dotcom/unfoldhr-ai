@@ -132,38 +132,33 @@ export function UnfoldNav({ page, setPage, currentUser }: NavProps) {
 
             <div className="h-px bg-border my-3" />
 
-            {currentUser ? (
-              <button
-                onClick={() => navigate("dashboard")}
-                className="w-full px-4 py-3.5 text-base font-semibold rounded-lg cursor-pointer bg-accent text-accent-foreground border border-blue-mid transition-colors"
-              >
-                My Dashboard
-              </button>
-            ) : (
-              <button
-                onClick={() => navigate("login")}
-                className="w-full px-4 py-3.5 text-base font-medium rounded-lg cursor-pointer bg-transparent text-foreground border border-border transition-colors"
-              >
-                Sign In
-              </button>
-            )}
+            {/* Primary CTA - Try an Agent */}
             <button
-              onClick={() => {
-                navigate("home");
-                setTimeout(() => document.getElementById("request")?.scrollIntoView({ behavior: "smooth" }), 100);
-              }}
-              className="w-full px-4 py-3.5 text-base font-semibold rounded-lg cursor-pointer bg-foreground text-background border-none transition-colors"
+              onClick={() => navigate("try-agents", true)}
+              className="w-full px-4 py-3.5 text-base font-semibold rounded-lg cursor-pointer bg-primary text-primary-foreground border-none transition-colors"
             >
-              Request a Build
+              Try an Agent
             </button>
+
+            {/* Secondary CTA - Book a Demo */}
             <a
               href="https://calendly.com/eric-weaver-unfoldhrai/unfold-hr-ai-demo"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full px-4 py-3.5 text-base font-semibold rounded-lg cursor-pointer bg-primary text-primary-foreground border-none transition-colors text-center"
+              className="w-full px-4 py-3.5 text-base font-semibold rounded-lg cursor-pointer bg-foreground text-background border-none transition-colors text-center"
             >
               Book a Demo
             </a>
+
+            {/* Tertiary - Dashboard (if logged in) */}
+            {currentUser && (
+              <button
+                onClick={() => navigate("dashboard")}
+                className="w-full px-4 py-3.5 text-base font-medium rounded-lg cursor-pointer bg-transparent text-muted-foreground border border-border transition-colors"
+              >
+                My Dashboard
+              </button>
+            )}
           </div>
         </div>
       )}
