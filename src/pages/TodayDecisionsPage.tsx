@@ -390,6 +390,21 @@ export default function TodayDecisionsPage({ setPage }: TodayDecisionsPageProps)
             )}
           </div>
         )}
+
+        {/* Testing-only: reset the free-trial flag */}
+        {canResetTrial && (
+          <div className="mt-10 pt-6 border-t border-dashed border-border flex items-center justify-between gap-4">
+            <p className="text-[11px] uppercase tracking-[1.5px] text-muted-foreground">
+              Testing control · {isAdmin ? "admin" : "dev environment"}
+            </p>
+            <button
+              onClick={handleResetTrial}
+              className="text-[11px] font-medium text-muted-foreground hover:text-foreground underline underline-offset-4 decoration-dotted cursor-pointer bg-transparent border-none"
+            >
+              Reset free trial state
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
