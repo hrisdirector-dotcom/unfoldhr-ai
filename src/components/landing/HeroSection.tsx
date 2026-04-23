@@ -99,6 +99,15 @@ export default function HeroSection({ setPage }: HeroSectionProps) {
                 <span className="group-hover:translate-x-0.5 transition-transform">→</span>
               </a>
             </div>
+            {/* Daily Decision Brief teaser */}
+            <button
+              onClick={() => document.getElementById("daily-brief-teaser")?.scrollIntoView({ behavior: "smooth" }) ?? setPage("today-decisions")}
+              className="mt-3 inline-flex items-center gap-1.5 text-xs text-muted-foreground/90 hover:text-primary transition-colors group"
+            >
+              <span className="px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary">New</span>
+              Get your daily workforce decision brief before you even ask
+              <span className="group-hover:translate-x-0.5 transition-transform">→</span>
+            </button>
           </div>
         </RevealDiv>
       </div>
