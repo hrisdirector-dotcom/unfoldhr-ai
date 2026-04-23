@@ -64,33 +64,41 @@ export default function HeroSection({ setPage }: HeroSectionProps) {
         </RevealDiv>
 
         <RevealDiv delay={0.3}>
-          <div className="flex flex-wrap justify-center gap-3">
-            <button
-              onClick={scrollToAgents}
-              className="px-7 py-3.5 rounded-xl bg-foreground text-background font-semibold text-sm border-none cursor-pointer hover:bg-foreground/90 transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
-            >
-              Try an Agent
-            </button>
-            <button
-              onClick={scrollToExample}
-              className="px-7 py-3.5 rounded-xl bg-card text-foreground font-semibold text-sm border border-border cursor-pointer hover:border-primary/50 hover:bg-accent transition-all duration-200"
-            >
-              See Example
-            </button>
-            <button
-              onClick={() => setPage("snapshot")}
-              className="px-7 py-3.5 rounded-xl bg-card text-foreground font-semibold text-sm border border-border cursor-pointer hover:border-primary/50 hover:bg-accent transition-all duration-200"
-            >
-              View Executive Snapshot
-            </button>
-            <a
-              href="https://calendly.com/eric-weaver-unfoldhrai/unfold-hr-ai-demo"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-7 py-3.5 rounded-xl bg-transparent text-primary font-semibold text-sm border border-primary cursor-pointer hover:bg-primary/10 transition-all duration-200 inline-flex items-center"
-            >
-              Book a Demo
-            </a>
+          <div className="flex flex-col items-center gap-4">
+            {/* Primary CTAs */}
+            <div className="flex flex-wrap justify-center gap-3">
+              <button
+                onClick={scrollToAgents}
+                className="px-7 py-3.5 rounded-xl bg-foreground text-background font-semibold text-sm border-none cursor-pointer hover:bg-foreground/90 transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+              >
+                Try an Agent
+              </button>
+              <button
+                onClick={() => setPage("snapshot")}
+                className="px-7 py-3.5 rounded-xl bg-card text-foreground font-semibold text-sm border border-border cursor-pointer hover:border-primary/50 hover:bg-accent transition-all duration-200"
+              >
+                View Executive Snapshot
+              </button>
+            </div>
+            {/* Secondary links */}
+            <div className="flex flex-wrap justify-center gap-6 mt-2">
+              <button
+                onClick={scrollToExample}
+                className="text-sm text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-1 group"
+              >
+                See a Decision Brief
+                <span className="group-hover:translate-x-0.5 transition-transform">→</span>
+              </button>
+              <a
+                href="https://calendly.com/eric-weaver-unfoldhrai/unfold-hr-ai-demo"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-1 group"
+              >
+                Book a Demo
+                <span className="group-hover:translate-x-0.5 transition-transform">→</span>
+              </a>
+            </div>
           </div>
         </RevealDiv>
       </div>
