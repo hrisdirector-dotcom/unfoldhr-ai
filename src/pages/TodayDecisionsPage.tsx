@@ -106,6 +106,8 @@ export default function TodayDecisionsPage({ setPage }: TodayDecisionsPageProps)
 
     setGenerating(true);
     setDecisions(null);
+    setEmailSent(false);
+    setEmailSending(false);
 
     // Simulate brief processing for executive feel
     setTimeout(() => {
