@@ -1,10 +1,13 @@
-import { useState } from "react";
-import { ArrowLeft, Sparkles, AlertTriangle, Lightbulb, Loader2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ArrowLeft, Sparkles, AlertTriangle, Lightbulb, Loader2, Lock, Calendar } from "lucide-react";
 import { useSavedRuns } from "@/hooks/useSavedRuns";
+import { useAuth } from "@/hooks/useAuth";
 
 interface TodayDecisionsPageProps {
   setPage: (p: string) => void;
 }
+
+const DAILY_BRIEF_USED_KEY = "unfold_daily_brief_used";
 
 interface DecisionCard {
   title: string;
