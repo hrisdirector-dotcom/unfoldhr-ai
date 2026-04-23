@@ -1,64 +1,47 @@
 import { useRef, useState } from "react";
-import { Download } from "lucide-react";
+import { Download, ArrowUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 
-const Section = ({
-  eyebrow,
-  title,
-  children,
-}: {
-  eyebrow?: string;
-  title: string;
-  children: React.ReactNode;
-}) => (
-  <section className="py-10 border-t border-border first:border-t-0">
-    {eyebrow && (
-      <p className="text-[11px] font-bold uppercase tracking-[3px] text-primary mb-3">
-        {eyebrow}
-      </p>
-    )}
-    <h2 className="font-display text-2xl md:text-3xl text-foreground mb-4 leading-tight">
-      {title}
-    </h2>
-    <div className="text-foreground/85 text-base leading-relaxed space-y-3">
-      {children}
-    </div>
-  </section>
-);
-
-const STEPS = [
-  { label: "Scenario", desc: "A real situation you're navigating." },
-  { label: "Decision", desc: "A clear point of view." },
-  { label: "Recommendation", desc: "What to do, in priority order." },
-  { label: "Risks", desc: "What to watch for." },
-  { label: "Next Actions", desc: "How to move forward." },
+const STACK_LAYERS = [
+  { label: "Business Outcomes", muted: true },
+  { label: "AI Agent Layer", highlight: true },
+  { label: "Enterprise AI Platform Layer" },
+  { label: "Data + Integration Layer" },
+  { label: "Process / Workflow Layer" },
+  { label: "Systems of Record (HRIS, Payroll, ATS)" },
 ];
 
 const DIFFERENTIATORS = [
-  "Built for decisions, not dashboards.",
-  "Works with imperfect, fragmented inputs.",
-  "Outputs structured judgment — not raw data.",
-  "Executive-ready format every time.",
-  "Designed for HR leaders, not data teams.",
-];
-
-const USE_CASES = [
-  "Workforce planning under hiring uncertainty.",
-  "Performance management calibration.",
-  "Employee listening signal interpretation.",
-  "U.S. workforce policy & compliance complexity.",
-  "Org design and restructuring trade-offs.",
+  "Built for decisions, not dashboards",
+  "Works with imperfect inputs",
+  "Produces structured judgment",
+  "Executive-ready output",
+  "Designed for HR leaders",
 ];
 
 const BRIEF_PARTS = [
-  { label: "Strategic Summary", desc: "The decision, in one paragraph." },
-  { label: "Key Themes", desc: "What's actually driving the situation." },
-  { label: "Recommendations", desc: "Prioritized actions, not options." },
-  { label: "Risks & Watch-outs", desc: "What could go wrong, and where." },
-  { label: "Next Actions", desc: "Concrete steps to move forward." },
+  "Summary",
+  "Key Themes",
+  "Recommendations",
+  "Risks",
+  "Next Actions",
 ];
+
+const FLOW_STEPS = [
+  "Scenario",
+  "Decision",
+  "Recommendation",
+  "Risks",
+  "Next Actions",
+];
+
+const Eyebrow = ({ children }: { children: React.ReactNode }) => (
+  <p className="text-[10px] font-bold uppercase tracking-[2.5px] text-primary mb-2">
+    {children}
+  </p>
+);
 
 export default function ExecutiveSnapshotPage() {
   const docRef = useRef<HTMLDivElement>(null);
@@ -79,22 +62,17 @@ export default function ExecutiveSnapshotPage() {
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
 
-      const imgWidth = pageWidth;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      // Fit entire document on a single page (preserve aspect ratio)
+      const ratio = Math.min(
+        pageWidth / canvas.width,
+        pageHeight / canvas.height
+      );
+      const imgWidth = canvas.width * ratio;
+      const imgHeight = canvas.height * ratio;
+      const xOffset = (pageWidth - imgWidth) / 2;
+      const yOffset = (pageHeight - imgHeight) / 2;
 
-      let heightLeft = imgHeight;
-      let position = 0;
-
-      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-
-      while (heightLeft > 0) {
-        position = heightLeft - imgHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
-      }
-
+      pdf.addImage(imgData, "PNG", xOffset, yOffset, imgWidth, imgHeight);
       pdf.save("UnfoldHRAI-Executive-Snapshot.pdf");
     } finally {
       setGenerating(false);
@@ -102,142 +80,172 @@ export default function ExecutiveSnapshotPage() {
   };
 
   return (
-    <div className="min-h-screen bg-muted/30 py-10 md:py-16">
+    <div className="min-h-screen bg-muted/30 py-8 md:py-12">
       {/* Toolbar (excluded from PDF) */}
-      <div className="max-w-3xl mx-auto px-6 mb-6 flex justify-end">
-        <Button
-          onClick={handleDownload}
-          disabled={generating}
-          className="gap-2"
-        >
+      <div className="max-w-[900px] mx-auto px-6 mb-5 flex justify-end">
+        <Button onClick={handleDownload} disabled={generating} className="gap-2">
           <Download className="w-4 h-4" />
           {generating ? "Generating…" : "Download PDF"}
         </Button>
       </div>
 
-      {/* Document */}
+      {/* Document — sized to roughly A4 portrait ratio for one-page fit */}
       <div
         ref={docRef}
-        className="max-w-3xl mx-auto bg-background px-10 md:px-14 py-14 md:py-16 shadow-sm border border-border rounded-sm"
+        className="max-w-[900px] mx-auto bg-background px-10 md:px-12 py-10 md:py-12 shadow-sm border border-border rounded-sm"
       >
-        {/* Title block */}
-        <header className="mb-8 pb-8 border-b border-border">
-          <p className="text-[11px] font-bold uppercase tracking-[3px] text-primary mb-4">
-            Executive Snapshot
+        {/* TOP — WHAT THIS IS */}
+        <div className="mb-6 pb-5 border-b border-border">
+          <Eyebrow>What this is</Eyebrow>
+          <p className="text-foreground/80 text-[14px] leading-relaxed max-w-[640px]">
+            UnfoldHRAI is a decision layer that sits on top of HR systems and
+            turns fragmented workforce signals into clear, structured actions.
           </p>
-          <h1 className="font-display text-3xl md:text-[40px] leading-[1.15] text-foreground mb-6">
+        </div>
+
+        {/* HERO */}
+        <header className="mb-7">
+          <Eyebrow>Executive Snapshot</Eyebrow>
+          <h1 className="font-display text-[26px] md:text-[30px] leading-[1.15] text-foreground mb-3">
             UnfoldHRAI — The Decision Layer for Workforce Intelligence
           </h1>
-          <p className="font-display text-xl md:text-2xl text-foreground/90 leading-snug mb-3">
+          <p className="font-display text-[17px] md:text-[18px] text-foreground/90 leading-snug mb-2">
             See the workforce decision before you make it.
           </p>
-          <p className="text-foreground/70 text-base leading-relaxed">
-            Turn fragmented workforce signals into clear, structured decisions —
-            without relying on perfect data or clean inputs.
+          <p className="text-foreground/65 text-[13px] leading-relaxed">
+            Turn fragmented workforce signals into clear, structured decisions.
           </p>
         </header>
 
-        <Section eyebrow="The Problem" title="HR runs on fragments.">
-          <p>
-            Workforce decisions are made across scattered spreadsheets, survey
-            exports, HRIS reports, and meeting notes. The signal exists — it's
-            just never in one place, never structured, and never timely enough to
-            act on with confidence.
-          </p>
-          <p>
-            Leaders are forced to choose between waiting for clean data or making
-            the call from gut feel. Neither is good enough.
-          </p>
-        </Section>
+        {/* TWO-COLUMN BODY */}
+        <div className="grid grid-cols-12 gap-8 mb-7">
+          {/* LEFT COLUMN */}
+          <div className="col-span-12 md:col-span-7 space-y-5">
+            <div>
+              <Eyebrow>The Problem</Eyebrow>
+              <p className="font-display text-foreground text-[16px] leading-snug">
+                HR decisions are made across disconnected data.
+              </p>
+            </div>
 
-        <Section eyebrow="The Gap" title="Tools show data. Leaders need decisions.">
-          <p>
-            Dashboards, BI tools, and HR analytics platforms surface metrics —
-            but they stop short of judgment. They tell you <em>what</em> is
-            happening, not <em>what to do</em> about it.
+            <div className="border-t border-border pt-5">
+              <Eyebrow>The Gap</Eyebrow>
+              <p className="font-display text-foreground text-[16px] leading-snug">
+                Systems show what is happening, not what to do.
+              </p>
+            </div>
+
+            <div className="border-t border-border pt-5">
+              <Eyebrow>The Shift</Eyebrow>
+              <p className="font-display text-foreground text-[16px] leading-snug">
+                From dashboards → to structured decisions.
+              </p>
+            </div>
+
+            <div className="border-t border-border pt-5">
+              <Eyebrow>How It Works</Eyebrow>
+              <p className="text-foreground/85 text-[13px] leading-relaxed">
+                {FLOW_STEPS.map((s, i) => (
+                  <span key={s}>
+                    <span className="font-display text-foreground font-semibold">
+                      {s}
+                    </span>
+                    {i < FLOW_STEPS.length - 1 && (
+                      <span className="text-primary mx-2">→</span>
+                    )}
+                  </span>
+                ))}
+              </p>
+            </div>
+
+            <div className="border-t border-border pt-5">
+              <Eyebrow>What Makes It Different</Eyebrow>
+              <ul className="space-y-1.5 list-none p-0 mt-1">
+                {DIFFERENTIATORS.map((d) => (
+                  <li
+                    key={d}
+                    className="flex gap-2.5 text-foreground/85 text-[13px] leading-snug"
+                  >
+                    <span className="text-primary font-bold mt-0.5">—</span>
+                    <span>{d}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* RIGHT COLUMN — STACK DIAGRAM */}
+          <div className="col-span-12 md:col-span-5">
+            <Eyebrow>Where It Fits</Eyebrow>
+            <div className="mt-2 space-y-1.5 relative">
+              {STACK_LAYERS.map((layer, idx) => {
+                const isHighlight = layer.highlight;
+                const isMuted = layer.muted;
+                return (
+                  <div key={layer.label}>
+                    <div
+                      className={[
+                        "rounded-sm px-3 py-2.5 text-[12px] leading-tight border transition-colors",
+                        isHighlight
+                          ? "bg-primary text-primary-foreground border-primary font-display font-semibold shadow-sm"
+                          : isMuted
+                          ? "bg-muted/40 text-foreground/70 border-border"
+                          : "bg-background text-foreground/85 border-border",
+                      ].join(" ")}
+                    >
+                      {layer.label}
+                    </div>
+                    {idx < STACK_LAYERS.length - 1 && (
+                      <div className="flex justify-center py-0.5">
+                        <ArrowUp
+                          className={[
+                            "w-3 h-3",
+                            idx === STACK_LAYERS.length - 2 ||
+                            STACK_LAYERS[idx + 1]?.highlight
+                              ? "text-primary"
+                              : "text-foreground/30",
+                          ].join(" ")}
+                          strokeWidth={2.5}
+                        />
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+            <p className="text-[10px] text-foreground/50 mt-3 leading-snug">
+              UnfoldHRAI operates at the AI Agent Layer — translating system
+              data into business outcomes.
+            </p>
+          </div>
+        </div>
+
+        {/* OUTPUT */}
+        <div className="border-t border-border pt-5 mb-6">
+          <Eyebrow>Output</Eyebrow>
+          <p className="font-display text-foreground text-[15px] mb-2.5">
+            A structured Decision Brief:
           </p>
-          <p>
-            The missing layer isn't more data. It's structured reasoning on top
-            of the data you already have.
-          </p>
-        </Section>
-
-        <Section eyebrow="The Solution" title="A decision layer, not another dashboard.">
-          <p>
-            UnfoldHRAI sits above your existing systems and turns messy
-            workforce signals into executive-ready decisions. It reasons across
-            inputs, flags trade-offs, and produces a structured recommendation
-            you can act on — or challenge — in minutes.
-          </p>
-        </Section>
-
-        <Section eyebrow="How It Works" title="From scenario to decision, every time.">
-          <ol className="space-y-3 list-none p-0">
-            {STEPS.map((s, i) => (
-              <li key={s.label} className="flex gap-4">
-                <span className="font-display text-sm text-primary font-bold shrink-0 w-6">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <span>
-                  <span className="font-display text-foreground font-semibold">
-                    {s.label}.
-                  </span>{" "}
-                  <span className="text-foreground/75">{s.desc}</span>
-                </span>
-              </li>
-            ))}
-          </ol>
-        </Section>
-
-        <Section eyebrow="What Makes It Different" title="Judgment, not just analytics.">
-          <ul className="space-y-2 list-none p-0">
-            {DIFFERENTIATORS.map((d) => (
-              <li key={d} className="flex gap-3">
-                <span className="text-primary font-bold mt-0.5">—</span>
-                <span className="text-foreground/85">{d}</span>
-              </li>
-            ))}
-          </ul>
-        </Section>
-
-        <Section eyebrow="Example Use Cases" title="Where it fits.">
-          <ul className="space-y-2 list-none p-0">
-            {USE_CASES.map((u) => (
-              <li key={u} className="flex gap-3">
-                <span className="text-primary font-bold mt-0.5">—</span>
-                <span className="text-foreground/85">{u}</span>
-              </li>
-            ))}
-          </ul>
-        </Section>
-
-        <Section eyebrow="The Output" title="A structured Decision Brief.">
-          <p className="mb-4">
-            Every agent returns the same executive-ready structure — designed to
-            be read in under two minutes and acted on the same day.
-          </p>
-          <div className="space-y-3">
+          <div className="flex flex-wrap gap-x-5 gap-y-1.5">
             {BRIEF_PARTS.map((b) => (
               <div
-                key={b.label}
-                className="border-l-2 border-primary/40 pl-4 py-1"
+                key={b}
+                className="flex items-center gap-2 text-foreground/85 text-[13px]"
               >
-                <p className="font-display text-foreground font-semibold text-base">
-                  {b.label}
-                </p>
-                <p className="text-foreground/70 text-sm">{b.desc}</p>
+                <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                <span className="font-display font-semibold">{b}</span>
               </div>
             ))}
           </div>
-        </Section>
+        </div>
 
-        {/* Closing */}
-        <footer className="mt-10 pt-8 border-t border-border">
-          <p className="font-display text-xl md:text-2xl text-foreground leading-snug italic">
+        {/* CLOSING */}
+        <footer className="border-t border-border pt-5 flex items-end justify-between gap-6">
+          <p className="font-display text-[15px] md:text-[16px] text-foreground leading-snug italic max-w-[600px]">
             UnfoldHRAI doesn't wait for perfect inputs. It structures the
             decision anyway.
           </p>
-          <p className="text-xs text-foreground/50 mt-6 tracking-wider uppercase">
+          <p className="text-[10px] text-foreground/50 tracking-[2px] uppercase whitespace-nowrap">
             unfoldhrai.com
           </p>
         </footer>
