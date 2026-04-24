@@ -16,7 +16,7 @@ export default function Footer({ setPage }: FooterProps) {
               Executive Snapshot
             </button>
           )}
-          <span>Privacy</span>
+          <a href="/privacy" className="hover:text-foreground transition-colors">Privacy</a>
           <span>Terms</span>
           <span>Security</span>
         </div>
