@@ -351,6 +351,8 @@ serve(async (req) => {
           { role: "system", content: systemPrompt },
           { role: "user", content: userMessage },
         ],
+        max_tokens: 4096,
+        response_format: { type: "json_object" },
       }),
     });
 
@@ -408,6 +410,34 @@ serve(async (req) => {
         .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, "")
         .replace(/,\s*([}\]])/g, "$1");
       parsed = tryParse(repaired);
+    }
+    if (!parsed.ok) {
+      // Truncation repair: close any unterminated string, then balance braces/brackets.
+      let s = jsonStr.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, "");
+      // Count quotes ignoring escaped ones to detect unterminated string.
+      let inStr = false;
+      let escape = false;
+      const stack: string[] = [];
+      for (let i = 0; i < s.length; i++) {
+        const c = s[i];
+        if (escape) { escape = false; continue; }
+        if (c === "\\") { escape = true; continue; }
+        if (c === '"') { inStr = !inStr; continue; }
+        if (inStr) continue;
+        if (c === "{" || c === "[") stack.push(c);
+        else if (c === "}" && stack[stack.length - 1] === "{") stack.pop();
+        else if (c === "]" && stack[stack.length - 1] === "[") stack.pop();
+      }
+      if (inStr) s += '"';
+      // Drop dangling key/comma/colon at the end before closing.
+      s = s.replace(/[,:]\s*$/g, "").replace(/"\s*[A-Za-z0-9_]*\s*$/g, (m) => m).replace(/,\s*([}\]])/g, "$1");
+      // Remove any trailing partial property like  ,"foo"  or  ,"foo":
+      s = s.replace(/,\s*"[^"]*"\s*:?\s*$/g, "");
+      while (stack.length) {
+        const open = stack.pop();
+        s += open === "{" ? "}" : "]";
+      }
+      parsed = tryParse(s);
     }
     if (!parsed.ok) {
       console.error("run-agent JSON parse failed. Raw content sample:", jsonStr.slice(0, 500));
