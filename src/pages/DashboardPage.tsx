@@ -244,9 +244,7 @@ export default function DashboardPage({ currentUser, onLogout, setPage, onGenera
                           )}
 
                           <button
-                            onClick={() => {
-                              setPage(run.agent_type === "workforce" ? "try-agent" : "agents");
-                            }}
+                            onClick={() => setSelectedRun(run)}
                             className="text-xs font-medium text-primary hover:underline cursor-pointer"
                           >
                             View Decision & Actions →
