@@ -351,6 +351,8 @@ serve(async (req) => {
           { role: "system", content: systemPrompt },
           { role: "user", content: userMessage },
         ],
+        max_tokens: 4096,
+        response_format: { type: "json_object" },
       }),
     });
 
