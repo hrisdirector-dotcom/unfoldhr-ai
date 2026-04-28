@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useSavedRuns, SavedRun } from "@/hooks/useSavedRuns";
 import { downloadCSV, downloadPDF } from "@/lib/downloadResult";
 import BrandingModal from "@/components/BrandingModal";
-import { Download, Trash2, FileText, ArrowRight, ArrowLeft, Zap, Presentation, Sparkles } from "lucide-react";
+import { Download, Trash2, FileText, ArrowRight, ArrowLeft, Zap, Presentation, Sparkles, ChevronDown } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -34,6 +34,9 @@ export default function DashboardPage({ currentUser, onLogout, setPage, onGenera
   const [brandingRun, setBrandingRun] = useState<SavedRun | null>(null);
   const [selectedRun, setSelectedRun] = useState<SavedRun | null>(null);
   const [activeAction, setActiveAction] = useState<string | null>(null);
+  const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({});
+  const toggleSection = (key: string) =>
+    setCollapsedSections((prev) => ({ ...prev, [key]: !prev[key] }));
 
   const paid = isPaidUser(currentUser.role);
 
@@ -234,15 +237,30 @@ export default function DashboardPage({ currentUser, onLogout, setPage, onGenera
 
                 if (!body) return null;
 
+                const isCollapsed = !!collapsedSections[key];
                 return (
                   <div key={key} className="bg-card border border-border rounded-2xl p-6">
-                    <p className="text-xs font-bold uppercase tracking-[2px] text-muted-foreground mb-3">
-                      {headerLabel}
-                    </p>
-                    {sectionTitle && (
-                      <p className="text-sm font-semibold text-foreground mb-3">{String(sectionTitle)}</p>
+                    <button
+                      type="button"
+                      onClick={() => toggleSection(key)}
+                      aria-expanded={!isCollapsed}
+                      className="w-full flex items-center justify-between gap-3 text-left group"
+                    >
+                      <p className="text-xs font-bold uppercase tracking-[2px] text-muted-foreground group-hover:text-foreground transition-colors">
+                        {headerLabel}
+                      </p>
+                      <ChevronDown
+                        className={`w-4 h-4 text-muted-foreground transition-transform ${isCollapsed ? "" : "rotate-180"}`}
+                      />
+                    </button>
+                    {!isCollapsed && (
+                      <div className="mt-3">
+                        {sectionTitle && (
+                          <p className="text-sm font-semibold text-foreground mb-3">{String(sectionTitle)}</p>
+                        )}
+                        {body}
+                      </div>
                     )}
-                    {body}
                   </div>
                 );
               })}
