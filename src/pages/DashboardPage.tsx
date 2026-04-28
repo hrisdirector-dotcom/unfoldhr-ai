@@ -60,8 +60,134 @@ export default function DashboardPage({ currentUser, onLogout, setPage, onGenera
       { title: "Adjust Hiring Plan", description: "Refine hiring timelines and sequencing", button: "Create Hiring Plan" },
       { title: "Align Budget", description: "Review hiring impact on workforce cost", button: "View Cost Scenario" },
     ];
+    const formatLabel = (k: string) =>
+      k.replace(/[_-]/g, " ").replace(/([a-z])([A-Z])/g, "$1 $2").replace(/\b\w/g, (c) => c.toUpperCase());
+
+    const renderPrimitive = (v: any) => (
+      <span className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">{String(v)}</span>
+    );
+
+    const renderItem = (item: any, i: number) => {
+      if (item == null) return null;
+      if (typeof item === "string" || typeof item === "number" || typeof item === "boolean") {
+        return (
+          <li key={i} className="text-sm text-foreground leading-relaxed">
+            {String(item)}
+          </li>
+        );
+      }
+      if (Array.isArray(item)) {
+        return (
+          <li key={i}>
+            <ul className="list-disc pl-5 space-y-1">{item.map((x, j) => renderItem(x, j))}</ul>
+          </li>
+        );
+      }
+      // object item — pull common fields
+      const label = item.label ?? item.title ?? item.name ?? item.heading;
+      const detail = item.detail ?? item.description ?? item.text ?? item.summary ?? item.value;
+      const tag = item.tag ?? item.badge ?? item.status ?? item.category;
+      const knownKeys = new Set(["label", "title", "name", "heading", "detail", "description", "text", "summary", "value", "tag", "badge", "status", "category"]);
+      const extra = Object.entries(item).filter(([k, v]) => !knownKeys.has(k) && v != null);
+
+      if (label || detail || tag) {
+        return (
+          <li key={i} className="rounded-xl border border-border bg-background p-4">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0 flex-1">
+                {label && <p className="text-sm font-semibold text-foreground">{String(label)}</p>}
+                {detail != null && (
+                  typeof detail === "string" || typeof detail === "number" ? (
+                    <p className="text-xs text-muted-foreground mt-1 leading-relaxed whitespace-pre-wrap">{String(detail)}</p>
+                  ) : (
+                    <div className="mt-2">{renderValue(detail)}</div>
+                  )
+                )}
+              </div>
+              {tag && (
+                <span className="shrink-0 inline-flex items-center rounded-full border border-border bg-card px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                  {String(tag)}
+                </span>
+              )}
+            </div>
+            {extra.length > 0 && (
+              <dl className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1.5">
+                {extra.map(([k, v]) => (
+                  <div key={k} className="flex flex-col">
+                    <dt className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">{formatLabel(k)}</dt>
+                    <dd className="text-xs text-foreground">
+                      {typeof v === "string" || typeof v === "number" || typeof v === "boolean"
+                        ? String(v)
+                        : renderValue(v)}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            )}
+          </li>
+        );
+      }
+
+      // generic object — render keys as label/value pairs
+      return (
+        <li key={i} className="rounded-xl border border-border bg-background p-4">
+          <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1.5">
+            {Object.entries(item).filter(([, v]) => v != null).map(([k, v]) => (
+              <div key={k} className="flex flex-col">
+                <dt className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">{formatLabel(k)}</dt>
+                <dd className="text-xs text-foreground">
+                  {typeof v === "string" || typeof v === "number" || typeof v === "boolean"
+                    ? String(v)
+                    : renderValue(v)}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </li>
+      );
+    };
+
+    const renderValue = (value: any): JSX.Element | null => {
+      if (value == null) return null;
+      if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+        return renderPrimitive(value);
+      }
+      if (Array.isArray(value)) {
+        if (value.length === 0) return null;
+        return <ul className="space-y-2">{value.map((item, i) => renderItem(item, i))}</ul>;
+      }
+      // object — if it looks like a section { title, items }
+      if (Array.isArray((value as any).items)) {
+        return (
+          <div className="space-y-3">
+            {(value as any).title && (
+              <p className="text-sm font-semibold text-foreground">{String((value as any).title)}</p>
+            )}
+            <ul className="space-y-2">{(value as any).items.map((item: any, i: number) => renderItem(item, i))}</ul>
+          </div>
+        );
+      }
+      // generic object — render as label/value list
+      const entries = Object.entries(value).filter(([, v]) => v != null);
+      if (entries.length === 0) return null;
+      return (
+        <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2">
+          {entries.map(([k, v]) => (
+            <div key={k} className="flex flex-col">
+              <dt className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">{formatLabel(k)}</dt>
+              <dd className="text-sm text-foreground">
+                {typeof v === "string" || typeof v === "number" || typeof v === "boolean"
+                  ? String(v)
+                  : renderValue(v)}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      );
+    };
+
     const sectionEntries = Object.entries(res).filter(
-      ([k, v]) => !["summary", "confidence"].includes(k) && v != null
+      ([k, v]) => !["summary", "confidence"].includes(k) && v != null && !(Array.isArray(v) && v.length === 0)
     );
     return (
       <div className="bg-background min-h-screen pt-28 pb-16 px-6 md:px-14">
