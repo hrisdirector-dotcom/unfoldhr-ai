@@ -171,6 +171,49 @@ export default function DecisionBriefCard({
         </motion.div>
       )}
 
+      {/* Recommended Actions */}
+      <motion.div custom={seq++} variants={fadeUp} className="mb-8">
+        <h4 className="text-xs font-semibold uppercase tracking-[1.5px] text-muted-foreground mb-3">
+          Recommended Actions
+        </h4>
+        <div className="space-y-2.5">
+          {[
+            {
+              title: "Open Sales Roles",
+              description: "Create and prioritize new roles based on hiring gaps",
+              button: "Generate Job Requisition",
+            },
+            {
+              title: "Adjust Hiring Plan",
+              description: "Refine hiring timelines and sequencing",
+              button: "Create Hiring Plan",
+            },
+            {
+              title: "Align Budget",
+              description: "Review hiring impact on workforce cost",
+              button: "View Cost Scenario",
+            },
+          ].map((action) => (
+            <div
+              key={action.title}
+              className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 rounded-xl border border-border bg-background p-3.5"
+            >
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-foreground">{action.title}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{action.description}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {}}
+                className="shrink-0 inline-flex items-center justify-center rounded-md border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+              >
+                {action.button}
+              </button>
+            </div>
+          ))}
+        </div>
+      </motion.div>
+
       {/* Confidence Level */}
       {confidence && (
         <motion.div custom={seq++} variants={fadeUp}>
