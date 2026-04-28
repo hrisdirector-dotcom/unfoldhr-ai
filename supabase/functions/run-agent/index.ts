@@ -351,7 +351,7 @@ serve(async (req) => {
           { role: "system", content: systemPrompt },
           { role: "user", content: userMessage },
         ],
-        max_tokens: 4096,
+        max_tokens: 8192,
         response_format: { type: "json_object" },
       }),
     });
@@ -379,9 +379,13 @@ serve(async (req) => {
 
     const data = await response.json();
     const content = data.choices?.[0]?.message?.content;
+    const finishReason = data.choices?.[0]?.finish_reason;
 
     if (!content) {
       throw new Error("No content in AI response");
+    }
+    if (finishReason === "length") {
+      console.warn("run-agent: AI response truncated by max_tokens; will attempt repair.");
     }
 
     let jsonStr = content.trim();
@@ -412,29 +416,74 @@ serve(async (req) => {
       parsed = tryParse(repaired);
     }
     if (!parsed.ok) {
-      // Truncation repair: close any unterminated string, then balance braces/brackets.
+      // Truncation repair: walk the string tracking strings/escapes/brackets,
+      // then trim back to the last complete value and close all open containers.
       let s = jsonStr.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, "");
-      // Count quotes ignoring escaped ones to detect unterminated string.
       let inStr = false;
       let escape = false;
       const stack: string[] = [];
+      // Track the index of the last position where we were at "value boundary"
+      // (i.e., not inside a string, and the next char could legally be a closer).
+      let lastSafe = -1;
       for (let i = 0; i < s.length; i++) {
         const c = s[i];
         if (escape) { escape = false; continue; }
-        if (c === "\\") { escape = true; continue; }
-        if (c === '"') { inStr = !inStr; continue; }
-        if (inStr) continue;
-        if (c === "{" || c === "[") stack.push(c);
-        else if (c === "}" && stack[stack.length - 1] === "{") stack.pop();
-        else if (c === "]" && stack[stack.length - 1] === "[") stack.pop();
+        if (inStr) {
+          if (c === "\\") { escape = true; continue; }
+          if (c === '"') { inStr = false; lastSafe = i; }
+          continue;
+        }
+        if (c === '"') { inStr = true; continue; }
+        if (c === "{" || c === "[") { stack.push(c); continue; }
+        if (c === "}" && stack[stack.length - 1] === "{") { stack.pop(); lastSafe = i; continue; }
+        if (c === "]" && stack[stack.length - 1] === "[") { stack.pop(); lastSafe = i; continue; }
+        if (c === "," || /[0-9truefalsn]/i.test(c)) { lastSafe = i; }
       }
-      if (inStr) s += '"';
-      // Drop dangling key/comma/colon at the end before closing.
-      s = s.replace(/[,:]\s*$/g, "").replace(/"\s*[A-Za-z0-9_]*\s*$/g, (m) => m).replace(/,\s*([}\]])/g, "$1");
-      // Remove any trailing partial property like  ,"foo"  or  ,"foo":
-      s = s.replace(/,\s*"[^"]*"\s*:?\s*$/g, "");
-      while (stack.length) {
-        const open = stack.pop();
+      // If we were mid-string when truncated, cut back to before the broken string started.
+      if (inStr) {
+        const lastQuote = s.lastIndexOf('"', s.length - 1);
+        // find the opening quote of the unterminated string
+        let openQuote = -1;
+        let esc = false; let inS = false;
+        for (let i = 0; i < s.length; i++) {
+          const c = s[i];
+          if (esc) { esc = false; continue; }
+          if (c === "\\") { esc = true; continue; }
+          if (c === '"') { if (!inS) { openQuote = i; inS = true; } else { inS = false; } }
+        }
+        if (openQuote >= 0) s = s.slice(0, openQuote);
+      } else if (lastSafe >= 0 && lastSafe < s.length - 1) {
+        s = s.slice(0, lastSafe + 1);
+      }
+      // Strip dangling separators / partial keys at the tail.
+      // Repeat until stable.
+      let prev = "";
+      while (prev !== s) {
+        prev = s;
+        s = s.replace(/[\s,]+$/g, "");
+        s = s.replace(/"[^"\\]*"\s*:\s*$/g, ""); // dangling "key":
+        s = s.replace(/[\s,]+$/g, "");
+        s = s.replace(/"[^"\\]*"\s*$/g, ""); // dangling bare "key"
+        s = s.replace(/[\s,]+$/g, "");
+      }
+      // Recount stack against trimmed s.
+      const stack2: string[] = [];
+      let inStr2 = false; let esc2 = false;
+      for (let i = 0; i < s.length; i++) {
+        const c = s[i];
+        if (esc2) { esc2 = false; continue; }
+        if (inStr2) {
+          if (c === "\\") { esc2 = true; continue; }
+          if (c === '"') inStr2 = false;
+          continue;
+        }
+        if (c === '"') { inStr2 = true; continue; }
+        if (c === "{" || c === "[") stack2.push(c);
+        else if (c === "}" && stack2[stack2.length - 1] === "{") stack2.pop();
+        else if (c === "]" && stack2[stack2.length - 1] === "[") stack2.pop();
+      }
+      while (stack2.length) {
+        const open = stack2.pop();
         s += open === "{" ? "}" : "]";
       }
       parsed = tryParse(s);
