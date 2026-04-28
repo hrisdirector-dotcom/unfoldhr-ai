@@ -215,34 +215,36 @@ export default function DashboardPage({ currentUser, onLogout, setPage, onGenera
 
           {sectionEntries.length > 0 && (
             <div className="space-y-4 mb-6">
-              {sectionEntries.map(([key, value]) => (
-                <div key={key} className="bg-card border border-border rounded-2xl p-6">
-                  <p className="text-xs font-bold uppercase tracking-[2px] text-muted-foreground mb-3">
-                    {key.replace(/_/g, " ")}
-                  </p>
-                  {typeof value === "string" || typeof value === "number" ? (
-                    <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">{String(value)}</p>
-                  ) : Array.isArray(value) ? (
-                    <ul className="space-y-2">
-                      {value.map((item, i) => (
-                        <li key={i} className="text-sm text-foreground leading-relaxed">
-                          {typeof item === "string" || typeof item === "number" ? (
-                            String(item)
-                          ) : (
-                            <pre className="text-xs font-sans whitespace-pre-wrap text-foreground bg-background border border-border rounded-lg p-3">
-                              {JSON.stringify(item, null, 2)}
-                            </pre>
-                          )}
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <pre className="text-xs font-sans whitespace-pre-wrap text-foreground bg-background border border-border rounded-lg p-3">
-                      {JSON.stringify(value, null, 2)}
-                    </pre>
-                  )}
-                </div>
-              ))}
+              {sectionEntries.map(([key, value]) => {
+                // Section shape: { title, items }
+                const isSectionShape =
+                  value && typeof value === "object" && !Array.isArray(value) && Array.isArray((value as any).items);
+                if (isSectionShape && (value as any).items.length === 0) return null;
+
+                const headerLabel = formatLabel(key);
+                const sectionTitle = isSectionShape ? (value as any).title : null;
+                const body = isSectionShape ? (
+                  <ul className="space-y-2">
+                    {(value as any).items.map((item: any, i: number) => renderItem(item, i))}
+                  </ul>
+                ) : (
+                  renderValue(value)
+                );
+
+                if (!body) return null;
+
+                return (
+                  <div key={key} className="bg-card border border-border rounded-2xl p-6">
+                    <p className="text-xs font-bold uppercase tracking-[2px] text-muted-foreground mb-3">
+                      {headerLabel}
+                    </p>
+                    {sectionTitle && (
+                      <p className="text-sm font-semibold text-foreground mb-3">{String(sectionTitle)}</p>
+                    )}
+                    {body}
+                  </div>
+                );
+              })}
             </div>
           )}
 
