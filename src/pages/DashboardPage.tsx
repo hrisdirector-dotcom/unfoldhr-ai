@@ -243,6 +243,14 @@ export default function DashboardPage({ currentUser, onLogout, setPage, onGenera
                           )}
 
                           <button
+                            onClick={() => {
+                              setPage(run.agent_type === "workforce" ? "try-agent" : "agents");
+                            }}
+                            className="text-xs font-medium text-primary hover:underline cursor-pointer"
+                          >
+                            View Decision & Actions →
+                          </button>
+                          <button
                             onClick={() => deleteRun(run.id)}
                             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-destructive/30 bg-background text-xs font-medium text-destructive hover:bg-destructive/10 transition-colors cursor-pointer ml-auto"
                           >
