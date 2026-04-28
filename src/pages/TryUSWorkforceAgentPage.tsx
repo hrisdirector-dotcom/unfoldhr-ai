@@ -520,11 +520,92 @@ export default function TryUSWorkforceAgentPage({ setPage }: TryUSWorkforceAgent
                     </div>
                   </div>
                 </RevealDiv>
+
+                <RevealDiv delay={0.15}>
+                  <RecommendedActions />
+                </RevealDiv>
               </>
             )}
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+type RecommendedAction = {
+  title: string;
+  description: string;
+  button: string;
+  draft: string;
+};
+
+const RECOMMENDED_ACTIONS: RecommendedAction[] = [
+  {
+    title: "Open Sales Roles",
+    description: "Create and prioritize new roles based on hiring gaps",
+    button: "Generate Job Requisition",
+    draft:
+      "Draft requisition: Senior Account Executive (US, Remote)\n\n• Reports to: VP Sales\n• Target start: next quarter\n• Priority: High — closes identified pipeline coverage gap\n• Key responsibilities: own mid-market pipeline, partner with SDRs, deliver against quarterly quota\n• Must-haves: 5+ yrs B2B SaaS closing experience, multi-state US territory ownership\n\nNext step: review with hiring manager, then post to ATS.",
+  },
+  {
+    title: "Adjust Hiring Plan",
+    description: "Refine hiring timelines and sequencing",
+    button: "Create Hiring Plan",
+    draft:
+      "Draft hiring sequence (next 3 quarters)\n\n• Q1 — front-load revenue roles (2 AEs, 1 SDR)\n• Q2 — add delivery capacity (2 engineers, 1 PM)\n• Q3 — backfill operational roles based on attrition signal\n\nDependencies: updated JDs, recruiter capacity, budget reforecast.",
+  },
+  {
+    title: "Align Budget",
+    description: "Review hiring impact on workforce cost",
+    button: "View Cost Scenario",
+    draft:
+      "Draft cost scenario\n\n• Baseline workforce cost: current run-rate\n• Incremental cost: new hires phased across quarters (loaded comp incl. benefits + employer taxes)\n• Sensitivity: +/- 10% on start dates\n• Risk: later-phase buffer is thin if attrition runs above forecast\n\nNext step: review with Finance before approving sequencing.",
+  },
+];
+
+function RecommendedActions() {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  return (
+    <div className="bg-card border border-border rounded-2xl p-5 md:p-6">
+      <p className="text-xs font-bold uppercase tracking-[2px] text-muted-foreground mb-4">
+        Recommended Actions
+      </p>
+      <div className="grid gap-3 md:grid-cols-3">
+        {RECOMMENDED_ACTIONS.map((action, idx) => {
+          const isOpen = openIndex === idx;
+          return (
+            <div
+              key={action.title}
+              className="flex flex-col justify-between rounded-xl border border-border bg-background p-4"
+            >
+              <div>
+                <h4 className="font-display text-base text-foreground mb-1.5">
+                  {action.title}
+                </h4>
+                <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+                  {action.description}
+                </p>
+              </div>
+              <button
+                onClick={() => setOpenIndex(isOpen ? null : idx)}
+                className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-foreground text-background text-sm font-semibold hover:bg-primary transition-colors cursor-pointer"
+              >
+                {isOpen ? "Hide draft" : action.button}
+              </button>
+              {isOpen && (
+                <pre className="mt-4 whitespace-pre-wrap text-xs text-foreground/90 leading-relaxed bg-muted/50 border border-border rounded-lg p-3 font-sans">
+                  {action.draft}
+                </pre>
+              )}
+            </div>
+          );
+        })}
+      </div>
+      <p className="text-xs text-muted-foreground mt-4">
+        Drafts are generated locally for review — no systems are updated.
+      </p>
     </div>
   );
 }
