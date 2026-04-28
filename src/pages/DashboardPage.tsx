@@ -32,6 +32,7 @@ export default function DashboardPage({ currentUser, onLogout, setPage, onGenera
   const { runs, loading, deleteRun } = useSavedRuns();
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [brandingRun, setBrandingRun] = useState<SavedRun | null>(null);
+  const [selectedRun, setSelectedRun] = useState<SavedRun | null>(null);
 
   const paid = isPaidUser(currentUser.role);
 
