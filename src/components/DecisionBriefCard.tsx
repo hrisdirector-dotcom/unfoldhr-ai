@@ -236,40 +236,56 @@ export default function DecisionBriefCard({
           Recommended Actions
         </h4>
         <div className="space-y-2.5">
-          {[
-            {
-              title: "Open Sales Roles",
-              description: "Create and prioritize new roles based on hiring gaps",
-              button: "Generate Job Requisition",
-            },
-            {
-              title: "Adjust Hiring Plan",
-              description: "Refine hiring timelines and sequencing",
-              button: "Create Hiring Plan",
-            },
-            {
-              title: "Align Budget",
-              description: "Review hiring impact on workforce cost",
-              button: "View Cost Scenario",
-            },
-          ].map((action) => (
-            <div
-              key={action.title}
-              className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 rounded-xl border border-border bg-background p-3.5"
-            >
-              <div className="min-w-0">
-                <p className="text-sm font-semibold text-foreground">{action.title}</p>
-                <p className="text-xs text-muted-foreground mt-0.5">{action.description}</p>
+          {actions.map((action) => {
+            const isOpen = openAction === action.key;
+            return (
+              <div key={action.key} className="space-y-2">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 rounded-xl border border-border bg-background p-3.5">
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-foreground">{action.title}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{action.description}</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setOpenAction(isOpen ? null : action.key)}
+                    className="shrink-0 inline-flex items-center justify-center rounded-md border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+                  >
+                    {isOpen ? "Hide draft" : action.button}
+                  </button>
+                </div>
+                <AnimatePresence initial={false}>
+                  {isOpen && (
+                    <motion.div
+                      key="output"
+                      initial={{ opacity: 0, y: -4, height: 0 }}
+                      animate={{ opacity: 1, y: 0, height: "auto" }}
+                      exit={{ opacity: 0, y: -4, height: 0 }}
+                      transition={{ duration: 0.25, ease: "easeOut" }}
+                      className="overflow-hidden"
+                    >
+                      <div className="rounded-xl border border-border bg-card p-4">
+                        <p className="text-xs font-semibold uppercase tracking-[1.5px] text-muted-foreground mb-2.5">
+                          {action.output.heading}
+                        </p>
+                        <div className="space-y-1.5 mb-3">
+                          {action.output.lines.map((line) => (
+                            <p key={line.label} className="text-xs text-foreground/80">
+                              <span className="text-muted-foreground">{line.label}</span>
+                              <span className="mx-1.5 text-muted-foreground">→</span>
+                              <span className="font-medium text-foreground">{line.value}</span>
+                            </p>
+                          ))}
+                        </div>
+                        <p className="text-xs text-muted-foreground leading-relaxed">
+                          {action.output.note}
+                        </p>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
-              <button
-                type="button"
-                onClick={() => {}}
-                className="shrink-0 inline-flex items-center justify-center rounded-md border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
-              >
-                {action.button}
-              </button>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </motion.div>
 
