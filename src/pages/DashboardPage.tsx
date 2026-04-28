@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useSavedRuns, SavedRun } from "@/hooks/useSavedRuns";
 import { downloadCSV, downloadPDF } from "@/lib/downloadResult";
 import BrandingModal from "@/components/BrandingModal";
-import { Download, Trash2, FileText, ArrowRight, Zap, Presentation, Sparkles } from "lucide-react";
+import { Download, Trash2, FileText, ArrowRight, ArrowLeft, Zap, Presentation, Sparkles } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -32,6 +32,7 @@ export default function DashboardPage({ currentUser, onLogout, setPage, onGenera
   const { runs, loading, deleteRun } = useSavedRuns();
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [brandingRun, setBrandingRun] = useState<SavedRun | null>(null);
+  const [selectedRun, setSelectedRun] = useState<SavedRun | null>(null);
 
   const paid = isPaidUser(currentUser.role);
 
@@ -51,6 +52,111 @@ export default function DashboardPage({ currentUser, onLogout, setPage, onGenera
     }
     setBrandingRun(null);
   };
+
+  if (selectedRun) {
+    const res = (selectedRun.result as any) || {};
+    const RECOMMENDED_ACTIONS = [
+      { title: "Open Sales Roles", description: "Create and prioritize new roles based on hiring gaps", button: "Generate Job Requisition" },
+      { title: "Adjust Hiring Plan", description: "Refine hiring timelines and sequencing", button: "Create Hiring Plan" },
+      { title: "Align Budget", description: "Review hiring impact on workforce cost", button: "View Cost Scenario" },
+    ];
+    const sectionEntries = Object.entries(res).filter(
+      ([k, v]) => !["summary", "confidence"].includes(k) && v != null
+    );
+    return (
+      <div className="bg-background min-h-screen pt-28 pb-16 px-6 md:px-14">
+        <div className="max-w-4xl mx-auto">
+          <button
+            onClick={() => setSelectedRun(null)}
+            className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors mb-6 cursor-pointer bg-transparent border-none"
+          >
+            <ArrowLeft className="w-4 h-4" /> Back to Dashboard
+          </button>
+
+          <div className="mb-2 text-xs font-bold uppercase tracking-[2px] text-muted-foreground">
+            {selectedRun.agent_name}
+          </div>
+          <h1 className="font-display text-3xl text-foreground mb-6">
+            {selectedRun.title || selectedRun.agent_name}
+          </h1>
+
+          {res?.summary && (
+            <div className="bg-card border border-border rounded-2xl p-6 mb-6">
+              <p className="text-xs font-bold uppercase tracking-[2px] text-muted-foreground mb-3">Summary</p>
+              <p className="text-sm text-foreground leading-relaxed">{res.summary}</p>
+            </div>
+          )}
+
+          {sectionEntries.length > 0 && (
+            <div className="space-y-4 mb-6">
+              {sectionEntries.map(([key, value]) => (
+                <div key={key} className="bg-card border border-border rounded-2xl p-6">
+                  <p className="text-xs font-bold uppercase tracking-[2px] text-muted-foreground mb-3">
+                    {key.replace(/_/g, " ")}
+                  </p>
+                  {typeof value === "string" || typeof value === "number" ? (
+                    <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">{String(value)}</p>
+                  ) : Array.isArray(value) ? (
+                    <ul className="space-y-2">
+                      {value.map((item, i) => (
+                        <li key={i} className="text-sm text-foreground leading-relaxed">
+                          {typeof item === "string" || typeof item === "number" ? (
+                            String(item)
+                          ) : (
+                            <pre className="text-xs font-sans whitespace-pre-wrap text-foreground bg-background border border-border rounded-lg p-3">
+                              {JSON.stringify(item, null, 2)}
+                            </pre>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <pre className="text-xs font-sans whitespace-pre-wrap text-foreground bg-background border border-border rounded-lg p-3">
+                      {JSON.stringify(value, null, 2)}
+                    </pre>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {res?.confidence && (
+            <div className="bg-card border border-border rounded-2xl p-6 mb-6 flex items-center gap-3">
+              <span className={`w-2.5 h-2.5 rounded-full ${res.confidence.score >= 75 ? "bg-green-500" : res.confidence.score >= 60 ? "bg-yellow-500" : "bg-red-500"}`} />
+              <span className="text-sm font-medium text-foreground">
+                {res.confidence.level} confidence ({res.confidence.score}%)
+              </span>
+            </div>
+          )}
+
+          <div className="bg-card border border-border rounded-2xl p-6">
+            <p className="text-xs font-bold uppercase tracking-[2px] text-muted-foreground mb-4">
+              Recommended Actions
+            </p>
+            <div className="space-y-3">
+              {RECOMMENDED_ACTIONS.map((action) => (
+                <div
+                  key={action.title}
+                  className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-xl border border-border bg-background p-4"
+                >
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-foreground">{action.title}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{action.description}</p>
+                  </div>
+                  <button
+                    onClick={() => alert(`${action.button} (simulated)`)}
+                    className="shrink-0 inline-flex items-center justify-center rounded-md border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground hover:bg-accent transition-colors cursor-pointer"
+                  >
+                    {action.button}
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-background min-h-screen pt-28 pb-16 px-6 md:px-14">
@@ -243,9 +349,7 @@ export default function DashboardPage({ currentUser, onLogout, setPage, onGenera
                           )}
 
                           <button
-                            onClick={() => {
-                              setPage(run.agent_type === "workforce" ? "try-agent" : "agents");
-                            }}
+                            onClick={() => setSelectedRun(run)}
                             className="text-xs font-medium text-primary hover:underline cursor-pointer"
                           >
                             View Decision & Actions →
