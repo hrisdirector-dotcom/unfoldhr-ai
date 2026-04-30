@@ -13,6 +13,7 @@ const NAV_LINKS: [string, string, boolean][] = [
   ["try-agents", "Try an Agent", true],
   ["integrations", "Integrations", false],
   ["pricing", "Pricing", false],
+  ["about", "About", false],
 ];
 
 export function UnfoldNav({ page, setPage, currentUser }: NavProps) {
