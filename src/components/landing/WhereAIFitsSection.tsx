@@ -149,6 +149,9 @@ export default function WhereAIFitsSection() {
               UnfoldHRAI sits on top — connecting signals across the enterprise and helping leaders
               make decisions that actually move the business forward.
             </p>
+            <p className="text-muted-foreground text-sm md:text-base leading-relaxed">
+              Signals already exist across HR systems, collaboration tools, surveys, and operations — UnfoldHRAI connects them and turns them into decisions.
+            </p>
           </div>
         </RevealDiv>
       </div>

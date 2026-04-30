@@ -24,6 +24,9 @@ export default function ScenarioToDecisionSection() {
             <p className="text-muted-foreground text-base md:text-lg max-w-2xl mx-auto">
               Every agent follows the same executive-ready structure.
             </p>
+            <p className="text-muted-foreground/80 text-sm md:text-base max-w-2xl mx-auto mt-3 italic">
+              Not just inputs — decisions are shaped by signals across your workforce environment.
+            </p>
           </div>
         </RevealDiv>
 
