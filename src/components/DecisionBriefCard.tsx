@@ -55,62 +55,34 @@ export default function DecisionBriefCard({
   confidence,
 }: DecisionBriefProps) {
   let seq = 0;
-  const [openAction, setOpenAction] = useState<string | null>(null);
 
-  const actions: {
-    key: string;
-    title: string;
-    description: string;
-    button: string;
-    output: { heading: string; lines: { label: string; value: string }[]; note: string };
-  }[] = [
+  const inDays = (n: number) => {
+    const d = new Date();
+    d.setDate(d.getDate() + n);
+    return d.toISOString();
+  };
+
+  const executionActions: ExecutionAction[] = [
     {
-      key: "requisition",
+      id: "requisition",
       title: "Open Sales Roles",
-      description: "Create and prioritize new roles based on hiring gaps",
-      button: "Generate Job Requisition",
-      output: {
-        heading: "Job Requisition Draft",
-        lines: [
-          { label: "Role", value: primaryItems[0]?.label ?? "Sales Representative" },
-          { label: "Objective", value: "Close hiring gap to support planned headcount expansion" },
-          { label: "Priority", value: "High" },
-          { label: "Suggested timing", value: "Open within next 2 weeks" },
-        ],
-        note: "Mid-market segment focus. Reports to Sales Director. Quota-carrying role aligned to revenue plan.",
-      },
+      owner: "Talent Acquisition",
+      dueDate: inDays(-1),
+      impactIfMissed: "Hiring gap widens; revenue plan capacity slips behind schedule.",
     },
     {
-      key: "hiring-plan",
+      id: "hiring-plan",
       title: "Adjust Hiring Plan",
-      description: "Refine hiring timelines and sequencing",
-      button: "Create Hiring Plan",
-      output: {
-        heading: "Hiring Plan Draft",
-        lines: [
-          { label: "Sequencing", value: "Phase hires across the next two quarters" },
-          { label: "First wave", value: "Senior roles to anchor team capacity" },
-          { label: "Second wave", value: "Mid-level roles to scale execution" },
-          { label: "Review cadence", value: "Monthly check-in with Talent + Finance" },
-        ],
-        note: "Sequence prioritizes critical capacity first to reduce execution risk on revenue plan.",
-      },
+      owner: "People Ops + Talent",
+      dueDate: inDays(2),
+      impactIfMissed: "Sequencing drifts; second-wave hires arrive too late to scale execution.",
     },
     {
-      key: "budget",
+      id: "budget",
       title: "Align Budget",
-      description: "Review hiring impact on workforce cost",
-      button: "View Cost Scenario",
-      output: {
-        heading: "Cost Scenario Summary",
-        lines: [
-          { label: "Cost driver", value: "Incremental headcount across the plan period" },
-          { label: "Phasing", value: "Spread across quarters to smooth burn" },
-          { label: "Sensitivity", value: "Defer second wave if revenue plan slips" },
-          { label: "Owner", value: "Finance + People Ops joint review" },
-        ],
-        note: "Directional cost view — confirm with Finance before locking the budget.",
-      },
+      owner: "Finance + People Ops",
+      dueDate: inDays(7),
+      impactIfMissed: "Workforce cost commitments outpace approved plan; budget reforecast required.",
     },
   ];
 
