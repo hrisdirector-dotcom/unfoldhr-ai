@@ -1,6 +1,6 @@
-import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { motion } from "framer-motion";
 import AddToDailyBriefHook from "@/components/AddToDailyBriefHook";
+import ExecutionStatus, { type ExecutionAction } from "@/components/ExecutionStatus";
 
 interface BriefLine {
   label: string;
@@ -55,62 +55,34 @@ export default function DecisionBriefCard({
   confidence,
 }: DecisionBriefProps) {
   let seq = 0;
-  const [openAction, setOpenAction] = useState<string | null>(null);
 
-  const actions: {
-    key: string;
-    title: string;
-    description: string;
-    button: string;
-    output: { heading: string; lines: { label: string; value: string }[]; note: string };
-  }[] = [
+  const inDays = (n: number) => {
+    const d = new Date();
+    d.setDate(d.getDate() + n);
+    return d.toISOString();
+  };
+
+  const executionActions: ExecutionAction[] = [
     {
-      key: "requisition",
+      id: "requisition",
       title: "Open Sales Roles",
-      description: "Create and prioritize new roles based on hiring gaps",
-      button: "Generate Job Requisition",
-      output: {
-        heading: "Job Requisition Draft",
-        lines: [
-          { label: "Role", value: primaryItems[0]?.label ?? "Sales Representative" },
-          { label: "Objective", value: "Close hiring gap to support planned headcount expansion" },
-          { label: "Priority", value: "High" },
-          { label: "Suggested timing", value: "Open within next 2 weeks" },
-        ],
-        note: "Mid-market segment focus. Reports to Sales Director. Quota-carrying role aligned to revenue plan.",
-      },
+      owner: "Talent Acquisition",
+      dueDate: inDays(-1),
+      impactIfMissed: "Hiring gap widens; revenue plan capacity slips behind schedule.",
     },
     {
-      key: "hiring-plan",
+      id: "hiring-plan",
       title: "Adjust Hiring Plan",
-      description: "Refine hiring timelines and sequencing",
-      button: "Create Hiring Plan",
-      output: {
-        heading: "Hiring Plan Draft",
-        lines: [
-          { label: "Sequencing", value: "Phase hires across the next two quarters" },
-          { label: "First wave", value: "Senior roles to anchor team capacity" },
-          { label: "Second wave", value: "Mid-level roles to scale execution" },
-          { label: "Review cadence", value: "Monthly check-in with Talent + Finance" },
-        ],
-        note: "Sequence prioritizes critical capacity first to reduce execution risk on revenue plan.",
-      },
+      owner: "People Ops + Talent",
+      dueDate: inDays(2),
+      impactIfMissed: "Sequencing drifts; second-wave hires arrive too late to scale execution.",
     },
     {
-      key: "budget",
+      id: "budget",
       title: "Align Budget",
-      description: "Review hiring impact on workforce cost",
-      button: "View Cost Scenario",
-      output: {
-        heading: "Cost Scenario Summary",
-        lines: [
-          { label: "Cost driver", value: "Incremental headcount across the plan period" },
-          { label: "Phasing", value: "Spread across quarters to smooth burn" },
-          { label: "Sensitivity", value: "Defer second wave if revenue plan slips" },
-          { label: "Owner", value: "Finance + People Ops joint review" },
-        ],
-        note: "Directional cost view — confirm with Finance before locking the budget.",
-      },
+      owner: "Finance + People Ops",
+      dueDate: inDays(7),
+      impactIfMissed: "Workforce cost commitments outpace approved plan; budget reforecast required.",
     },
   ];
 
@@ -230,63 +202,9 @@ export default function DecisionBriefCard({
         </motion.div>
       )}
 
-      {/* Recommended Actions */}
+      {/* Next Actions — Execution Status */}
       <motion.div custom={seq++} variants={fadeUp} className="mb-8">
-        <h4 className="text-xs font-semibold uppercase tracking-[1.5px] text-muted-foreground mb-3">
-          Recommended Actions
-        </h4>
-        <div className="space-y-2.5">
-          {actions.map((action) => {
-            const isOpen = openAction === action.key;
-            return (
-              <div key={action.key} className="space-y-2">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 rounded-xl border border-border bg-background p-3.5">
-                  <div className="min-w-0">
-                    <p className="text-sm font-semibold text-foreground">{action.title}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">{action.description}</p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setOpenAction(isOpen ? null : action.key)}
-                    className="shrink-0 inline-flex items-center justify-center rounded-md border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
-                  >
-                    {isOpen ? "Hide draft" : action.button}
-                  </button>
-                </div>
-                <AnimatePresence initial={false}>
-                  {isOpen && (
-                    <motion.div
-                      key="output"
-                      initial={{ opacity: 0, y: -4, height: 0 }}
-                      animate={{ opacity: 1, y: 0, height: "auto" }}
-                      exit={{ opacity: 0, y: -4, height: 0 }}
-                      transition={{ duration: 0.25, ease: "easeOut" }}
-                      className="overflow-hidden"
-                    >
-                      <div className="rounded-xl border border-border bg-card p-4">
-                        <p className="text-xs font-semibold uppercase tracking-[1.5px] text-muted-foreground mb-2.5">
-                          {action.output.heading}
-                        </p>
-                        <div className="space-y-1.5 mb-3">
-                          {action.output.lines.map((line) => (
-                            <p key={line.label} className="text-xs text-foreground/80">
-                              <span className="text-muted-foreground">{line.label}</span>
-                              <span className="mx-1.5 text-muted-foreground">→</span>
-                              <span className="font-medium text-foreground">{line.value}</span>
-                            </p>
-                          ))}
-                        </div>
-                        <p className="text-xs text-muted-foreground leading-relaxed">
-                          {action.output.note}
-                        </p>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            );
-          })}
-        </div>
+        <ExecutionStatus actions={executionActions} />
       </motion.div>
 
       {/* Confidence Level */}

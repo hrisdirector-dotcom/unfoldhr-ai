@@ -3,6 +3,7 @@ import { useSavedRuns, SavedRun } from "@/hooks/useSavedRuns";
 import { downloadCSV, downloadPDF } from "@/lib/downloadResult";
 import BrandingModal from "@/components/BrandingModal";
 import { Download, Trash2, FileText, ArrowRight, ArrowLeft, Zap, Presentation, Sparkles, ChevronDown } from "lucide-react";
+import ExecutionStatus, { defaultExecutionActions } from "@/components/ExecutionStatus";
 import {
   Tooltip,
   TooltipContent,
@@ -33,7 +34,7 @@ export default function DashboardPage({ currentUser, onLogout, setPage, onGenera
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [brandingRun, setBrandingRun] = useState<SavedRun | null>(null);
   const [selectedRun, setSelectedRun] = useState<SavedRun | null>(null);
-  const [activeAction, setActiveAction] = useState<string | null>(null);
+  
   const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({});
   const toggleSection = (key: string) =>
     setCollapsedSections((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -277,79 +278,7 @@ export default function DashboardPage({ currentUser, onLogout, setPage, onGenera
           )}
 
           <div className="bg-card border border-border rounded-2xl p-6">
-            <p className="text-xs font-bold uppercase tracking-[2px] text-muted-foreground mb-4">
-              Recommended Actions
-            </p>
-            <div className="space-y-3">
-              {RECOMMENDED_ACTIONS.map((action) => {
-                const isOpen = activeAction === action.title;
-                const draft: Record<string, { heading: string; lines: { label: string; value: string }[] }> = {
-                  "Open Sales Roles": {
-                    heading: "Job Requisition Draft",
-                    lines: [
-                      { label: "Role Focus", value: "Revenue-generating roles" },
-                      { label: "Objective", value: "Support the hiring priority identified in the decision brief" },
-                      { label: "Priority", value: "High" },
-                      { label: "Draft Summary", value: "Create a role request focused on accelerating revenue capacity while keeping budget constraints visible." },
-                    ],
-                  },
-                  "Adjust Hiring Plan": {
-                    heading: "Hiring Plan Draft",
-                    lines: [
-                      { label: "Focus", value: "Sequencing and timing" },
-                      { label: "Objective", value: "Align hiring priorities with available budget and execution capacity" },
-                      { label: "Priority", value: "Medium" },
-                      { label: "Draft Summary", value: "Refine hiring phases so critical roles move first and supporting functions scale as demand increases." },
-                    ],
-                  },
-                  "Align Budget": {
-                    heading: "Budget Scenario Draft",
-                    lines: [
-                      { label: "Focus", value: "Workforce cost alignment" },
-                      { label: "Objective", value: "Review hiring impact before committing to execution" },
-                      { label: "Priority", value: "Medium" },
-                      { label: "Draft Summary", value: "Compare hiring priorities against available budget and identify where tradeoffs may be required." },
-                    ],
-                  },
-                };
-                const output = draft[action.title];
-
-                return (
-                  <div
-                    key={action.title}
-                    className="rounded-xl border border-border bg-background p-4"
-                  >
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                      <div className="min-w-0">
-                        <p className="text-sm font-semibold text-foreground">{action.title}</p>
-                        <p className="text-xs text-muted-foreground mt-0.5">{action.description}</p>
-                      </div>
-                      <button
-                        onClick={() => setActiveAction(isOpen ? null : action.title)}
-                        className="shrink-0 inline-flex items-center justify-center rounded-md border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground hover:bg-accent transition-colors cursor-pointer"
-                      >
-                        {isOpen ? "Hide draft" : action.button}
-                      </button>
-                    </div>
-                    {isOpen && output && (
-                      <div className="mt-4 rounded-lg border border-border bg-muted/30 p-4">
-                        <p className="text-xs font-bold uppercase tracking-[1.5px] text-muted-foreground mb-3">
-                          {output.heading}
-                        </p>
-                        <dl className="space-y-2">
-                          {output.lines.map((line) => (
-                            <div key={line.label} className="grid grid-cols-1 sm:grid-cols-[140px_1fr] gap-1 sm:gap-3">
-                              <dt className="text-xs font-semibold text-muted-foreground">{line.label}</dt>
-                              <dd className="text-sm text-foreground">{line.value}</dd>
-                            </div>
-                          ))}
-                        </dl>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
+            <ExecutionStatus actions={defaultExecutionActions(RECOMMENDED_ACTIONS)} />
           </div>
         </div>
       </div>
