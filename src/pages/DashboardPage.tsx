@@ -3,6 +3,7 @@ import { useSavedRuns, SavedRun } from "@/hooks/useSavedRuns";
 import { downloadCSV, downloadPDF } from "@/lib/downloadResult";
 import BrandingModal from "@/components/BrandingModal";
 import { Download, Trash2, FileText, ArrowRight, ArrowLeft, Zap, Presentation, Sparkles, ChevronDown } from "lucide-react";
+import ExecutionStatus, { defaultExecutionActions } from "@/components/ExecutionStatus";
 import {
   Tooltip,
   TooltipContent,
