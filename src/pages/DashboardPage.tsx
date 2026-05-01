@@ -34,7 +34,7 @@ export default function DashboardPage({ currentUser, onLogout, setPage, onGenera
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [brandingRun, setBrandingRun] = useState<SavedRun | null>(null);
   const [selectedRun, setSelectedRun] = useState<SavedRun | null>(null);
-  const [activeAction, setActiveAction] = useState<string | null>(null);
+  
   const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({});
   const toggleSection = (key: string) =>
     setCollapsedSections((prev) => ({ ...prev, [key]: !prev[key] }));
