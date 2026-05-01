@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { downloadCSV, downloadPDF } from "@/lib/downloadResult";
 import { Bookmark, Download, RotateCcw, Presentation } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import ExecutionStatus, { type ExecutionAction } from "@/components/ExecutionStatus";
 
 type Step = "start" | "decision" | "guided" | "result";
 
