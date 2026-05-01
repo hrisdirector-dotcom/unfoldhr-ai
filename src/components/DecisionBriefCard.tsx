@@ -1,6 +1,6 @@
-import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { motion } from "framer-motion";
 import AddToDailyBriefHook from "@/components/AddToDailyBriefHook";
+import ExecutionStatus, { type ExecutionAction } from "@/components/ExecutionStatus";
 
 interface BriefLine {
   label: string;
