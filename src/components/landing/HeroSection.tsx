@@ -61,8 +61,11 @@ export default function HeroSection({ setPage }: HeroSectionProps) {
           <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto mb-4">
             Decision briefs that turn workforce signals into clear actions.
           </p>
-          <p className="text-base md:text-lg text-muted-foreground/80 leading-relaxed max-w-2xl mx-auto mb-10">
+          <p className="text-base md:text-lg text-muted-foreground/80 leading-relaxed max-w-2xl mx-auto mb-4">
             UnfoldHRAI connects signals across your workforce systems — and turns them into clear, actionable decisions.
+          </p>
+          <p className="text-base md:text-lg text-foreground/90 leading-relaxed max-w-2xl mx-auto mb-10 font-medium">
+            UnfoldHRAI connects workforce signals, frames decisions, and turns them into controlled actions.
           </p>
         </RevealDiv>
 
