@@ -53,6 +53,7 @@ export default function HomePage({ setPage }: HomePageProps) {
       <TryItYourselfCTA />
       <InteractiveAgentSection setPage={setPage} />
       <AgentsShowcase setPage={setPage} />
+      <DecisionToExecutionSection />
       <TrustSection />
       <FinalCTA setPage={setPage} showToast={showToast} />
       <Footer setPage={setPage} />
