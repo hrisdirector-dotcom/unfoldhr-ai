@@ -10,6 +10,7 @@ import ExampleOutputSection from "@/components/landing/ExampleOutputSection";
 import TryItYourselfCTA from "@/components/landing/TryItYourselfCTA";
 import InteractiveAgentSection from "@/components/landing/InteractiveAgentSection";
 import AgentsShowcase from "@/components/landing/AgentsShowcase";
+import DecisionToExecutionSection from "@/components/landing/DecisionToExecutionSection";
 import TrustSection from "@/components/landing/TrustSection";
 import FinalCTA from "@/components/landing/FinalCTA";
 import Footer from "@/components/landing/Footer";
