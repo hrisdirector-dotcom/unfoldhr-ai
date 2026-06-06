@@ -149,9 +149,6 @@ export default function WhereAIFitsSection() {
               UnfoldHRAI sits on top — connecting signals across the enterprise and helping leaders
               make decisions that actually move the business forward.
             </p>
-            <p className="text-foreground text-base md:text-lg leading-relaxed font-medium">
-              Decision Agents help leaders understand what should happen next. Execution Agents help move approved actions forward with guardrails.
-            </p>
             <p className="text-muted-foreground text-sm md:text-base leading-relaxed">
               Signals already exist across HR systems, collaboration tools, surveys, and operations — UnfoldHRAI connects them and turns them into decisions.
             </p>
