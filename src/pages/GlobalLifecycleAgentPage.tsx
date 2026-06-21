@@ -656,7 +656,7 @@ export default function GlobalLifecycleAgentPage({ setPage }: Props) {
                     return (
                       <button
                         key={s.id}
-                        onClick={() => setSelectedId(s.id)}
+                        onClick={() => { setSelectedId(s.id); setResult(null); }}
                         className={`w-full text-left rounded-lg border px-4 py-3 transition ${
                           active
                             ? "border-primary bg-accent"
