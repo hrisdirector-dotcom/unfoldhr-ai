@@ -55,14 +55,14 @@ export function UnfoldNav({ page, setPage, currentUser }: NavProps) {
       >
         <button
           onClick={() => navigate("home")}
-          className="flex items-center gap-3 bg-transparent border-none cursor-pointer p-0"
+          className={`flex items-center gap-2.5 bg-transparent border-none cursor-pointer p-0 ${overDark ? "text-white" : "text-foreground"}`}
         >
-          <UnfoldMark size={28} />
+          <UnfoldMark size={30} />
           <div className="flex flex-col items-start">
-            <span className="font-display text-lg tracking-tight text-foreground">
-              unfold<span className="text-primary font-display">HR</span>
+            <span className="font-display text-[1.25rem] tracking-tight">
+              UnfoldHRAI
             </span>
-            <span className="text-[11px] text-muted-foreground hidden lg:block">
+            <span className={`text-[11px] hidden lg:block ${overDark ? "text-white/60" : "text-muted-foreground"}`}>
               Decision Layer for Workforce Intelligence
             </span>
           </div>
@@ -74,7 +74,9 @@ export function UnfoldNav({ page, setPage, currentUser }: NavProps) {
               key={p}
               onClick={() => navigate(p, !!isScroll)}
               className={`px-4 py-2 text-sm font-medium rounded-lg border-none cursor-pointer transition-colors bg-transparent ${
-                page === p ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+                page === p
+                  ? (overDark ? "text-white" : "text-foreground")
+                  : (overDark ? "text-white/70 hover:text-white" : "text-muted-foreground hover:text-foreground")
               }`}
             >
               {label}
@@ -96,7 +98,11 @@ export function UnfoldNav({ page, setPage, currentUser }: NavProps) {
             href="https://calendly.com/eric-weaver-unfoldhrai/unfold-hr-ai-demo"
             target="_blank"
             rel="noopener noreferrer"
-            className="px-5 py-2.5 text-sm font-semibold rounded-lg cursor-pointer bg-foreground text-background border-none hover:bg-foreground/90 transition-colors inline-flex items-center"
+            className={`px-5 py-2.5 text-sm font-semibold rounded-lg cursor-pointer border-none transition-colors inline-flex items-center ${
+              overDark
+                ? "bg-white text-slate hover:bg-blue-50"
+                : "bg-foreground text-background hover:bg-foreground/90"
+            }`}
           >
             Book a Demo
           </a>
@@ -105,7 +111,11 @@ export function UnfoldNav({ page, setPage, currentUser }: NavProps) {
           {currentUser && (
             <button
               onClick={() => navigate("dashboard")}
-              className="px-4 py-2 text-sm font-medium rounded-lg cursor-pointer bg-transparent text-muted-foreground border border-border hover:text-foreground hover:border-foreground transition-colors"
+              className={`px-4 py-2 text-sm font-medium rounded-lg cursor-pointer bg-transparent border transition-colors ${
+                overDark
+                  ? "text-white/80 border-white/20 hover:text-white hover:border-white/40"
+                  : "text-muted-foreground border-border hover:text-foreground hover:border-foreground"
+              }`}
             >
               My Dashboard
             </button>
@@ -115,7 +125,9 @@ export function UnfoldNav({ page, setPage, currentUser }: NavProps) {
         {/* Mobile hamburger */}
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="md:hidden flex items-center justify-center w-10 h-10 rounded-lg bg-transparent border border-border cursor-pointer text-foreground"
+          className={`md:hidden flex items-center justify-center w-10 h-10 rounded-lg bg-transparent border cursor-pointer transition-colors ${
+            overDark ? "text-white border-white/20 hover:border-white/40" : "text-foreground border-border"
+          }`}
           aria-label="Toggle menu"
         >
           {mobileOpen ? <X size={20} /> : <Menu size={20} />}
