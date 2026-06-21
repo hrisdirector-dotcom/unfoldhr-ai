@@ -3,6 +3,7 @@ import { RevealDiv } from "@/components/RevealDiv";
 interface Agent {
   icon: string;
   name: string;
+  subtitle?: string;
   outcome: string;
   benefit: string;
   tag: "Try Free" | "Featured";
@@ -10,6 +11,15 @@ interface Agent {
 }
 
 const SHOWCASE_AGENTS: Agent[] = [
+  {
+    pageId: "global-lifecycle-agent",
+    icon: "🌐",
+    name: "Global Lifecycle Agent",
+    subtitle: "BambooHR Edition",
+    outcome: "Workforce Event Control & Readiness",
+    benefit: "Catch payroll, PTO, and policy conflicts before they ship",
+    tag: "Featured",
+  },
   {
     icon: "🏗️",
     name: "Workforce Planning",
