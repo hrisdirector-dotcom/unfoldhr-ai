@@ -175,7 +175,7 @@ export default function TryPerformanceAgentPage({ setPage }: TryPerformanceAgent
                   ← Try different inputs
                 </button>
                 <button
-                  onClick={() => setPage("try-picker")}
+                  onClick={() => setPage("agents")}
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer bg-transparent border-none"
                 >
                   ← Try a different agent
