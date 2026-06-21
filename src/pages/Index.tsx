@@ -19,6 +19,7 @@ import ExecutiveSnapshotPage from "@/pages/ExecutiveSnapshotPage";
 import TodayDecisionsPage from "@/pages/TodayDecisionsPage";
 import GlobalLifecycleAgentPage from "@/pages/GlobalLifecycleAgentPage";
 import AgentsPage from "@/pages/AgentsPage";
+import AgentDetailPage from "@/pages/AgentDetailPage";
 import OnboardingWalkthrough from "@/components/OnboardingWalkthrough";
 import type { SavedRun } from "@/hooks/useSavedRuns";
 
@@ -150,8 +151,9 @@ const Index = () => {
       {page === "try-performance-agent" && <TryPerformanceAgentPage setPage={navigateTo} />}
       {page === "try-us-workforce-agent" && <TryUSWorkforceAgentPage setPage={navigateTo} />}
       {page === "agents" && <AgentsPage onSelectAgent={navigateToAgent} onBuildAgent={handleBuildAgent} setPage={navigateTo} />}
+      {page === "agent-detail" && agentId && <AgentDetailPage agentId={agentId} setPage={navigateTo} />}
       {page === "global-lifecycle-agent" && <GlobalLifecycleAgentPage setPage={navigateTo} />}
-      {page === "workforce-planning" && <WorkforcePlanningAgent />}
+      {page === "workforce-planning" && <WorkforcePlanningAgent setPage={navigateTo} />}
       {page === "pricing" && <PricingPage setPage={navigateTo} />}
       {page === "about" && <AboutPage />}
       {page === "integrations" && <IntegrationsPage />}
