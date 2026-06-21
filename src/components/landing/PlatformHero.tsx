@@ -52,7 +52,7 @@ export default function PlatformHero({ setPage }: PlatformHeroProps) {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.05 }}
-          className="mt-7 font-display text-4xl sm:text-5xl md:text-6xl lg:text-[4.5rem] leading-[1.02] tracking-tight max-w-5xl"
+          className="mt-7 font-display text-4xl sm:text-5xl md:text-6xl lg:text-[4.5rem] leading-[1.02] tracking-tight max-w-4xl"
         >
           Purpose-built AI agents for
           <br />
@@ -67,11 +67,11 @@ export default function PlatformHero({ setPage }: PlatformHeroProps) {
           transition={{ duration: 0.6, delay: 0.12 }}
           className="mt-7 text-base md:text-lg text-slate-200/80 leading-relaxed max-w-2xl"
         >
-          UnfoldHRAI deploys two families of HR agents:{" "}
+          Two agent families:{" "}
           <span className="text-white font-medium">Control &amp; Readiness Agents</span>{" "}
-          that determine whether workforce events and HR actions are ready to move forward, and{" "}
+          that verify workforce events are ready to move, and{" "}
           <span className="text-white font-medium">Decision Agents</span>{" "}
-          that help leaders evaluate workforce, talent, and operating decisions.
+          that help leaders evaluate talent and operating decisions.
         </motion.p>
 
         <motion.div
@@ -96,21 +96,6 @@ export default function PlatformHero({ setPage }: PlatformHeroProps) {
           </button>
         </motion.div>
 
-        {/* breadcrumb-style hint line — mirrors agent-page sub-meta */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.32 }}
-          className="mt-7 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] uppercase tracking-[0.18em] text-blue-200/70 font-mono"
-        >
-          <span>Start path</span>
-          <span className="opacity-40">/</span>
-          <span className="text-white/85">Global Lifecycle Agent</span>
-          <span className="opacity-40">·</span>
-          <span>BambooHR Edition</span>
-          <span className="opacity-40">·</span>
-          <span>Live evaluation demo</span>
-        </motion.div>
       </div>
     </section>
   );
