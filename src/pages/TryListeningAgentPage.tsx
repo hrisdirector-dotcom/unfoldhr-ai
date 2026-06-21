@@ -3,6 +3,7 @@ import { RevealDiv } from "@/components/RevealDiv";
 import DecisionBriefCard from "@/components/DecisionBriefCard";
 import type { DecisionBriefProps } from "@/components/DecisionBriefCard";
 import { supabase } from "@/integrations/supabase/client";
+import AgentPageNav from "@/components/AgentPageNav";
 
 type Step = "start" | "input" | "result";
 
@@ -114,6 +115,7 @@ export default function TryListeningAgentPage({ setPage }: TryListeningAgentPage
   return (
     <div className="bg-background min-h-screen">
       <div className="max-w-2xl mx-auto px-6 md:px-14 py-32">
+        <div className="mb-10"><AgentPageNav setPage={setPage} /></div>
         {step === "start" && (
           <RevealDiv>
             <div className="text-center space-y-6">
