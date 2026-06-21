@@ -12,6 +12,9 @@ interface NavProps {
 
 const NAV_LINKS: [string, string, boolean][] = [
   ["how-it-works", "How It Works", false],
+  ["agents", "Agents", false],
+  ["integrations", "Integrations", false],
+  ["about", "About", false],
 ];
 
 export function UnfoldNav({ page, setPage, currentUser }: NavProps) {
