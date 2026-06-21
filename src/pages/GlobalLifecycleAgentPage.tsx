@@ -14,6 +14,7 @@ import {
   Sparkles,
   Lock,
   ChevronRight,
+  ChevronDown,
   UserPlus,
   UserMinus,
   ShieldCheck,
@@ -882,128 +883,123 @@ function ResultsStage({
     "Control-status": { title: "Control posture", caption: "Release & hold state", icon: GitBranch },
   };
 
+  const primaryBlocker = blockers[0];
+  const extraBlockers = blockers.slice(1);
+  const verdict = verdictFor(scenario.summary.status);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="space-y-6"
+      className="space-y-5"
     >
-      {/* 1 — Lifecycle Control Summary (dominant) */}
+      {/* 1 — Lifecycle Control Verdict (dominant) */}
       <Card
         id="lifecycle-outcome"
-        className={`relative overflow-hidden p-8 lg:p-10 border-2 ${s.border} ${s.bg}`}
+        className={`relative overflow-hidden p-7 lg:p-9 border-2 ${s.border} ${s.bg}`}
       >
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div className="min-w-0">
-            <div className="text-[11px] uppercase tracking-[0.18em] text-slate-4 mb-3 font-mono">
-              Lifecycle control result · {scenario.event}
-            </div>
-            <h2 className="font-display text-3xl md:text-[2.2rem] text-slate leading-tight">
-              {scenario.employee.name}
-            </h2>
-            <div className="mt-1 text-sm text-slate-3">
-              {scenario.employee.title} · {scenario.employee.department} · {scenario.employee.location}
-            </div>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="text-[11px] uppercase tracking-[0.18em] text-slate-4 font-mono">
+            Lifecycle control result · {scenario.event} · {scenario.employee.name}
           </div>
           <StatusPill status={scenario.summary.status} />
         </div>
 
-        <p className="mt-5 text-base text-slate-2 leading-relaxed max-w-3xl">
+        <div className="mt-4 flex items-center gap-3">
+          <span className={`h-2.5 w-2.5 rounded-full ${s.dot}`} />
+          <h2 className="font-display text-4xl md:text-5xl lg:text-[3.25rem] leading-[1.05] text-slate tracking-tight">
+            {verdict.headline}
+          </h2>
+        </div>
+
+        <p className="mt-4 text-base text-slate-2 leading-relaxed max-w-3xl">
           {scenario.summary.reason}
         </p>
 
-        <div className="mt-7 max-w-2xl">
-          <div className="flex items-end justify-between mb-2">
-            <div className="text-[10px] uppercase tracking-wider text-slate-4 font-mono">
-              Overall readiness
-            </div>
-            <div className="text-xl font-display text-slate tabular-nums">
-              {readinessPct}
-              <span className="text-sm text-slate-4">%</span>
+        {/* Primary blocker — inline so the user sees it within the verdict */}
+        {primaryBlocker ? (
+          <div className="mt-6 rounded-xl border border-amber-300/80 bg-white/80 backdrop-blur-sm px-4 py-3 flex items-start gap-3">
+            <Lock className="h-4 w-4 mt-0.5 shrink-0 text-amber-700" />
+            <div className="flex-1 min-w-0">
+              <div className="text-[10px] uppercase tracking-wider text-amber-800 font-mono mb-0.5">
+                Primary blocking condition
+              </div>
+              <div className="text-sm text-slate font-medium leading-snug">
+                {primaryBlocker.label}
+              </div>
+              <div className="text-xs text-slate-3 mt-0.5 leading-relaxed">{primaryBlocker.reason}</div>
             </div>
           </div>
-          <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/70">
+        ) : (
+          <div className="mt-6 rounded-xl border border-emerald-300/80 bg-white/80 backdrop-blur-sm px-4 py-3 flex items-center gap-3">
+            <ShieldCheck className="h-4 w-4 shrink-0 text-emerald-600" />
+            <div className="text-sm text-slate">
+              <span className="font-medium">Cleared for release.</span>{" "}
+              <span className="text-slate-3">No blocking gates · all approvals and policy checks satisfied.</span>
+            </div>
+          </div>
+        )}
+
+        {/* Compact readiness strip */}
+        <div className="mt-5 flex items-center gap-4">
+          <div className="text-[10px] uppercase tracking-wider text-slate-4 font-mono shrink-0">
+            Readiness
+          </div>
+          <div className="flex-1 h-1.5 overflow-hidden rounded-full bg-white/70">
             <div
               className="h-full rounded-full bg-gradient-to-r from-blue-400 to-blue-600"
               style={{ width: `${readinessPct}%` }}
             />
           </div>
-          <div className="mt-2 flex justify-between text-[10px] text-slate-4 font-mono">
-            <span>{passedCount} of {totalChecks} checks passed</span>
-            <span>{totalChecks - passedCount} require attention</span>
+          <div className="text-sm font-display text-slate tabular-nums shrink-0">
+            {readinessPct}<span className="text-xs text-slate-4">%</span>
+          </div>
+          <div className="text-[11px] text-slate-4 font-mono shrink-0 hidden sm:block">
+            {passedCount}/{totalChecks} checks
           </div>
         </div>
-      </Card>
 
-      {/* 2 — Blocking conditions (or cleared confirmation) */}
-      {blockers.length > 0 ? (
-        <Card className="p-6 lg:p-7 bg-white border-2 border-amber-200/80">
-          <div className="flex items-start gap-3">
-            <ShieldAlert className="h-5 w-5 text-amber-600 mt-0.5 shrink-0" />
-            <div className="flex-1">
-              <div className="font-display text-lg text-slate">Blocking conditions</div>
-              <div className="text-xs text-slate-4 mt-0.5">
-                {blockers.length} control{blockers.length === 1 ? "" : "s"} actively preventing release.
-                Resolve to allow this event to progress.
-              </div>
-            </div>
-          </div>
-          <ul className="mt-5 space-y-3">
-            {blockers.map((g) => {
+        {/* Additional blockers — compact chips */}
+        {extraBlockers.length > 0 && (
+          <div className="mt-5 flex flex-wrap items-center gap-2">
+            <span className="text-[10px] uppercase tracking-wider text-slate-4 font-mono">
+              Also blocking
+            </span>
+            {extraBlockers.map((g) => {
               const gs = GATE_STYLES[g.status];
               return (
-                <li
+                <span
                   key={g.label}
-                  className={`flex items-start gap-3 rounded-lg border px-4 py-3 ${gs.border} ${gs.bg}`}
+                  className={`text-xs px-2 py-1 rounded-md border ${gs.bg} ${gs.text} ${gs.border}`}
+                  title={g.reason}
                 >
-                  <Lock className="h-4 w-4 mt-0.5 shrink-0 text-slate-600" />
-                  <div className="flex-1">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-sm text-slate font-medium">{g.label}</span>
-                      <span className={`text-[10px] uppercase tracking-wider font-medium px-1.5 py-0.5 rounded border ${gs.bg} ${gs.text} ${gs.border}`}>
-                        {g.status}
-                      </span>
-                    </div>
-                    <div className="text-xs text-slate-3 mt-1 leading-relaxed">{g.reason}</div>
-                  </div>
-                </li>
+                  {g.label}
+                </span>
               );
             })}
-          </ul>
-        </Card>
-      ) : (
-        <Card className="p-6 bg-emerald-50/60 border-2 border-emerald-200/80">
-          <div className="flex items-center gap-3">
-            <ShieldCheck className="h-5 w-5 text-emerald-600 shrink-0" />
-            <div>
-              <div className="font-display text-lg text-slate">Cleared for release</div>
-              <div className="text-xs text-slate-3 mt-0.5">
-                No blocking gates. All required approvals and policy checks are satisfied.
-              </div>
-            </div>
           </div>
-        </Card>
-      )}
+        )}
+      </Card>
 
-      {/* 3 — Readiness outcomes */}
-      <Card className="p-6 lg:p-7 bg-white border border-border/70">
+      {/* 2 — Readiness outcomes (compact two-column) */}
+      <Card className="p-6 bg-white border border-border/70">
         <BlockHeader
           title="Readiness outcomes"
           caption={`${passedCount} passed · ${totalChecks - passedCount} require attention`}
         />
-        <ul className="mt-5 divide-y divide-border/60">
+        <ul className="mt-4 grid sm:grid-cols-2 gap-x-6 gap-y-2">
           {scenario.readiness.map((c) => {
             const cs = CHECK_STYLES[c.status];
             return (
-              <li key={c.label} className="py-3 flex items-start gap-3">
+              <li key={c.label} className="py-1.5 flex items-start gap-2.5">
                 <CheckIcon status={c.status} />
-                <div className="flex-1">
-                  <div className="text-sm text-slate font-medium">{c.label}</div>
-                  <div className="text-xs text-slate-4 mt-0.5">{c.detail}</div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm text-slate font-medium leading-snug">{c.label}</div>
+                  <div className="text-xs text-slate-4 mt-0.5 leading-snug">{c.detail}</div>
                 </div>
                 <span
-                  className={`text-[10px] uppercase tracking-wider font-medium px-2 py-0.5 rounded border ${cs.bg} ${cs.text} ${cs.border} shrink-0`}
+                  className={`text-[10px] uppercase tracking-wider font-medium px-1.5 py-0.5 rounded border ${cs.bg} ${cs.text} ${cs.border} shrink-0`}
                 >
                   {c.status}
                 </span>
@@ -1013,13 +1009,13 @@ function ResultsStage({
         </ul>
       </Card>
 
-      {/* 4 — Prepared workstreams grouped by operational bucket */}
-      <Card className="p-6 lg:p-7 bg-white border border-border/70">
+      {/* 3 — Prepared workstreams */}
+      <Card className="p-6 bg-white border border-border/70">
         <BlockHeader
           title="Prepared workstreams"
           caption="Grouped by operational domain · subordinate to control state"
         />
-        <div className="mt-6 grid md:grid-cols-3 gap-4">
+        <div className="mt-5 grid md:grid-cols-3 gap-3">
           {(Object.keys(actionsByClass) as ActionClass[]).map((k) => {
             const meta = classMeta[k];
             const items = actionsByClass[k];
@@ -1028,21 +1024,20 @@ function ResultsStage({
             return (
               <div
                 key={k}
-                className="rounded-xl border border-border/70 bg-paper/40 p-5"
+                className="rounded-xl border border-border/70 bg-paper/40 p-4"
               >
-                <div className="flex items-center gap-2 mb-1">
+                <div className="flex items-center gap-2">
                   <Icon className="h-4 w-4 text-primary" />
                   <div className="text-sm font-display text-slate">{meta.title}</div>
                 </div>
-                <div className="text-[11px] text-slate-4 mb-3">{meta.caption}</div>
-                <ul className="space-y-2.5">
+                <ul className="mt-3 space-y-2">
                   {items.map((a) => (
                     <li
                       key={a.label}
-                      className="rounded-lg border border-border/60 bg-white p-3"
+                      className="rounded-lg border border-border/60 bg-white p-2.5"
                     >
                       <div className="flex items-start justify-between gap-2">
-                        <div className="text-sm text-slate font-medium leading-snug">{a.label}</div>
+                        <div className="text-[13px] text-slate font-medium leading-snug">{a.label}</div>
                         <Badge
                           variant="outline"
                           className={`text-[10px] shrink-0 ${ACTION_STYLES[a.status]}`}
@@ -1050,7 +1045,7 @@ function ResultsStage({
                           {a.status}
                         </Badge>
                       </div>
-                      <div className="text-xs text-slate-4 mt-1 leading-relaxed">{a.detail}</div>
+                      <div className="text-[11px] text-slate-4 mt-1 leading-snug">{a.detail}</div>
                     </li>
                   ))}
                 </ul>
@@ -1060,30 +1055,40 @@ function ResultsStage({
         </div>
       </Card>
 
-      {/* 5 — Operating trail */}
-      <Card className="p-6 lg:p-7 bg-white border border-border/70">
-        <BlockHeader title="Operating trail" caption="How the agent reached this result" />
-        <ol className="mt-5 relative border-l border-border/70 ml-2">
-          {scenario.trail.map((t, i) => {
-            const dot =
-              t.emphasis === "critical"
-                ? "bg-red-500"
-                : t.emphasis === "warn"
-                ? "bg-amber-500"
-                : "bg-primary";
-            return (
-              <li key={i} className="ml-4 pb-4 last:pb-0">
-                <span className={`absolute -left-[5px] mt-1.5 h-2 w-2 rounded-full ${dot}`} />
-                <div className="text-xs text-slate-4 font-mono">{t.time}</div>
-                <div className="text-sm text-slate mt-0.5">{t.text}</div>
-              </li>
-            );
-          })}
-        </ol>
-      </Card>
+      {/* 4 — Operating trail (collapsible to reduce sprawl) */}
+      <details className="group rounded-xl border border-border/70 bg-white">
+        <summary className="cursor-pointer list-none p-5 flex items-center justify-between gap-3">
+          <div>
+            <div className="font-display text-base text-slate">Operating trail</div>
+            <div className="text-xs text-slate-4 mt-0.5">
+              {scenario.trail.length} steps · how the agent reached this result
+            </div>
+          </div>
+          <ChevronDown className="h-4 w-4 text-slate-4 transition-transform group-open:rotate-180" />
+        </summary>
+        <div className="px-6 pb-6">
+          <ol className="relative border-l border-border/70 ml-2">
+            {scenario.trail.map((t, i) => {
+              const dot =
+                t.emphasis === "critical"
+                  ? "bg-red-500"
+                  : t.emphasis === "warn"
+                  ? "bg-amber-500"
+                  : "bg-primary";
+              return (
+                <li key={i} className="ml-4 pb-3 last:pb-0">
+                  <span className={`absolute -left-[5px] mt-1.5 h-2 w-2 rounded-full ${dot}`} />
+                  <div className="text-xs text-slate-4 font-mono">{t.time}</div>
+                  <div className="text-sm text-slate mt-0.5">{t.text}</div>
+                </li>
+              );
+            })}
+          </ol>
+        </div>
+      </details>
 
       {/* Closing actions */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pt-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
         <Button variant="outline" onClick={onBack}>
           <ArrowLeft className="mr-2 h-4 w-4" /> Back to queue
         </Button>
@@ -1093,6 +1098,16 @@ function ResultsStage({
       </div>
     </motion.div>
   );
+}
+
+function verdictFor(status: ControlStatus): { headline: string } {
+  switch (status) {
+    case "Ready":              return { headline: "Ready for release" };
+    case "Approval Required":  return { headline: "Approval required to release" };
+    case "Action Required":    return { headline: "Action required before release" };
+    case "Held":               return { headline: "Release held" };
+    case "Escalated":          return { headline: "Escalated · release held" };
+  }
 }
 
 function BlockHeader({ title, caption }: { title: string; caption: string }) {
