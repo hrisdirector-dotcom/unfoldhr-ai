@@ -24,24 +24,52 @@ type ControlStatus =
   | "Held"
   | "Escalated";
 
+type CheckStatus = "Passed" | "Warning" | "Failed" | "Pending";
+
 interface ReadinessCheck {
   label: string;
-  status: "pass" | "warn" | "fail";
+  status: CheckStatus;
   detail: string;
 }
+
+type GateStatus = "Open" | "Pending" | "Passed" | "Blocking" | "Escalated";
+
 interface Gate {
   label: string;
-  type: "Approval" | "Hold" | "Exception";
-  detail: string;
+  status: GateStatus;
+  reason: string;
+  blocking: boolean;
 }
+
+type ActionClass = "Communication" | "Coordination" | "Control-status";
+type ActionStatus = "Prepared" | "Ready to Release" | "Held" | "Pending Approval";
+
 interface PreparedAction {
   label: string;
-  audience: string;
-  state: "Prepared" | "Held" | "Awaiting Approval";
+  actionClass: ActionClass;
+  status: ActionStatus;
+  detail: string;
 }
+
 interface TrailEntry {
   time: string;
   text: string;
+  emphasis?: "info" | "warn" | "critical";
+}
+
+interface ScenarioEmployee {
+  name: string;
+  title: string;
+  department: string;
+  location: string;
+  manager: string;
+  eventDate: string;
+  employmentType: string;
+  separationType?: string;
+  exceptionType?: string;
+  ptoNote: string;
+  payrollNote: string;
+  contextNote: string;
 }
 
 interface Scenario {
@@ -49,14 +77,7 @@ interface Scenario {
   event: "Termination" | "New Hire";
   label: string;
   one_liner: string;
-  employee: {
-    name: string;
-    role: string;
-    department: string;
-    location: string;
-    date: string;
-    manager: string;
-  };
+  employee: ScenarioEmployee;
   summary: {
     status: ControlStatus;
     reason: string;
@@ -68,246 +89,342 @@ interface Scenario {
 }
 
 const SCENARIOS: Scenario[] = [
+  /* =========================================================
+   * TERMINATION 1 — Voluntary Termination — Ready
+   * ========================================================= */
   {
     id: "term-ready",
     event: "Termination",
     label: "Voluntary Termination — Ready",
     one_liner:
-      "Standard voluntary exit with clean policy alignment and prepared coordination actions.",
+      "Standard voluntary exit with clean dates, resolved PTO, payroll ready, and approved communication timing.",
     employee: {
       name: "Marcus Chen",
-      role: "Senior Account Executive",
+      title: "Senior Account Executive",
       department: "Revenue",
       location: "Austin, TX",
-      date: "Effective Dec 12, 2026",
       manager: "Priya Natarajan",
+      eventDate: "Final working day · Dec 12, 2026",
+      employmentType: "Full-time · Salaried",
+      separationType: "Voluntary resignation · Standard path",
+      ptoNote: "3.2 days remaining · within payout policy",
+      payrollNote: "Final payroll aligned to next regular cycle",
+      contextNote: "Standard 14-day notice on file. No retention or sensitivity flags.",
     },
     summary: {
       status: "Ready",
       reason:
-        "All readiness checks pass. No policy conflicts detected. Coordination actions prepared for manager review.",
+        "Termination event is ready to progress. Payroll resolution, PTO payout handling, and communication timing are all cleared.",
     },
     readiness: [
-      { label: "Notice period satisfied", status: "pass", detail: "14-day notice on file" },
-      { label: "Final pay window aligned to policy", status: "pass", detail: "On next pay cycle" },
-      { label: "PTO balance reconciled", status: "pass", detail: "3.2 days payout calculated" },
-      { label: "Manager acknowledgement captured", status: "pass", detail: "Acknowledged Dec 1" },
+      { label: "Termination date / final working day integrity", status: "Passed", detail: "Final working day Dec 12, 2026 confirmed by manager" },
+      { label: "Separation type / control path", status: "Passed", detail: "Voluntary · standard control path assigned" },
+      { label: "PTO payout / leave policy check", status: "Passed", detail: "3.2 days within standard payout threshold" },
+      { label: "Final payroll readiness status", status: "Passed", detail: "Aligned to regular cycle ending Dec 15" },
+      { label: "Departure context captured", status: "Passed", detail: "No sensitivity flags · standard notice on file" },
+      { label: "HR approval status", status: "Passed", detail: "Approved by HR Business Partner Dec 1" },
+      { label: "Communication / handoff readiness", status: "Passed", detail: "Manager and team handoff plan acknowledged" },
     ],
     gates: [
-      { label: "No active holds", type: "Approval", detail: "No gates required for this scenario" },
+      { label: "Final HR Approval Gate", status: "Passed", reason: "HRBP approval received Dec 1", blocking: false },
+      { label: "Payroll Resolution Gate", status: "Passed", reason: "Final payroll aligned and ready for release", blocking: false },
+      { label: "Communication Timing Gate", status: "Passed", reason: "Timing approved by manager and HRBP", blocking: false },
     ],
     actions: [
-      { label: "Departure communication — manager draft", audience: "People Manager", state: "Prepared" },
-      { label: "Knowledge transfer checklist", audience: "Manager + Team Lead", state: "Prepared" },
-      { label: "Coordination handoff to People Ops", audience: "People Ops", state: "Prepared" },
+      { label: "Draft termination communication", actionClass: "Communication", status: "Ready to Release", detail: "Manager-authored draft cleared for release" },
+      { label: "Prepare manager handoff instructions", actionClass: "Coordination", status: "Ready to Release", detail: "Account and pipeline handoff documented" },
+      { label: "Queue calendar cleanup reminder", actionClass: "Coordination", status: "Prepared", detail: "Scheduled for final working day" },
+      { label: "Flag equipment return owner", actionClass: "Control-status", status: "Prepared", detail: "Owner assigned · standard return window" },
     ],
     trail: [
       { time: "09:14", text: "Termination event received from BambooHR" },
-      { time: "09:14", text: "Readiness evaluation completed — 4 of 4 checks passed" },
-      { time: "09:15", text: "No gates triggered" },
-      { time: "09:15", text: "Coordination actions prepared and held for manager review" },
+      { time: "09:14", text: "Control path assigned: voluntary · standard" },
+      { time: "09:14", text: "PTO payout rule evaluated — within policy" },
+      { time: "09:15", text: "Final payroll readiness confirmed for cycle ending Dec 15" },
+      { time: "09:15", text: "HR approval validated · communication timing cleared" },
+      { time: "09:15", text: "Event marked ready for release", emphasis: "info" },
     ],
   },
+
+  /* =========================================================
+   * TERMINATION 2 — Final Pay / PTO Conflict
+   * ========================================================= */
   {
     id: "term-pto",
     event: "Termination",
     label: "Termination — Final Pay / PTO Conflict",
     one_liner:
-      "Final pay timing and PTO payout exceed configured policy threshold — payroll approval required.",
+      "Final payroll and PTO payout cannot be cleanly resolved without payroll approval — release is held.",
     employee: {
       name: "Elena Voss",
-      role: "Engineering Manager",
+      title: "Engineering Manager",
       department: "Product Engineering",
       location: "Berlin, DE",
-      date: "Effective Jan 9, 2027",
       manager: "Tom Hwang",
+      eventDate: "Final working day · Jan 9, 2027",
+      employmentType: "Full-time · Salaried",
+      separationType: "Voluntary resignation · Standard path",
+      ptoNote: "Carried balance exceeds standard payout threshold",
+      payrollNote: "Final pay date falls outside the configured payroll window",
+      contextNote: "Manager acknowledged. Off-cycle final pay treatment required.",
     },
     summary: {
-      status: "Approval Required",
+      status: "Held",
       reason:
-        "PTO payout exceeds standard threshold and final pay date falls outside the configured window. Payroll approval is required before progression.",
+        "Termination remains held until final payroll resolution is complete and PTO payout handling is approved.",
     },
     readiness: [
-      { label: "Notice period satisfied", status: "pass", detail: "30-day notice on file" },
-      { label: "Final pay window aligned to policy", status: "warn", detail: "Falls 4 days outside policy window" },
-      { label: "PTO balance reconciled", status: "fail", detail: "Payout exceeds €5,000 threshold" },
-      { label: "Manager acknowledgement captured", status: "pass", detail: "Acknowledged Dec 18" },
+      { label: "Termination date / final working day integrity", status: "Passed", detail: "Final working day Jan 9, 2027 confirmed" },
+      { label: "Separation type / control path", status: "Passed", detail: "Voluntary · standard control path assigned" },
+      { label: "PTO payout / leave policy check", status: "Failed", detail: "Carried balance exceeds standard payout threshold" },
+      { label: "Final payroll readiness status", status: "Pending", detail: "Final pay date falls outside configured pay window" },
+      { label: "Departure context captured", status: "Passed", detail: "Standard notice on file · no sensitivity flags" },
+      { label: "HR approval status", status: "Passed", detail: "Approved by HRBP Dec 18" },
+      { label: "Communication / handoff readiness", status: "Pending", detail: "Held pending payroll resolution" },
     ],
     gates: [
-      { label: "Payroll exception approval", type: "Approval", detail: "Required from Payroll Lead" },
-      { label: "Final pay timing review", type: "Hold", detail: "Held pending finance sign-off" },
+      { label: "Payroll Resolution Gate", status: "Blocking", reason: "Payroll Lead approval required for off-cycle final pay and elevated PTO payout", blocking: true },
+      { label: "Final HR Approval Gate", status: "Passed", reason: "HRBP approval already received", blocking: false },
+      { label: "Communication Timing Gate", status: "Pending", reason: "Cannot release communication until payroll resolution clears", blocking: true },
     ],
     actions: [
-      { label: "Departure communication — manager draft", audience: "People Manager", state: "Held" },
-      { label: "Knowledge transfer checklist", audience: "Manager + Team Lead", state: "Prepared" },
-      { label: "Payroll exception request", audience: "Payroll Lead", state: "Awaiting Approval" },
+      { label: "Draft termination communication", actionClass: "Communication", status: "Held", detail: "Held pending Payroll Resolution Gate" },
+      { label: "Prepare manager handoff instructions", actionClass: "Coordination", status: "Prepared", detail: "Ready for manager review" },
+      { label: "Flag equipment return owner", actionClass: "Control-status", status: "Prepared", detail: "Owner assigned · standard return window" },
+      { label: "Hold release pending payroll resolution", actionClass: "Control-status", status: "Held", detail: "Hold posture applied to all outbound coordination" },
     ],
     trail: [
       { time: "10:02", text: "Termination event received from BambooHR" },
-      { time: "10:02", text: "Readiness evaluation flagged 2 conditions" },
-      { time: "10:03", text: "Gates raised: Payroll exception approval, Final pay timing review" },
-      { time: "10:03", text: "Departure communication held pending approval" },
+      { time: "10:02", text: "Control path assigned: voluntary · standard" },
+      { time: "10:03", text: "PTO payout rule evaluated — exceeds standard threshold", emphasis: "warn" },
+      { time: "10:03", text: "Final payroll readiness check pending — off-cycle final pay detected", emphasis: "warn" },
+      { time: "10:03", text: "Payroll Resolution Gate raised · blocking progression", emphasis: "critical" },
+      { time: "10:04", text: "Communication release held pending payroll resolution" },
     ],
   },
+
+  /* =========================================================
+   * TERMINATION 3 — Sensitive Offboarding Control Conflict
+   * ========================================================= */
   {
     id: "term-sensitive",
     event: "Termination",
     label: "Termination — Sensitive Offboarding Control Conflict",
     one_liner:
-      "Sensitive role exit requires escalated review and coordinated communications hold.",
+      "Sensitive separation path with multiple unresolved control conditions — escalated.",
     employee: {
       name: "Devon Pierce",
-      role: "VP Finance",
+      title: "VP Finance",
       department: "Finance",
       location: "New York, NY",
-      date: "Effective Dec 22, 2026",
       manager: "Sasha Bloom (CFO)",
+      eventDate: "Final working day · Dec 22, 2026",
+      employmentType: "Full-time · Executive",
+      separationType: "Sensitive separation · Executive path",
+      ptoNote: "Balance under review with executive comp",
+      payrollNote: "Final pay treatment under counsel review",
+      contextNote: "Accelerated exit. Communications must remain held pending counsel and executive review.",
     },
     summary: {
       status: "Escalated",
       reason:
-        "Sensitive role exit. Communications and coordination actions held pending executive review and legal acknowledgement.",
+        "Sensitive separation path with multiple unresolved control conditions — release is held pending executive review, counsel acknowledgement, and payroll resolution.",
     },
     readiness: [
-      { label: "Notice period satisfied", status: "warn", detail: "Accelerated exit on record" },
-      { label: "Sensitive role classification", status: "fail", detail: "Executive / Finance — escalation required" },
-      { label: "Legal acknowledgement", status: "fail", detail: "Pending counsel sign-off" },
-      { label: "Manager acknowledgement captured", status: "pass", detail: "Acknowledged Dec 15" },
+      { label: "Termination date / final working day integrity", status: "Warning", detail: "Accelerated exit on record · timing under executive review" },
+      { label: "Separation type / control path", status: "Warning", detail: "Sensitive separation · executive control path assigned" },
+      { label: "PTO payout / leave policy check", status: "Pending", detail: "Held pending executive comp review" },
+      { label: "Final payroll readiness status", status: "Pending", detail: "Off-cycle treatment under counsel review" },
+      { label: "Departure context captured", status: "Passed", detail: "Captured · flagged sensitive · counsel notified" },
+      { label: "HR approval status", status: "Pending", detail: "Awaiting executive review sign-off" },
+      { label: "Communication / handoff readiness", status: "Warning", detail: "All outbound communication on hold" },
     ],
     gates: [
-      { label: "Executive review", type: "Approval", detail: "Required from CEO office" },
-      { label: "Legal acknowledgement", type: "Hold", detail: "Counsel review in progress" },
-      { label: "Communications hold", type: "Exception", detail: "All outbound comms blocked" },
+      { label: "Final HR Approval Gate", status: "Escalated", reason: "Routed to CEO office for executive review", blocking: true },
+      { label: "Payroll Resolution Gate", status: "Pending", reason: "Off-cycle final pay treatment under counsel review", blocking: true },
+      { label: "Communication Timing Gate", status: "Blocking", reason: "Communications hold in effect until counsel and executive review clear", blocking: true },
     ],
     actions: [
-      { label: "Internal announcement draft", audience: "Comms", state: "Held" },
-      { label: "Team coordination plan", audience: "People Manager", state: "Held" },
-      { label: "Legal acknowledgement request", audience: "Legal", state: "Awaiting Approval" },
+      { label: "Draft termination communication", actionClass: "Communication", status: "Held", detail: "Held under communications hold" },
+      { label: "Prepare manager handoff instructions", actionClass: "Coordination", status: "Held", detail: "Held pending executive review" },
+      { label: "Hold release pending HR approval", actionClass: "Control-status", status: "Held", detail: "Executive review in progress" },
+      { label: "Hold release pending payroll resolution", actionClass: "Control-status", status: "Held", detail: "Counsel review in progress" },
     ],
     trail: [
       { time: "08:41", text: "Termination event received from BambooHR" },
-      { time: "08:41", text: "Sensitive role classification detected" },
-      { time: "08:42", text: "Escalation raised to executive review" },
-      { time: "08:42", text: "Communications hold applied to all prepared actions" },
+      { time: "08:41", text: "Sensitive separation classification detected", emphasis: "warn" },
+      { time: "08:42", text: "Executive control path assigned" },
+      { time: "08:42", text: "Communications hold applied to all prepared actions", emphasis: "critical" },
+      { time: "08:43", text: "Final HR Approval Gate escalated to CEO office", emphasis: "critical" },
+      { time: "08:43", text: "Payroll Resolution Gate held pending counsel review" },
+      { time: "08:44", text: "Event posture: held — escalated", emphasis: "critical" },
     ],
   },
+
+  /* =========================================================
+   * NEW HIRE 1 — Standard New Hire — Ready
+   * ========================================================= */
   {
     id: "hire-ready",
     event: "New Hire",
     label: "Standard New Hire — Ready",
-    one_liner: "Clean new-hire event with all readiness checks passing.",
+    one_liner:
+      "Clean new hire with aligned PTO setup, payroll readiness confirmed, manager ready, and approvals complete.",
     employee: {
       name: "Amelia Rhodes",
-      role: "Product Designer",
+      title: "Product Designer",
       department: "Design",
-      location: "Remote — UK",
-      date: "Start date Jan 6, 2027",
+      location: "Remote — United Kingdom",
       manager: "Jonas Eriksen",
+      eventDate: "Start date · Jan 6, 2027",
+      employmentType: "Full-time · Salaried",
+      ptoNote: "UK PTO policy correctly assigned",
+      payrollNote: "Payroll onboarding complete for cycle starting Jan 1",
+      contextNote: "No exception flags. Standard remote onboarding path.",
     },
     summary: {
       status: "Ready",
       reason:
-        "All readiness checks pass. Coordination actions prepared for manager and onboarding partner.",
+        "New hire is ready for release. Policy, payroll, manager readiness, and required approvals are all clean.",
     },
     readiness: [
-      { label: "Offer accepted in BambooHR", status: "pass", detail: "Signed Dec 4" },
-      { label: "Work eligibility on file", status: "pass", detail: "Verified" },
-      { label: "Start date aligned to pay cycle", status: "pass", detail: "Pay cycle Jan 1–15" },
-      { label: "Manager pre-boarding acknowledged", status: "pass", detail: "Acknowledged Dec 6" },
+      { label: "Employee record complete", status: "Passed", detail: "All required fields populated in BambooHR" },
+      { label: "Department / location / start-date integrity", status: "Passed", detail: "Design · Remote-UK · Jan 6, 2027" },
+      { label: "PTO policy assigned and aligned", status: "Passed", detail: "UK policy correctly assigned to role profile" },
+      { label: "Payroll onboarding readiness status", status: "Passed", detail: "Payroll onboarding complete for cycle Jan 1–15" },
+      { label: "Manager readiness", status: "Passed", detail: "Manager pre-boarding acknowledged Dec 6" },
+      { label: "Required approvals complete", status: "Passed", detail: "No exceptions · standard approval path" },
     ],
     gates: [
-      { label: "No active holds", type: "Approval", detail: "No gates required for this scenario" },
+      { label: "HR Ops Policy Configuration Gate", status: "Passed", reason: "Policy configuration aligned to location and role", blocking: false },
+      { label: "Manager Readiness Gate", status: "Passed", reason: "Manager acknowledged pre-boarding plan", blocking: false },
+      { label: "Start-Date Release Rule", status: "Passed", reason: "Start date aligned to pay cycle and onboarding window", blocking: false },
     ],
     actions: [
-      { label: "Welcome communication — manager draft", audience: "People Manager", state: "Prepared" },
-      { label: "Day-1 coordination plan", audience: "Onboarding Partner", state: "Prepared" },
-      { label: "Team intro brief", audience: "Team Lead", state: "Prepared" },
+      { label: "Draft Teams welcome message", actionClass: "Communication", status: "Ready to Release", detail: "Cleared for release on start date" },
+      { label: "Draft manager kickoff email", actionClass: "Communication", status: "Ready to Release", detail: "Manager-authored kickoff cleared for release" },
+      { label: "Create first-week calendar hold", actionClass: "Coordination", status: "Prepared", detail: "Calendar hold prepared for first 5 working days" },
+      { label: "Notify HR onboarding owner", actionClass: "Coordination", status: "Prepared", detail: "Owner notified for day-1 coordination" },
     ],
     trail: [
       { time: "11:20", text: "New hire event received from BambooHR" },
-      { time: "11:20", text: "Readiness evaluation completed — 4 of 4 checks passed" },
-      { time: "11:21", text: "Coordination actions prepared and held for manager review" },
+      { time: "11:20", text: "Control path assigned: standard new hire · remote" },
+      { time: "11:21", text: "PTO policy configuration validated for UK · Design" },
+      { time: "11:21", text: "Payroll onboarding readiness confirmed" },
+      { time: "11:21", text: "Manager kickoff draft prepared", emphasis: "info" },
+      { time: "11:22", text: "Event marked ready for release", emphasis: "info" },
     ],
   },
+
+  /* =========================================================
+   * NEW HIRE 2 — PTO / Workforce Policy Configuration Mismatch
+   * ========================================================= */
   {
     id: "hire-policy",
     event: "New Hire",
     label: "New Hire — PTO / Workforce Policy Configuration Mismatch",
     one_liner:
-      "Configured PTO accrual policy for this location does not match the new-hire profile.",
+      "Employee record is present, but the PTO/workforce policy for this location and role is misaligned.",
     employee: {
       name: "Rafael Mendes",
-      role: "Field Operations Lead",
+      title: "Field Operations Lead",
       department: "Operations",
       location: "São Paulo, BR",
-      date: "Start date Jan 12, 2027",
       manager: "Hannah Iwu",
+      eventDate: "Start date · Jan 12, 2027",
+      employmentType: "Full-time · Salaried",
+      ptoNote: "Assigned PTO policy does not match BR Field role profile",
+      payrollNote: "Payroll onboarding readiness impacted by policy mismatch",
+      contextNote: "Manager pre-boarding outstanding. Policy correction required before release.",
     },
     summary: {
       status: "Action Required",
       reason:
-        "PTO accrual policy for São Paulo does not match this role profile. HR Ops review required before progression.",
+        "New hire cannot progress until PTO policy configuration is corrected and payroll readiness is revalidated.",
     },
     readiness: [
-      { label: "Offer accepted in BambooHR", status: "pass", detail: "Signed Dec 9" },
-      { label: "Work eligibility on file", status: "pass", detail: "Verified" },
-      { label: "PTO policy configuration", status: "fail", detail: "Location/role mismatch detected" },
-      { label: "Manager pre-boarding acknowledged", status: "warn", detail: "Pending acknowledgement" },
+      { label: "Employee record complete", status: "Passed", detail: "All required fields populated" },
+      { label: "Department / location / start-date integrity", status: "Passed", detail: "Operations · São Paulo · Jan 12, 2027" },
+      { label: "PTO policy assigned and aligned", status: "Failed", detail: "Policy assigned does not match BR Field role profile" },
+      { label: "Payroll onboarding readiness status", status: "Pending", detail: "Cannot finalize until policy mismatch is corrected" },
+      { label: "Manager readiness", status: "Warning", detail: "Manager pre-boarding acknowledgement outstanding" },
+      { label: "Required approvals complete", status: "Passed", detail: "Standard approval path · no exception" },
     ],
     gates: [
-      { label: "HR Ops policy review", type: "Hold", detail: "Required before pre-boarding can progress" },
+      { label: "HR Ops Policy Configuration Gate", status: "Blocking", reason: "PTO/workforce policy for BR Field role must be corrected", blocking: true },
+      { label: "Manager Readiness Gate", status: "Open", reason: "Manager pre-boarding acknowledgement pending", blocking: false },
+      { label: "Start-Date Release Rule", status: "Pending", reason: "Cannot evaluate until policy correction is complete", blocking: true },
     ],
     actions: [
-      { label: "Welcome communication — manager draft", audience: "People Manager", state: "Held" },
-      { label: "HR Ops review request", audience: "HR Ops", state: "Awaiting Approval" },
-      { label: "Day-1 coordination plan", audience: "Onboarding Partner", state: "Held" },
+      { label: "Draft Teams welcome message", actionClass: "Communication", status: "Held", detail: "Held pending HR Ops Policy Configuration Gate" },
+      { label: "Draft manager kickoff email", actionClass: "Communication", status: "Held", detail: "Held pending policy correction" },
+      { label: "Create first-week calendar hold", actionClass: "Coordination", status: "Prepared", detail: "Prepared but not releasable until release rule clears" },
+      { label: "Hold release pending policy correction", actionClass: "Control-status", status: "Held", detail: "Hold posture applied across coordination" },
     ],
     trail: [
       { time: "13:05", text: "New hire event received from BambooHR" },
-      { time: "13:05", text: "Policy configuration mismatch detected" },
-      { time: "13:06", text: "HR Ops review requested" },
-      { time: "13:06", text: "Coordination actions held pending review" },
+      { time: "13:05", text: "Control path assigned: standard new hire · field" },
+      { time: "13:06", text: "Policy configuration mismatch detected for BR Field role", emphasis: "warn" },
+      { time: "13:06", text: "HR Ops Policy Configuration Gate raised · blocking progression", emphasis: "critical" },
+      { time: "13:06", text: "Payroll onboarding readiness check held pending policy correction", emphasis: "warn" },
+      { time: "13:07", text: "Communication release held across all coordination actions" },
     ],
   },
+
+  /* =========================================================
+   * NEW HIRE 3 — Exception Approval Required
+   * ========================================================= */
   {
     id: "hire-exception",
     event: "New Hire",
     label: "New Hire — Exception Approval Required",
     one_liner:
-      "Off-cycle start date and non-standard compensation profile require leadership approval.",
+      "Hire is structurally ready, but a compensation threshold exception requires approval before release.",
     employee: {
       name: "Priya Kumar",
-      role: "Director, Data Platform",
+      title: "Director, Data Platform",
       department: "Engineering",
       location: "Toronto, CA",
-      date: "Start date Dec 30, 2026",
       manager: "Will Okafor",
+      eventDate: "Start date · Dec 30, 2026",
+      employmentType: "Full-time · Salaried",
+      exceptionType: "Compensation threshold exception · outside standard band",
+      ptoNote: "PTO policy correctly assigned · standard CA path",
+      payrollNote: "Payroll onboarding complete · pending exception approval",
+      contextNote: "Off-cycle start aligned to pay cycle by 7 days. Comp profile triggers exception approval threshold.",
     },
     summary: {
       status: "Approval Required",
       reason:
-        "Off-cycle start and non-standard compensation profile require Talent + Finance approval.",
+        "New hire is structurally ready, but an exception approval is required before release.",
     },
     readiness: [
-      { label: "Offer accepted in BambooHR", status: "pass", detail: "Signed Dec 11" },
-      { label: "Work eligibility on file", status: "pass", detail: "Verified" },
-      { label: "Start date aligned to pay cycle", status: "warn", detail: "Off-cycle by 7 days" },
-      { label: "Compensation profile", status: "fail", detail: "Outside standard band" },
+      { label: "Employee record complete", status: "Passed", detail: "All required fields populated" },
+      { label: "Department / location / start-date integrity", status: "Passed", detail: "Engineering · Toronto · Dec 30, 2026" },
+      { label: "PTO policy assigned and aligned", status: "Passed", detail: "CA policy assigned · matches role profile" },
+      { label: "Payroll onboarding readiness status", status: "Passed", detail: "Payroll onboarding complete · ready on approval" },
+      { label: "Manager readiness", status: "Passed", detail: "Manager pre-boarding acknowledged" },
+      { label: "Required approvals complete", status: "Pending", detail: "Compensation threshold exception triggered — VP Talent + FP&A approval pending" },
     ],
     gates: [
-      { label: "Talent leadership approval", type: "Approval", detail: "Required from VP Talent" },
-      { label: "Finance approval", type: "Approval", detail: "Required from FP&A" },
+      { label: "Exception Approval Gate", status: "Open", reason: "Compensation threshold exception — VP Talent + FP&A approval required", blocking: true },
+      { label: "HR Ops Policy Configuration Gate", status: "Passed", reason: "Policy configuration aligned", blocking: false },
+      { label: "Manager Readiness Gate", status: "Passed", reason: "Manager acknowledged pre-boarding", blocking: false },
+      { label: "Start-Date Release Rule", status: "Pending", reason: "Will clear automatically on exception approval", blocking: true },
     ],
     actions: [
-      { label: "Welcome communication — manager draft", audience: "People Manager", state: "Held" },
-      { label: "Talent approval request", audience: "VP Talent", state: "Awaiting Approval" },
-      { label: "Finance approval request", audience: "FP&A", state: "Awaiting Approval" },
+      { label: "Draft Teams welcome message", actionClass: "Communication", status: "Prepared", detail: "Prepared · not releasable until exception clears" },
+      { label: "Draft manager kickoff email", actionClass: "Communication", status: "Pending Approval", detail: "Awaiting Exception Approval Gate" },
+      { label: "Create first-week calendar hold", actionClass: "Coordination", status: "Prepared", detail: "Prepared for first 5 working days" },
+      { label: "Hold release pending exception approval", actionClass: "Control-status", status: "Held", detail: "Hold posture applied across release path" },
     ],
     trail: [
       { time: "15:48", text: "New hire event received from BambooHR" },
-      { time: "15:48", text: "Off-cycle start and non-standard comp flagged" },
-      { time: "15:49", text: "Approvals routed to VP Talent and FP&A" },
-      { time: "15:49", text: "Coordination actions held pending approvals" },
+      { time: "15:48", text: "Control path assigned: standard new hire · director" },
+      { time: "15:49", text: "Compensation threshold exception triggered", emphasis: "warn" },
+      { time: "15:49", text: "Exception Approval Gate opened · routed to VP Talent and FP&A", emphasis: "critical" },
+      { time: "15:50", text: "Manager kickoff draft prepared · held pending approval" },
+      { time: "15:50", text: "Start-Date Release Rule pending · will clear on approval" },
     ],
   },
 ];
@@ -320,10 +437,33 @@ const STATUS_STYLES: Record<ControlStatus, { dot: string; text: string; bg: stri
   Escalated:           { dot: "bg-red-500",     text: "text-red-700",     bg: "bg-red-50",      border: "border-red-200" },
 };
 
-function CheckIcon({ status }: { status: "pass" | "warn" | "fail" }) {
-  if (status === "pass") return <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />;
-  if (status === "warn") return <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0" />;
-  return <ShieldAlert className="h-4 w-4 text-red-600 shrink-0" />;
+const CHECK_STYLES: Record<CheckStatus, { text: string; bg: string; border: string }> = {
+  Passed:  { text: "text-emerald-700", bg: "bg-emerald-50", border: "border-emerald-200" },
+  Warning: { text: "text-amber-700",   bg: "bg-amber-50",   border: "border-amber-200" },
+  Failed:  { text: "text-red-700",     bg: "bg-red-50",     border: "border-red-200" },
+  Pending: { text: "text-slate-600",   bg: "bg-slate-50",   border: "border-slate-200" },
+};
+
+const GATE_STYLES: Record<GateStatus, { text: string; bg: string; border: string }> = {
+  Open:      { text: "text-amber-700",   bg: "bg-amber-50",   border: "border-amber-200" },
+  Pending:   { text: "text-slate-600",   bg: "bg-slate-50",   border: "border-slate-200" },
+  Passed:    { text: "text-emerald-700", bg: "bg-emerald-50", border: "border-emerald-200" },
+  Blocking:  { text: "text-red-700",     bg: "bg-red-50",     border: "border-red-200" },
+  Escalated: { text: "text-red-700",     bg: "bg-red-50",     border: "border-red-300" },
+};
+
+const ACTION_STYLES: Record<ActionStatus, string> = {
+  Prepared:           "border-slate-200 text-slate-700 bg-slate-50",
+  "Ready to Release": "border-emerald-200 text-emerald-700 bg-emerald-50",
+  Held:               "border-amber-200 text-amber-700 bg-amber-50",
+  "Pending Approval": "border-blue-200 text-blue-700 bg-blue-50",
+};
+
+function CheckIcon({ status }: { status: CheckStatus }) {
+  if (status === "Passed") return <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />;
+  if (status === "Warning") return <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0" />;
+  if (status === "Failed") return <ShieldAlert className="h-4 w-4 text-red-600 shrink-0" />;
+  return <Clock className="h-4 w-4 text-slate-500 shrink-0" />;
 }
 
 function StatusPill({ status }: { status: ControlStatus }) {
@@ -335,6 +475,7 @@ function StatusPill({ status }: { status: ControlStatus }) {
     </span>
   );
 }
+
 
 interface Props {
   setPage: (p: string) => void;
@@ -359,6 +500,7 @@ export default function GlobalLifecycleAgentPage({ setPage }: Props) {
     setEvent(v);
     const first = SCENARIOS.find((s) => s.event === v);
     if (first) setSelectedId(first.id);
+    setResult(null);
   };
 
   const runAgent = () => {
@@ -515,7 +657,7 @@ export default function GlobalLifecycleAgentPage({ setPage }: Props) {
                     return (
                       <button
                         key={s.id}
-                        onClick={() => setSelectedId(s.id)}
+                        onClick={() => { setSelectedId(s.id); setResult(null); }}
                         className={`w-full text-left rounded-lg border px-4 py-3 transition ${
                           active
                             ? "border-primary bg-accent"
@@ -543,11 +685,23 @@ export default function GlobalLifecycleAgentPage({ setPage }: Props) {
                       {selectedScenario.employee.name}
                     </div>
                     <div className="text-xs text-slate-3">
-                      {selectedScenario.employee.role} · {selectedScenario.employee.department}
+                      {selectedScenario.employee.title} · {selectedScenario.employee.department}
                     </div>
                     <div className="text-xs text-slate-4">{selectedScenario.employee.location}</div>
-                    <div className="text-xs text-slate-4">{selectedScenario.employee.date}</div>
+                    <div className="text-xs text-slate-4">{selectedScenario.employee.eventDate}</div>
                     <div className="text-xs text-slate-4">Manager: {selectedScenario.employee.manager}</div>
+                    <div className="pt-2 mt-2 border-t border-border/60 space-y-1 text-[11px] text-slate-4">
+                      <div><span className="text-slate-3 font-medium">Employment:</span> {selectedScenario.employee.employmentType}</div>
+                      {selectedScenario.employee.separationType && (
+                        <div><span className="text-slate-3 font-medium">Separation:</span> {selectedScenario.employee.separationType}</div>
+                      )}
+                      {selectedScenario.employee.exceptionType && (
+                        <div><span className="text-slate-3 font-medium">Exception:</span> {selectedScenario.employee.exceptionType}</div>
+                      )}
+                      <div><span className="text-slate-3 font-medium">PTO:</span> {selectedScenario.employee.ptoNote}</div>
+                      <div><span className="text-slate-3 font-medium">Payroll:</span> {selectedScenario.employee.payrollNote}</div>
+                      <div className="italic">{selectedScenario.employee.contextNote}</div>
+                    </div>
                   </div>
                 </>
               )}
@@ -737,72 +891,91 @@ function ResultsWorkspace({ scenario }: { scenario: Scenario }) {
       <Card className="p-6 bg-white border border-border/70">
         <BlockHeader title="Readiness checks" caption="Operational conditions evaluated against policy" />
         <ul className="mt-5 divide-y divide-border/60">
-          {scenario.readiness.map((c) => (
-            <li key={c.label} className="py-3 flex items-start gap-3">
-              <CheckIcon status={c.status} />
-              <div className="flex-1">
-                <div className="text-sm text-slate font-medium">{c.label}</div>
-                <div className="text-xs text-slate-4 mt-0.5">{c.detail}</div>
-              </div>
-              <span className={`text-[10px] uppercase tracking-wider font-medium ${
-                c.status === "pass" ? "text-emerald-700" : c.status === "warn" ? "text-amber-700" : "text-red-700"
-              }`}>
-                {c.status === "pass" ? "Pass" : c.status === "warn" ? "Review" : "Fail"}
-              </span>
-            </li>
-          ))}
+          {scenario.readiness.map((c) => {
+            const cs = CHECK_STYLES[c.status];
+            return (
+              <li key={c.label} className="py-3 flex items-start gap-3">
+                <CheckIcon status={c.status} />
+                <div className="flex-1">
+                  <div className="text-sm text-slate font-medium">{c.label}</div>
+                  <div className="text-xs text-slate-4 mt-0.5">{c.detail}</div>
+                </div>
+                <span className={`text-[10px] uppercase tracking-wider font-medium px-2 py-0.5 rounded border ${cs.bg} ${cs.text} ${cs.border}`}>
+                  {c.status}
+                </span>
+              </li>
+            );
+          })}
         </ul>
       </Card>
 
       {/* Block 3: Gates / Approvals / Exceptions */}
       <Card className="p-6 bg-white border border-border/70">
-        <BlockHeader title="Gates, approvals & exceptions" caption="What is currently blocking progression" />
+        <BlockHeader title="Gates, approvals & exceptions" caption="What controls progression of this event" />
         <ul className="mt-5 space-y-3">
-          {scenario.gates.map((g) => (
-            <li key={g.label} className="flex items-start gap-3 rounded-lg border border-border/70 bg-paper/40 px-4 py-3">
-              {g.type === "Approval" ? (
-                <Lock className="h-4 w-4 text-blue-600 mt-0.5 shrink-0" />
-              ) : g.type === "Hold" ? (
-                <Clock className="h-4 w-4 text-slate-500 mt-0.5 shrink-0" />
-              ) : (
-                <ShieldAlert className="h-4 w-4 text-red-600 mt-0.5 shrink-0" />
-              )}
-              <div className="flex-1">
-                <div className="text-sm text-slate font-medium">{g.label}</div>
-                <div className="text-xs text-slate-4 mt-0.5">{g.detail}</div>
-              </div>
-              <Badge variant="outline" className="text-[10px] border-border/70">
-                {g.type}
-              </Badge>
-            </li>
-          ))}
+          {scenario.gates.map((g) => {
+            const gs = GATE_STYLES[g.status];
+            const Icon =
+              g.status === "Blocking" || g.status === "Escalated"
+                ? ShieldAlert
+                : g.status === "Passed"
+                ? CheckCircle2
+                : g.status === "Open"
+                ? AlertTriangle
+                : Lock;
+            const iconColor =
+              g.status === "Blocking" || g.status === "Escalated"
+                ? "text-red-600"
+                : g.status === "Passed"
+                ? "text-emerald-600"
+                : g.status === "Open"
+                ? "text-amber-600"
+                : "text-slate-500";
+            return (
+              <li
+                key={g.label}
+                className={`flex items-start gap-3 rounded-lg border px-4 py-3 ${
+                  g.blocking ? `${gs.border} ${gs.bg}` : "border-border/70 bg-paper/40"
+                }`}
+              >
+                <Icon className={`h-4 w-4 mt-0.5 shrink-0 ${iconColor}`} />
+                <div className="flex-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-sm text-slate font-medium">{g.label}</span>
+                    {g.blocking && (
+                      <span className="text-[10px] uppercase tracking-wider font-medium text-red-700 bg-red-50 border border-red-200 rounded px-1.5 py-0.5">
+                        Blocking
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-xs text-slate-4 mt-0.5">{g.reason}</div>
+                </div>
+                <span className={`text-[10px] uppercase tracking-wider font-medium px-2 py-0.5 rounded border ${gs.bg} ${gs.text} ${gs.border}`}>
+                  {g.status}
+                </span>
+              </li>
+            );
+          })}
         </ul>
       </Card>
 
       {/* Block 4: Prepared Actions */}
       <Card className="p-6 bg-white border border-border/70">
-        <BlockHeader title="Prepared actions" caption="Coordination and communication actions held for review" />
+        <BlockHeader title="Prepared actions" caption="Communication, coordination, and control-status actions" />
         <ul className="mt-5 space-y-2">
           {scenario.actions.map((a) => (
             <li
               key={a.label}
-              className="flex items-center gap-3 rounded-lg border border-border/70 bg-white px-4 py-3"
+              className="flex items-start gap-3 rounded-lg border border-border/70 bg-white px-4 py-3"
             >
               <div className="flex-1">
                 <div className="text-sm text-slate font-medium">{a.label}</div>
-                <div className="text-xs text-slate-4 mt-0.5">For: {a.audience}</div>
+                <div className="text-xs text-slate-4 mt-0.5">
+                  <span className="text-slate-3 font-medium">{a.actionClass}</span> · {a.detail}
+                </div>
               </div>
-              <Badge
-                variant="outline"
-                className={`text-[10px] ${
-                  a.state === "Prepared"
-                    ? "border-emerald-200 text-emerald-700 bg-emerald-50"
-                    : a.state === "Held"
-                    ? "border-slate-200 text-slate-700 bg-slate-50"
-                    : "border-blue-200 text-blue-700 bg-blue-50"
-                }`}
-              >
-                {a.state}
+              <Badge variant="outline" className={`text-[10px] shrink-0 ${ACTION_STYLES[a.status]}`}>
+                {a.status}
               </Badge>
             </li>
           ))}
@@ -811,15 +984,23 @@ function ResultsWorkspace({ scenario }: { scenario: Scenario }) {
 
       {/* Block 5: Operating Trail */}
       <Card className="p-6 bg-white border border-border/70">
-        <BlockHeader title="Operating trail" caption="Audit-style record of the agent's evaluation" />
+        <BlockHeader title="Operating trail" caption="Concise control log of the agent's evaluation" />
         <ol className="mt-5 relative border-l border-border/70 ml-2">
-          {scenario.trail.map((t, i) => (
-            <li key={i} className="ml-4 pb-4 last:pb-0">
-              <span className="absolute -left-[5px] mt-1.5 h-2 w-2 rounded-full bg-primary" />
-              <div className="text-xs text-slate-4">{t.time}</div>
-              <div className="text-sm text-slate mt-0.5">{t.text}</div>
-            </li>
-          ))}
+          {scenario.trail.map((t, i) => {
+            const dot =
+              t.emphasis === "critical"
+                ? "bg-red-500"
+                : t.emphasis === "warn"
+                ? "bg-amber-500"
+                : "bg-primary";
+            return (
+              <li key={i} className="ml-4 pb-4 last:pb-0">
+                <span className={`absolute -left-[5px] mt-1.5 h-2 w-2 rounded-full ${dot}`} />
+                <div className="text-xs text-slate-4">{t.time}</div>
+                <div className="text-sm text-slate mt-0.5">{t.text}</div>
+              </li>
+            );
+          })}
         </ol>
       </Card>
     </div>
