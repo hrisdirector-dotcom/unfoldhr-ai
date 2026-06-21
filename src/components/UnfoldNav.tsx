@@ -26,7 +26,14 @@ export function UnfoldNav({ page, setPage, currentUser }: NavProps) {
   }, []);
 
   const navigate = (p: string, scrollToGallery = false) => {
-    if (scrollToGallery || p === "try-agents") {
+    // "Try an Agent" routes directly to the flagship Global Lifecycle Agent
+    if (p === "try-agents") {
+      setMobileOpen(false);
+      setPage("global-lifecycle-agent");
+      window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
+      return;
+    }
+    if (scrollToGallery) {
       setPage("home");
       setMobileOpen(false);
       setTimeout(() => document.getElementById("agent-gallery")?.scrollIntoView({ behavior: "smooth" }), 150);
