@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useMemo } from "react";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -10,11 +11,17 @@ import {
   Clock,
   ArrowRight,
   ArrowLeft,
-  Play,
-  Loader2,
+  Sparkles,
   Lock,
   ChevronRight,
+  UserPlus,
+  UserMinus,
+  ShieldCheck,
+  MessageSquare,
+  Workflow,
+  GitBranch,
 } from "lucide-react";
+import { LifecycleRunOverlay } from "@/components/agent/LifecycleRunOverlay";
 
 type ControlStatus =
   | "Ready"
