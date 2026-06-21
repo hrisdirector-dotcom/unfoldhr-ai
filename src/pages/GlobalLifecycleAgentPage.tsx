@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -486,6 +486,10 @@ export default function GlobalLifecycleAgentPage({ setPage }: Props) {
   const [selectedId, setSelectedId] = useState<string>("term-ready");
   const [result, setResult] = useState<Scenario | null>(SCENARIOS[0]);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
+  }, []);
 
   const visibleScenarios = useMemo(
     () => SCENARIOS.filter((s) => s.event === event),
