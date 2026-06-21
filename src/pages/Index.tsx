@@ -70,7 +70,7 @@ const Index = () => {
     } else {
       window.history.pushState(stateObj, "");
     }
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
   }, [agentId]);
 
   const navigateToAgent = useCallback((id: string) => {
@@ -85,14 +85,14 @@ const Index = () => {
     if (route) {
       setPage(route);
       window.history.pushState({ page: route }, "");
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
       return;
     }
 
     setAgentId(id);
     setPage("agent-detail");
     window.history.pushState({ page: "agent-detail", agentId: id }, "");
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
   }, []);
 
   const handleBuildAgent = useCallback((id: string) => {
