@@ -65,30 +65,42 @@ export default function AgentsPage({ onSelectAgent, onBuildAgent, setPage }: Age
         </div>
       </section>
 
-      {/* ───────────── Section 1 — Control & Readiness ───────────── */}
-      <section className="py-24 md:py-32 bg-paper border-t border-border">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
+      {/* ───────────── Section 1 — Control & Readiness (LEAD, dominant) ───────────── */}
+      <section className="relative py-28 md:py-40 bg-slate text-white overflow-hidden border-t border-white/5">
+        <div className="absolute inset-0 dot-grid opacity-[0.05] pointer-events-none" />
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(ellipse 55% 45% at 80% 0%, rgba(43,92,230,0.22), transparent 65%), radial-gradient(ellipse 45% 35% at 0% 100%, rgba(43,92,230,0.14), transparent 70%)",
+          }}
+        />
+
+        <div className="relative max-w-7xl mx-auto px-6 lg:px-10">
           <RevealDiv>
-            <div className="mb-10 flex items-center gap-2 text-[11px] uppercase tracking-[0.22em] text-primary font-mono">
-              <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+            <div className="mb-8 flex items-center gap-2 text-[11px] uppercase tracking-[0.22em] text-blue-200/90 font-mono">
+              <span className="h-1.5 w-1.5 rounded-full bg-blue-300 animate-pulse" />
               <span>Family 01 — Lead</span>
               <span className="opacity-40">·</span>
-              <span className="text-slate-4">Control &amp; Readiness</span>
+              <span className="text-white/70">Control &amp; Readiness</span>
             </div>
-            <h2 className="font-display text-3xl md:text-5xl text-slate leading-[1.05] tracking-tight max-w-3xl mb-4">
+            <h2 className="font-display text-4xl md:text-6xl lg:text-[3.75rem] leading-[1.03] tracking-tight max-w-4xl mb-6">
               Control &amp; Readiness Agents
+              <br />
+              <span className="font-serif-alt italic text-blue-200">govern what moves forward.</span>
             </h2>
-            <p className="text-slate-3 text-lg max-w-2xl leading-relaxed">
-              These agents evaluate workforce events and HR actions to determine what can
-              progress, what must be held, and what requires approval — turning lifecycle
-              activity into governed, auditable outcomes.
+            <p className="text-slate-200/80 text-lg md:text-xl max-w-2xl leading-relaxed">
+              Evaluate workforce events and HR actions to determine what can progress,
+              what must be held, and what requires approval — turning lifecycle activity
+              into governed, auditable outcomes.
             </p>
           </RevealDiv>
 
+          {/* Flagship card */}
           <RevealDiv delay={0.1}>
             <div
               onClick={() => setPage("global-lifecycle-agent")}
-              className="group cursor-pointer relative mt-10 bg-white border border-border rounded-3xl overflow-hidden hover:border-primary/40 transition-all duration-300 shadow-[0_24px_70px_-30px_rgba(28,35,48,0.25)] hover:shadow-[0_30px_90px_-25px_rgba(43,92,230,0.35)]"
+              className="group cursor-pointer relative mt-14 bg-white border border-white/10 rounded-3xl overflow-hidden hover:border-primary/40 transition-all duration-300 shadow-[0_40px_120px_-30px_rgba(0,0,0,0.6)] hover:shadow-[0_50px_140px_-25px_rgba(43,92,230,0.55)]"
             >
               <div className="relative bg-gradient-to-r from-slate via-slate to-slate-2 text-white px-8 md:px-12 py-4 flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] font-mono">
                 <div className="absolute inset-0 dot-grid opacity-[0.05] pointer-events-none" />
@@ -149,30 +161,69 @@ export default function AgentsPage({ onSelectAgent, onBuildAgent, setPage }: Age
               </div>
             </div>
           </RevealDiv>
+
+          {/* Coming-soon roster — makes the family feel like a real category */}
+          <RevealDiv delay={0.18}>
+            <div className="mt-16">
+              <p className="text-[11px] font-mono uppercase tracking-[0.22em] text-blue-200/80 mb-5 flex items-center gap-2">
+                <span className="h-1 w-1 rounded-full bg-blue-300" />
+                Expanding the family
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {[
+                  { icon: Lock, name: "Access &amp; Entitlement Agent", note: "Governs role-based access readiness across systems." },
+                  { icon: GitBranch, name: "Org Change Readiness Agent", note: "Validates reorgs, M&amp;A moves, and structural changes." },
+                  { icon: FileCheck2, name: "Compliance Release Agent", note: "Confirms regulatory and policy readiness before action." },
+                ].map((a, i) => (
+                  <div
+                    key={i}
+                    className="relative rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-sm p-6 hover:bg-white/[0.05] transition-colors"
+                  >
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="h-9 w-9 rounded-lg bg-white/[0.06] border border-white/10 flex items-center justify-center">
+                        <a.icon className="h-4 w-4 text-blue-200" />
+                      </div>
+                      <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-blue-200/70 px-2 py-1 rounded border border-blue-300/20 bg-blue-300/[0.06]">
+                        Coming soon
+                      </span>
+                    </div>
+                    <h4
+                      className="font-display text-lg text-white leading-snug mb-1.5"
+                      dangerouslySetInnerHTML={{ __html: a.name }}
+                    />
+                    <p
+                      className="text-sm text-slate-200/65 leading-relaxed"
+                      dangerouslySetInnerHTML={{ __html: a.note }}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </RevealDiv>
         </div>
       </section>
 
-      {/* ───────────── Section 2 — Decision Agents ───────────── */}
-      <section className="py-24 md:py-32 bg-background border-t border-border">
+      {/* ───────────── Section 2 — Decision Agents (secondary catalog) ───────────── */}
+      <section className="py-20 md:py-24 bg-background border-t border-border">
         <div className="max-w-7xl mx-auto px-6 lg:px-10">
           <RevealDiv>
-            <div className="mb-10 flex items-center gap-2 text-[11px] uppercase tracking-[0.22em] text-slate-4 font-mono">
+            <div className="mb-6 flex items-center gap-2 text-[11px] uppercase tracking-[0.22em] text-slate-4 font-mono">
               <span className="h-1.5 w-1.5 rounded-full bg-slate-4" />
               <span>Family 02</span>
               <span className="opacity-40">·</span>
               <span>Decision Intelligence</span>
             </div>
-            <h2 className="font-display text-2xl md:text-4xl text-slate leading-[1.05] tracking-tight max-w-3xl mb-4">
-              Decision Agents
-            </h2>
-            <p className="text-slate-3 text-base md:text-lg max-w-2xl leading-relaxed mb-12">
-              Structured recommendations for specific HR domains — workforce planning,
-              listening, performance, compliance, and more. Part of the Decision Support
-              product.
-            </p>
+            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-10">
+              <h2 className="font-display text-2xl md:text-3xl text-slate leading-[1.1] tracking-tight max-w-2xl">
+                Decision Agents
+              </h2>
+              <p className="text-slate-3 text-sm md:text-base max-w-md leading-relaxed">
+                Structured recommendations for specific HR domains. Part of the Decision Support product.
+              </p>
+            </div>
           </RevealDiv>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {AGENTS.map((agent, i) => (
               <RevealDiv key={agent.id} delay={i * 0.04}>
                 <AgentCard
