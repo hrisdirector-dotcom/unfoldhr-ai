@@ -17,6 +17,7 @@ import TryUSWorkforceAgentPage from "@/pages/TryUSWorkforceAgentPage";
 import ExecutiveDeckPage from "@/pages/ExecutiveDeckPage";
 import ExecutiveSnapshotPage from "@/pages/ExecutiveSnapshotPage";
 import TodayDecisionsPage from "@/pages/TodayDecisionsPage";
+import GlobalLifecycleAgentPage from "@/pages/GlobalLifecycleAgentPage";
 import OnboardingWalkthrough from "@/components/OnboardingWalkthrough";
 import type { SavedRun } from "@/hooks/useSavedRuns";
 
@@ -150,6 +151,7 @@ const Index = () => {
       {page === "try-listening-agent" && <TryListeningAgentPage setPage={navigateTo} />}
       {page === "try-performance-agent" && <TryPerformanceAgentPage setPage={navigateTo} />}
       {page === "try-us-workforce-agent" && <TryUSWorkforceAgentPage setPage={navigateTo} />}
+      {page === "global-lifecycle-agent" && <GlobalLifecycleAgentPage setPage={navigateTo} />}
       {page === "workforce-planning" && <WorkforcePlanningAgent />}
       {page === "pricing" && <PricingPage setPage={navigateTo} />}
       {page === "about" && <AboutPage />}
