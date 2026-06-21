@@ -91,12 +91,12 @@ export function UnfoldNav({ page, setPage, currentUser }: NavProps) {
         </div>
 
         <div className="hidden md:flex items-center gap-3">
-          {/* Primary CTA - Try an Agent */}
+          {/* Primary CTA - Try the Flagship Agent */}
           <button
             onClick={() => navigate("try-agents")}
             className="px-5 py-2.5 text-sm font-semibold rounded-lg cursor-pointer bg-primary text-primary-foreground border-none hover:bg-primary/90 transition-colors"
           >
-            Try an Agent
+            Try the Flagship Agent
           </button>
 
           {/* Secondary CTA - Book a Demo */}
