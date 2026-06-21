@@ -11,11 +11,16 @@ export default function AgentFamiliesSection({ setPage }: Props) {
       <div className="max-w-7xl mx-auto px-6 md:px-14">
         <RevealDiv>
           <div className="max-w-2xl mb-10">
-            <span className="inline-block text-xs font-bold uppercase tracking-[3px] text-primary mb-3">Lead Agent Family</span>
-            <h2 className="font-display text-3xl md:text-4xl text-foreground leading-tight mb-3">
+            <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.22em] text-primary font-mono mb-4">
+              <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+              <span>Lead Agent Family</span>
+              <span className="opacity-40">·</span>
+              <span className="text-slate-4">Control &amp; Readiness</span>
+            </div>
+            <h2 className="font-display text-3xl md:text-5xl text-slate leading-[1.05] tracking-tight mb-4">
               Control &amp; Readiness Agents
             </h2>
-            <p className="text-muted-foreground text-lg leading-relaxed">
+            <p className="text-slate-3 text-lg leading-relaxed">
               Govern workforce events and HR actions after they enter the system of record. Determine what can progress, what must be held, and what requires approval.
             </p>
           </div>
