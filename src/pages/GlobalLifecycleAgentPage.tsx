@@ -500,6 +500,7 @@ export default function GlobalLifecycleAgentPage({ setPage }: Props) {
     setEvent(v);
     const first = SCENARIOS.find((s) => s.event === v);
     if (first) setSelectedId(first.id);
+    setResult(null);
   };
 
   const runAgent = () => {
