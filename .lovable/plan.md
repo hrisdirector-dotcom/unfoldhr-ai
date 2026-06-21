@@ -1,28 +1,28 @@
-## Why the Lovable logo shows up in Google
+## Goal
+Make the new Global Lifecycle Agent page reachable from the existing homepage Agents Showcase, without adding a top-level nav item.
 
-Google's result icon comes from `/favicon.ico`. Right now `public/favicon.ico` is still the default Lovable icon shipped with new projects, so that's what crawlers cached. The social-preview image (`og:image` / `twitter:image`) in `index.html` also points at a Lovable storage URL, which is what LinkedIn, Slack, WhatsApp etc. show.
+## Changes
 
-## Fix
+### 1. `src/components/landing/AgentsShowcase.tsx`
+Add a new featured card at the top of `SHOWCASE_AGENTS`:
 
-1. **Generate an UnfoldHRAI favicon** from the existing brand mark (the two-dot logo used in `UnfoldMark.tsx` / `src/assets/unfoldhr-logo.png`) at 512×512, on the slate `#1C2330` background with the electric-blue `#2B5CE6` accent dot. Save as:
-   - `public/favicon.png` (overwrite the 547-byte placeholder)
-   - `public/favicon.ico` (overwrite the Lovable default — this is the one Google reads)
-   - `public/apple-touch-icon.png` (180×180, for iOS home screen)
+- icon: `🌐`
+- name: `Global Lifecycle Agent`
+- subtitle (new optional field `subtitle`): `BambooHR Edition`
+- outcome / descriptor: `Workforce Event Control & Readiness`
+- benefit: `Catch payroll, PTO, and policy conflicts before they ship`
+- tag: `Featured`
+- pageId: `global-lifecycle-agent`
 
-2. **Generate a branded social-preview image** (1200×630) using the UnfoldHRAI logo, brand colors, and the tagline already on the homepage. Save as `public/og-image.jpg`.
+Small UI tweak: render `subtitle` (when present) under the title in a smaller muted line so the BambooHR Edition label is visible without changing the card layout for other agents. Existing `handleCardClick` already routes via `pageId` to `setPage("global-lifecycle-agent")`, which `Index.tsx` already wires to `GlobalLifecycleAgentPage`. No routing changes needed.
 
-3. **Update `index.html`**:
-   - Add `<link rel="icon" type="image/x-icon" href="/favicon.ico">` and `<link rel="apple-touch-icon" href="/apple-touch-icon.png">` alongside the existing PNG link.
-   - Replace both `og:image` and `twitter:image` URLs with `https://www.unfoldhrai.com/og-image.jpg`.
-   - Change `twitter:site` from `@Lovable` to a neutral value (or remove it if no UnfoldHRAI handle exists — please confirm).
-   - Add `<meta property="og:url" content="https://www.unfoldhrai.com/" />` and `<link rel="canonical" href="https://www.unfoldhrai.com/" />` so Google consolidates the right domain.
+### 2. Verify Phase 2 scenario-state is on `GlobalLifecycleAgentPage.tsx`
+Read the file and confirm the six scenarios + readiness checks / gates / prepared actions / operating trail blocks are present. If anything from Phase 2 is missing, note it and re-apply the missing pieces — but do not rebuild the page structure.
 
-## What will and won't change immediately
+## Out of scope
+- No top-level nav entry.
+- No new card in `src/data/agents.ts` / `AgentsPage` gallery (homepage showcase is the requested surface).
+- No design-system changes.
 
-- Browser tab icon updates as soon as the change is published and the user hard-refreshes.
-- Social previews (LinkedIn/Slack/etc.) update once their cache refreshes — most have a "scrape again" debugger.
-- **Google's search-result icon can take 1–4 weeks** to refresh even after the new favicon is live; that's Google-side, nothing more we can do besides waiting or requesting re-indexing in Search Console.
-
-## One thing to confirm
-
-- Twitter handle: remove `@Lovable` entirely, or replace with an UnfoldHRAI handle if you have one?
+## Deliverable
+After build: one featured "Global Lifecycle Agent — BambooHR Edition" card on the homepage Agents Showcase that navigates straight to the rebuilt page, plus a one-line confirmation of Phase 2 state in the page file.
