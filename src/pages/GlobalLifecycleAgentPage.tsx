@@ -684,11 +684,23 @@ export default function GlobalLifecycleAgentPage({ setPage }: Props) {
                       {selectedScenario.employee.name}
                     </div>
                     <div className="text-xs text-slate-3">
-                      {selectedScenario.employee.role} · {selectedScenario.employee.department}
+                      {selectedScenario.employee.title} · {selectedScenario.employee.department}
                     </div>
                     <div className="text-xs text-slate-4">{selectedScenario.employee.location}</div>
-                    <div className="text-xs text-slate-4">{selectedScenario.employee.date}</div>
+                    <div className="text-xs text-slate-4">{selectedScenario.employee.eventDate}</div>
                     <div className="text-xs text-slate-4">Manager: {selectedScenario.employee.manager}</div>
+                    <div className="pt-2 mt-2 border-t border-border/60 space-y-1 text-[11px] text-slate-4">
+                      <div><span className="text-slate-3 font-medium">Employment:</span> {selectedScenario.employee.employmentType}</div>
+                      {selectedScenario.employee.separationType && (
+                        <div><span className="text-slate-3 font-medium">Separation:</span> {selectedScenario.employee.separationType}</div>
+                      )}
+                      {selectedScenario.employee.exceptionType && (
+                        <div><span className="text-slate-3 font-medium">Exception:</span> {selectedScenario.employee.exceptionType}</div>
+                      )}
+                      <div><span className="text-slate-3 font-medium">PTO:</span> {selectedScenario.employee.ptoNote}</div>
+                      <div><span className="text-slate-3 font-medium">Payroll:</span> {selectedScenario.employee.payrollNote}</div>
+                      <div className="italic">{selectedScenario.employee.contextNote}</div>
+                    </div>
                   </div>
                 </>
               )}
