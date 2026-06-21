@@ -484,7 +484,7 @@ interface Props {
 export default function GlobalLifecycleAgentPage({ setPage }: Props) {
   const [event, setEvent] = useState<"Termination" | "New Hire">("Termination");
   const [selectedId, setSelectedId] = useState<string>("term-ready");
-  const [result, setResult] = useState<Scenario | null>(SCENARIOS[0]);
+  const [result, setResult] = useState<Scenario | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
