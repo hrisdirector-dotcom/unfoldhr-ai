@@ -160,12 +160,12 @@ export function UnfoldNav({ page, setPage, currentUser }: NavProps) {
 
             <div className="h-px bg-border my-3" />
 
-            {/* Primary CTA - Try an Agent */}
+            {/* Primary CTA - Try the Flagship Agent */}
             <button
               onClick={() => navigate("try-agents")}
               className="w-full px-4 py-3.5 text-base font-semibold rounded-lg cursor-pointer bg-primary text-primary-foreground border-none transition-colors"
             >
-              Try an Agent
+              Try the Flagship Agent
             </button>
 
             {/* Secondary CTA - Book a Demo */}
