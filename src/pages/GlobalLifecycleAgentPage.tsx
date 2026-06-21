@@ -14,6 +14,7 @@ import {
   Sparkles,
   Lock,
   ChevronRight,
+  ChevronDown,
   UserPlus,
   UserMinus,
   ShieldCheck,
