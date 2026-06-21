@@ -890,72 +890,91 @@ function ResultsWorkspace({ scenario }: { scenario: Scenario }) {
       <Card className="p-6 bg-white border border-border/70">
         <BlockHeader title="Readiness checks" caption="Operational conditions evaluated against policy" />
         <ul className="mt-5 divide-y divide-border/60">
-          {scenario.readiness.map((c) => (
-            <li key={c.label} className="py-3 flex items-start gap-3">
-              <CheckIcon status={c.status} />
-              <div className="flex-1">
-                <div className="text-sm text-slate font-medium">{c.label}</div>
-                <div className="text-xs text-slate-4 mt-0.5">{c.detail}</div>
-              </div>
-              <span className={`text-[10px] uppercase tracking-wider font-medium ${
-                c.status === "pass" ? "text-emerald-700" : c.status === "warn" ? "text-amber-700" : "text-red-700"
-              }`}>
-                {c.status === "pass" ? "Pass" : c.status === "warn" ? "Review" : "Fail"}
-              </span>
-            </li>
-          ))}
+          {scenario.readiness.map((c) => {
+            const cs = CHECK_STYLES[c.status];
+            return (
+              <li key={c.label} className="py-3 flex items-start gap-3">
+                <CheckIcon status={c.status} />
+                <div className="flex-1">
+                  <div className="text-sm text-slate font-medium">{c.label}</div>
+                  <div className="text-xs text-slate-4 mt-0.5">{c.detail}</div>
+                </div>
+                <span className={`text-[10px] uppercase tracking-wider font-medium px-2 py-0.5 rounded border ${cs.bg} ${cs.text} ${cs.border}`}>
+                  {c.status}
+                </span>
+              </li>
+            );
+          })}
         </ul>
       </Card>
 
       {/* Block 3: Gates / Approvals / Exceptions */}
       <Card className="p-6 bg-white border border-border/70">
-        <BlockHeader title="Gates, approvals & exceptions" caption="What is currently blocking progression" />
+        <BlockHeader title="Gates, approvals & exceptions" caption="What controls progression of this event" />
         <ul className="mt-5 space-y-3">
-          {scenario.gates.map((g) => (
-            <li key={g.label} className="flex items-start gap-3 rounded-lg border border-border/70 bg-paper/40 px-4 py-3">
-              {g.type === "Approval" ? (
-                <Lock className="h-4 w-4 text-blue-600 mt-0.5 shrink-0" />
-              ) : g.type === "Hold" ? (
-                <Clock className="h-4 w-4 text-slate-500 mt-0.5 shrink-0" />
-              ) : (
-                <ShieldAlert className="h-4 w-4 text-red-600 mt-0.5 shrink-0" />
-              )}
-              <div className="flex-1">
-                <div className="text-sm text-slate font-medium">{g.label}</div>
-                <div className="text-xs text-slate-4 mt-0.5">{g.detail}</div>
-              </div>
-              <Badge variant="outline" className="text-[10px] border-border/70">
-                {g.type}
-              </Badge>
-            </li>
-          ))}
+          {scenario.gates.map((g) => {
+            const gs = GATE_STYLES[g.status];
+            const Icon =
+              g.status === "Blocking" || g.status === "Escalated"
+                ? ShieldAlert
+                : g.status === "Passed"
+                ? CheckCircle2
+                : g.status === "Open"
+                ? AlertTriangle
+                : Lock;
+            const iconColor =
+              g.status === "Blocking" || g.status === "Escalated"
+                ? "text-red-600"
+                : g.status === "Passed"
+                ? "text-emerald-600"
+                : g.status === "Open"
+                ? "text-amber-600"
+                : "text-slate-500";
+            return (
+              <li
+                key={g.label}
+                className={`flex items-start gap-3 rounded-lg border px-4 py-3 ${
+                  g.blocking ? `${gs.border} ${gs.bg}` : "border-border/70 bg-paper/40"
+                }`}
+              >
+                <Icon className={`h-4 w-4 mt-0.5 shrink-0 ${iconColor}`} />
+                <div className="flex-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-sm text-slate font-medium">{g.label}</span>
+                    {g.blocking && (
+                      <span className="text-[10px] uppercase tracking-wider font-medium text-red-700 bg-red-50 border border-red-200 rounded px-1.5 py-0.5">
+                        Blocking
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-xs text-slate-4 mt-0.5">{g.reason}</div>
+                </div>
+                <span className={`text-[10px] uppercase tracking-wider font-medium px-2 py-0.5 rounded border ${gs.bg} ${gs.text} ${gs.border}`}>
+                  {g.status}
+                </span>
+              </li>
+            );
+          })}
         </ul>
       </Card>
 
       {/* Block 4: Prepared Actions */}
       <Card className="p-6 bg-white border border-border/70">
-        <BlockHeader title="Prepared actions" caption="Coordination and communication actions held for review" />
+        <BlockHeader title="Prepared actions" caption="Communication, coordination, and control-status actions" />
         <ul className="mt-5 space-y-2">
           {scenario.actions.map((a) => (
             <li
               key={a.label}
-              className="flex items-center gap-3 rounded-lg border border-border/70 bg-white px-4 py-3"
+              className="flex items-start gap-3 rounded-lg border border-border/70 bg-white px-4 py-3"
             >
               <div className="flex-1">
                 <div className="text-sm text-slate font-medium">{a.label}</div>
-                <div className="text-xs text-slate-4 mt-0.5">For: {a.audience}</div>
+                <div className="text-xs text-slate-4 mt-0.5">
+                  <span className="text-slate-3 font-medium">{a.actionClass}</span> · {a.detail}
+                </div>
               </div>
-              <Badge
-                variant="outline"
-                className={`text-[10px] ${
-                  a.state === "Prepared"
-                    ? "border-emerald-200 text-emerald-700 bg-emerald-50"
-                    : a.state === "Held"
-                    ? "border-slate-200 text-slate-700 bg-slate-50"
-                    : "border-blue-200 text-blue-700 bg-blue-50"
-                }`}
-              >
-                {a.state}
+              <Badge variant="outline" className={`text-[10px] shrink-0 ${ACTION_STYLES[a.status]}`}>
+                {a.status}
               </Badge>
             </li>
           ))}
@@ -964,15 +983,23 @@ function ResultsWorkspace({ scenario }: { scenario: Scenario }) {
 
       {/* Block 5: Operating Trail */}
       <Card className="p-6 bg-white border border-border/70">
-        <BlockHeader title="Operating trail" caption="Audit-style record of the agent's evaluation" />
+        <BlockHeader title="Operating trail" caption="Concise control log of the agent's evaluation" />
         <ol className="mt-5 relative border-l border-border/70 ml-2">
-          {scenario.trail.map((t, i) => (
-            <li key={i} className="ml-4 pb-4 last:pb-0">
-              <span className="absolute -left-[5px] mt-1.5 h-2 w-2 rounded-full bg-primary" />
-              <div className="text-xs text-slate-4">{t.time}</div>
-              <div className="text-sm text-slate mt-0.5">{t.text}</div>
-            </li>
-          ))}
+          {scenario.trail.map((t, i) => {
+            const dot =
+              t.emphasis === "critical"
+                ? "bg-red-500"
+                : t.emphasis === "warn"
+                ? "bg-amber-500"
+                : "bg-primary";
+            return (
+              <li key={i} className="ml-4 pb-4 last:pb-0">
+                <span className={`absolute -left-[5px] mt-1.5 h-2 w-2 rounded-full ${dot}`} />
+                <div className="text-xs text-slate-4">{t.time}</div>
+                <div className="text-sm text-slate mt-0.5">{t.text}</div>
+              </li>
+            );
+          })}
         </ol>
       </Card>
     </div>
