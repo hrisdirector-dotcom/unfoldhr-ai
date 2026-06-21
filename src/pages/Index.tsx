@@ -11,6 +11,7 @@ import DashboardPage from "@/pages/DashboardPage";
 import AdminDashboard from "@/pages/AdminDashboard";
 import TryListeningAgentPage from "@/pages/TryListeningAgentPage";
 import TryPerformanceAgentPage from "@/pages/TryPerformanceAgentPage";
+import TryAgentPage from "@/pages/TryAgentPage";
 import PricingPage from "@/pages/PricingPage";
 import WorkforcePlanningAgent from "@/pages/WorkforcePlanningAgent";
 import TryUSWorkforceAgentPage from "@/pages/TryUSWorkforceAgentPage";
@@ -150,6 +151,7 @@ const Index = () => {
       {page === "try-listening-agent" && <TryListeningAgentPage setPage={navigateTo} />}
       {page === "try-performance-agent" && <TryPerformanceAgentPage setPage={navigateTo} />}
       {page === "try-us-workforce-agent" && <TryUSWorkforceAgentPage setPage={navigateTo} />}
+      {page === "try-agent" && <TryAgentPage setPage={navigateTo} />}
       {page === "agents" && <AgentsPage onSelectAgent={navigateToAgent} onBuildAgent={handleBuildAgent} setPage={navigateTo} />}
       {page === "agent-detail" && agentId && <AgentDetailPage agentId={agentId} setPage={navigateTo} />}
       {page === "global-lifecycle-agent" && <GlobalLifecycleAgentPage setPage={navigateTo} />}
