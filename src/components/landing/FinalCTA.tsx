@@ -7,16 +7,16 @@ interface FinalCTAProps {
 
 export default function FinalCTA({ setPage, showToast }: FinalCTAProps) {
   return (
-    <section id="final-cta" className="py-24 md:py-32 bg-background">
+    <section id="final-cta" className="py-20 md:py-28 bg-background border-t border-border">
       <div className="max-w-3xl mx-auto px-6 md:px-14">
         <RevealDiv>
           <div className="bg-card border border-border rounded-3xl p-8 md:p-12 text-center">
-            <span className="inline-block text-xs font-bold uppercase tracking-[3px] text-primary mb-5">Get Started</span>
+            <span className="inline-block text-xs font-bold uppercase tracking-[3px] text-primary mb-5">Request an Agent</span>
             <h2 className="font-display text-3xl md:text-4xl text-foreground mb-3">
-              Ready to transform how your team makes decisions?
+              Not seeing the right agent for your system?
             </h2>
             <p className="text-muted-foreground text-lg max-w-xl mx-auto mb-10">
-              Tell us about your HR workflow challenge and we'll show you how an Unfold HR agent can help — in a single conversation.
+              Tell us about your HRIS and workflow. We'll match you to an existing agent or scope a new one for your stack.
             </p>
 
             <form
@@ -36,7 +36,7 @@ export default function FinalCTA({ setPage, showToast }: FinalCTAProps) {
                 className="w-full bg-background border border-border rounded-xl px-4 py-3.5 text-sm text-foreground outline-none focus:border-primary transition-colors"
               />
               <textarea
-                placeholder="Describe your HR workflow challenge…"
+                placeholder="What HR workflow do you need an agent for?"
                 rows={3}
                 className="w-full bg-background border border-border rounded-xl px-4 py-3.5 text-sm text-foreground outline-none focus:border-primary transition-colors resize-none"
               />
@@ -50,10 +50,10 @@ export default function FinalCTA({ setPage, showToast }: FinalCTAProps) {
 
             <div className="flex flex-wrap justify-center gap-4 mt-8">
               <button
-                onClick={() => setPage("try-picker")}
+                onClick={() => setPage("global-lifecycle-agent")}
                 className="text-sm font-medium text-primary hover:underline cursor-pointer bg-transparent border-none"
               >
-                Or try an agent for free →
+                Explore the Global Lifecycle Agent →
               </button>
               <button
                 onClick={() => setPage("pricing")}

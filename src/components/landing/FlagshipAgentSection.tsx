@@ -10,11 +10,14 @@ export default function FlagshipAgentSection({ setPage }: Props) {
     <section className="py-24 md:py-32 bg-background border-t border-border">
       <div className="max-w-7xl mx-auto px-6 md:px-14">
         <RevealDiv>
-          <div className="text-center mb-12">
-            <span className="inline-block text-xs font-bold uppercase tracking-[3px] text-primary mb-4">Featured Flagship Agent</span>
-            <h2 className="font-display text-3xl md:text-4xl text-foreground">
-              The first agent to see in action.
+          <div className="mb-12">
+            <span className="inline-block text-xs font-bold uppercase tracking-[3px] text-primary mb-3">Featured Flagship Agent</span>
+            <h2 className="font-display text-3xl md:text-4xl text-foreground leading-tight mb-3">
+              Start here: the Global Lifecycle Agent
             </h2>
+            <p className="text-muted-foreground text-lg max-w-2xl">
+              If you want to understand how UnfoldHRAI works, this is the agent to explore first. It shows how Control &amp; Readiness evaluates real workforce events.
+            </p>
           </div>
         </RevealDiv>
 
