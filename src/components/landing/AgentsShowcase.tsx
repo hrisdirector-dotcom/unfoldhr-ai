@@ -123,7 +123,10 @@ export default function AgentsShowcase({ setPage }: AgentsShowcaseProps) {
                     {agent.tag}
                   </span>
                 </div>
-                <h3 className="font-display text-lg text-foreground mb-2">{agent.name}</h3>
+                <h3 className="font-display text-lg text-foreground mb-1">{agent.name}</h3>
+                {agent.subtitle && (
+                  <p className="text-xs font-semibold uppercase tracking-wider text-primary/80 mb-2">{agent.subtitle}</p>
+                )}
                 <p className="text-sm text-muted-foreground leading-relaxed mb-4 flex-1">{agent.outcome}</p>
                 <div className="pt-3 border-t border-border">
                   <p className="text-xs font-semibold text-primary">{agent.benefit} →</p>
