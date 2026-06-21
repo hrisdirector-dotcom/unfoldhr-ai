@@ -26,7 +26,14 @@ export function UnfoldNav({ page, setPage, currentUser }: NavProps) {
   }, []);
 
   const navigate = (p: string, scrollToGallery = false) => {
-    if (scrollToGallery || p === "try-agents") {
+    // "Try an Agent" routes directly to the flagship Global Lifecycle Agent
+    if (p === "try-agents") {
+      setMobileOpen(false);
+      setPage("global-lifecycle-agent");
+      window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
+      return;
+    }
+    if (scrollToGallery) {
       setPage("home");
       setMobileOpen(false);
       setTimeout(() => document.getElementById("agent-gallery")?.scrollIntoView({ behavior: "smooth" }), 150);
@@ -83,7 +90,7 @@ export function UnfoldNav({ page, setPage, currentUser }: NavProps) {
         <div className="hidden md:flex items-center gap-3">
           {/* Primary CTA - Try an Agent */}
           <button
-            onClick={() => navigate("try-agents", true)}
+            onClick={() => navigate("try-agents")}
             className="px-5 py-2.5 text-sm font-semibold rounded-lg cursor-pointer bg-primary text-primary-foreground border-none hover:bg-primary/90 transition-colors"
           >
             Try an Agent
@@ -152,7 +159,7 @@ export function UnfoldNav({ page, setPage, currentUser }: NavProps) {
 
             {/* Primary CTA - Try an Agent */}
             <button
-              onClick={() => navigate("try-agents", true)}
+              onClick={() => navigate("try-agents")}
               className="w-full px-4 py-3.5 text-base font-semibold rounded-lg cursor-pointer bg-primary text-primary-foreground border-none transition-colors"
             >
               Try an Agent
