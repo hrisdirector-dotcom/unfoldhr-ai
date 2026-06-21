@@ -487,6 +487,10 @@ export default function GlobalLifecycleAgentPage({ setPage }: Props) {
   const [result, setResult] = useState<Scenario | null>(SCENARIOS[0]);
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
+  }, []);
+
   const visibleScenarios = useMemo(
     () => SCENARIOS.filter((s) => s.event === event),
     [event]
