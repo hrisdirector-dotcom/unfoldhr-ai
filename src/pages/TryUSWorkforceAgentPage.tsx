@@ -458,7 +458,7 @@ export default function TryUSWorkforceAgentPage({ setPage }: TryUSWorkforceAgent
                         <RotateCcw className="w-3.5 h-3.5" /> Refine
                       </button>
                       <button
-                        onClick={() => setPage("try-picker")}
+                        onClick={() => setPage("agents")}
                         className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border bg-background text-sm font-medium text-foreground hover:bg-muted transition-colors cursor-pointer"
                       >
                         <RotateCcw className="w-3.5 h-3.5" /> Try another agent

@@ -1,6 +1,15 @@
-Fix logo clarity on the Agents page.
+## Problem
 
-The Agents page uses a dark slate hero gradient (same visual language as the homepage and Global Lifecycle Agent page), but the navigation logo currently renders in dark `text-foreground` against that dark background because the page is missing from the `DARK_HERO_PAGES` set.
+On every Try-Agent result screen, the "← Try a different agent" link opens the legacy "try-picker" modal instead of returning the user to the Agents catalog page they originated from.
 
-Single-line fix:
-- Add `"agents"` to `DARK_HERO_PAGES` in `src/components/UnfoldNav.tsx` so the logo and nav text switch to white/light mode on the dark hero, matching the homepage and Global Lifecycle Agent behavior.
+## Fix
+
+Change the "Try a different agent" link on all four try pages to route to `agents` (the Agents catalog) instead of `try-picker`.
+
+Files to update:
+- `src/pages/TryAgentPage.tsx` — line 207: `setPage("try-picker")` → `setPage("agents")`
+- `src/pages/TryListeningAgentPage.tsx` — line 267: same change
+- `src/pages/TryPerformanceAgentPage.tsx` — line 176: same change
+- `src/pages/TryUSWorkforceAgentPage.tsx` — line 459: same change
+
+No other behavior changes. The existing top "Back to Agents" pill already points to `agents`, so this just makes the bottom link consistent.
