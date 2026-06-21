@@ -2,7 +2,7 @@ import { AGENTS } from "@/data/agents";
 import { AgentCard } from "@/components/AgentCard";
 import { RevealDiv } from "@/components/RevealDiv";
 import { motion } from "framer-motion";
-import { ArrowRight, ShieldCheck, CheckCircle2, AlertTriangle, Clock } from "lucide-react";
+import { ArrowRight, ShieldCheck, CheckCircle2, AlertTriangle, Clock, Lock, GitBranch, FileCheck2 } from "lucide-react";
 
 interface AgentsPageProps {
   onSelectAgent: (agentId: string) => void;
