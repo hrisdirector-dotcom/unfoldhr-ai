@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useMemo } from "react";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -10,11 +11,17 @@ import {
   Clock,
   ArrowRight,
   ArrowLeft,
-  Play,
-  Loader2,
+  Sparkles,
   Lock,
   ChevronRight,
+  UserPlus,
+  UserMinus,
+  ShieldCheck,
+  MessageSquare,
+  Workflow,
+  GitBranch,
 } from "lucide-react";
+import { LifecycleRunOverlay } from "@/components/agent/LifecycleRunOverlay";
 
 type ControlStatus =
   | "Ready"
@@ -377,26 +384,39 @@ export default function GlobalLifecycleAgentPage({ setPage }: Props) {
 
   const startRun = () => {
     setStage("running");
-    window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
   };
 
   const completeRun = () => {
     setStage("results");
+    requestAnimationFrame(() => {
+      const el = document.getElementById("lifecycle-outcome");
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
   };
+
+  const caseId = selected
+    ? `CASE · ${selected.id.toUpperCase()}-${new Date().getFullYear()}`
+    : "";
 
   return (
     <main className="bg-paper min-h-screen">
       {/* Identity band */}
-      <section className="bg-gradient-to-b from-slate text-white">
+      <section className="bg-gradient-to-b from-slate text-white relative">
         <div className="absolute inset-x-0 dot-grid opacity-[0.05] pointer-events-none" />
         <div className="relative max-w-7xl mx-auto px-6 lg:px-10 pt-12 pb-10 lg:pt-16 lg:pb-12">
-          <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-blue-200/90">
+          <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-blue-200/90 flex-wrap">
             <span className="h-1.5 w-1.5 rounded-full bg-blue-300" />
             Global Lifecycle Agent
             <span className="opacity-50">·</span>
             BambooHR Edition
             <span className="opacity-50">·</span>
             Workforce Event Control & Readiness
+            {stage !== "queue" && selected && (
+              <>
+                <span className="opacity-50">·</span>
+                <span className="font-mono text-blue-100/70">{caseId}</span>
+              </>
+            )}
           </div>
 
           {stage === "queue" && (
@@ -412,7 +432,7 @@ export default function GlobalLifecycleAgentPage({ setPage }: Props) {
           )}
 
           {stage !== "queue" && selected && (
-            <div className="mt-5 flex items-center gap-3">
+            <div className="mt-5 flex items-center gap-3 flex-wrap">
               <button
                 onClick={goQueue}
                 className="inline-flex items-center gap-1.5 text-sm text-blue-200/90 hover:text-white transition"
@@ -421,6 +441,8 @@ export default function GlobalLifecycleAgentPage({ setPage }: Props) {
               </button>
               <span className="text-slate-400/60">/</span>
               <span className="text-sm text-white/90">{selected.employee.name}</span>
+              <span className="text-slate-400/60">·</span>
+              <span className="text-xs text-blue-200/70">{selected.event}</span>
             </div>
           )}
         </div>
@@ -430,11 +452,8 @@ export default function GlobalLifecycleAgentPage({ setPage }: Props) {
       <section className="py-12 lg:py-16">
         <div className="max-w-7xl mx-auto px-6 lg:px-10">
           {stage === "queue" && <QueueStage onOpen={openEvent} />}
-          {stage === "launch" && selected && (
-            <LaunchStage scenario={selected} onBack={goQueue} onRun={startRun} />
-          )}
-          {stage === "running" && selected && (
-            <RunStage scenario={selected} onComplete={completeRun} />
+          {(stage === "launch" || stage === "running") && selected && (
+            <LaunchStage scenario={selected} onBack={goQueue} onRun={startRun} running={stage === "running"} />
           )}
           {stage === "results" && selected && (
             <ResultsStage
@@ -445,6 +464,17 @@ export default function GlobalLifecycleAgentPage({ setPage }: Props) {
           )}
         </div>
       </section>
+
+      {/* Run overlay */}
+      {selected && (
+        <LifecycleRunOverlay
+          show={stage === "running"}
+          steps={runStepsFor(selected.event)}
+          eventLabel={selected.event}
+          employeeName={selected.employee.name}
+          onDone={completeRun}
+        />
+      )}
     </main>
   );
 }
@@ -453,306 +483,373 @@ export default function GlobalLifecycleAgentPage({ setPage }: Props) {
  * STAGE 1 — QUEUE
  * ============================================================ */
 function QueueStage({ onOpen }: { onOpen: (id: string) => void }) {
+  const groups = useMemo(
+    () => [
+      {
+        type: "onboarding" as const,
+        title: "New Hire Onboarding",
+        icon: UserPlus,
+        items: SCENARIOS.filter((s) => s.event === "New Hire"),
+      },
+      {
+        type: "offboarding" as const,
+        title: "Employee Offboarding",
+        icon: UserMinus,
+        items: SCENARIOS.filter((s) => s.event === "Termination"),
+      },
+    ],
+    []
+  );
+
   return (
     <div>
-      <div className="flex items-end justify-between flex-wrap gap-4 mb-6">
+      <div className="flex items-end justify-between flex-wrap gap-4 mb-2">
         <div>
-          <div className="text-[11px] uppercase tracking-[0.18em] text-primary mb-2">
-            Lifecycle queue
+          <div className="text-[11px] uppercase tracking-[0.18em] text-primary mb-2 font-mono">
+            Lifecycle queue · standing by
           </div>
           <h2 className="font-display text-2xl md:text-3xl text-slate leading-tight">
             Events awaiting control evaluation
           </h2>
         </div>
-        <div className="text-xs text-slate-4">Synthetic demo data · 3 events queued</div>
+        <div className="text-xs text-slate-4">
+          <span className="font-mono">3 events queued</span> · synthetic demo data
+        </div>
       </div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {SCENARIOS.map((s) => (
-          <QueueCard key={s.id} scenario={s} onOpen={() => onOpen(s.id)} />
+      <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-[11px] text-slate-4 font-mono">
+        <span>Synthetic workforce only</span>
+        <span className="opacity-50">·</span>
+        <span>No real PII</span>
+        <span className="opacity-50">·</span>
+        <span>Simulated integrations</span>
+        <span className="opacity-50">·</span>
+        <span>Human-in-the-loop</span>
+      </div>
+
+      <div className="mt-10 space-y-10">
+        {groups.map((g, gi) => (
+          <motion.section
+            key={g.type}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45, delay: 0.05 + gi * 0.08 }}
+          >
+            <div className="mb-3 flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] text-slate-3 font-mono">
+              <g.icon className="h-3.5 w-3.5" />
+              {g.title}
+              <span className="opacity-40">·</span>
+              <span className="opacity-70">
+                {g.items.length} event{g.items.length === 1 ? "" : "s"}
+              </span>
+            </div>
+            <div className="grid md:grid-cols-2 gap-5">
+              {g.items.map((s) => (
+                <QueueCard key={s.id} scenario={s} onOpen={() => onOpen(s.id)} />
+              ))}
+            </div>
+          </motion.section>
         ))}
       </div>
     </div>
   );
 }
 
+function urgencyForStatus(status: ControlStatus): {
+  label: string;
+  cls: string;
+  dot: string;
+} {
+  switch (status) {
+    case "Ready":
+      return {
+        label: "Ready to Review",
+        cls: "border-emerald-200 text-emerald-700 bg-emerald-50",
+        dot: "bg-emerald-500",
+      };
+    case "Approval Required":
+      return {
+        label: "Approval Blocked",
+        cls: "border-blue-200 text-blue-700 bg-blue-50",
+        dot: "bg-blue-500",
+      };
+    case "Action Required":
+      return {
+        label: "Action Required",
+        cls: "border-amber-200 text-amber-700 bg-amber-50",
+        dot: "bg-amber-500",
+      };
+    case "Held":
+      return {
+        label: "Payroll Hold",
+        cls: "border-slate-300 text-slate-700 bg-slate-50",
+        dot: "bg-slate-500",
+      };
+    case "Escalated":
+      return {
+        label: "Escalated",
+        cls: "border-red-200 text-red-700 bg-red-50",
+        dot: "bg-red-500",
+      };
+  }
+}
+
+function initialsOf(name: string) {
+  return name
+    .split(" ")
+    .map((w) => w[0])
+    .filter(Boolean)
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+}
+
 function QueueCard({ scenario, onOpen }: { scenario: Scenario; onOpen: () => void }) {
-  const accent =
-    scenario.event === "Termination"
-      ? "from-red-50 to-transparent"
-      : "from-blue-50 to-transparent";
+  const urgency = urgencyForStatus(scenario.summary.status);
+  const isTerm = scenario.event === "Termination";
+
   return (
-    <Card
+    <button
       onClick={onOpen}
-      className="group relative cursor-pointer p-6 bg-white border border-border/70 hover:border-primary/40 hover:shadow-lg transition flex flex-col"
+      className="group relative overflow-hidden rounded-2xl border border-border/70 bg-white p-6 text-left transition-all hover:border-primary/40 hover:shadow-[0_18px_50px_-20px_rgba(43,92,230,0.35)] hover:-translate-y-px focus:outline-none focus:ring-2 focus:ring-primary/40"
     >
-      <div className={`absolute inset-x-0 top-0 h-16 bg-gradient-to-b ${accent} opacity-60 rounded-t-lg pointer-events-none`} />
-      <div className="relative flex items-center justify-between">
-        <Badge
-          variant="outline"
-          className={`text-[10px] uppercase tracking-wider ${
-            scenario.event === "Termination"
-              ? "border-red-200 text-red-700 bg-red-50"
-              : "border-blue-200 text-blue-700 bg-blue-50"
-          }`}
+      <div
+        className="absolute inset-0 opacity-0 transition-opacity group-hover:opacity-100 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(ellipse at top right, rgba(43,92,230,0.08), transparent 60%)",
+        }}
+      />
+
+      <div className="relative flex items-start justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div
+            className={`flex h-11 w-11 items-center justify-center rounded-xl text-sm font-display ring-1 ${
+              isTerm
+                ? "bg-slate-50 text-slate-700 ring-slate-200"
+                : "bg-blue-50 text-blue-700 ring-blue-200"
+            }`}
+          >
+            {initialsOf(scenario.employee.name)}
+          </div>
+          <div className="min-w-0">
+            <div className="text-[15px] font-semibold text-slate truncate">
+              {scenario.employee.name}
+            </div>
+            <div className="text-xs text-slate-3 truncate">
+              {scenario.employee.title} · {scenario.employee.department}
+            </div>
+          </div>
+        </div>
+        <span className="shrink-0 rounded-full border border-border/70 bg-paper/60 px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider text-slate-4">
+          via BambooHR
+        </span>
+      </div>
+
+      <div className="relative mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-4">
+        <span>{scenario.employee.location}</span>
+        <span className="opacity-50">·</span>
+        <span>{scenario.employee.eventDate}</span>
+      </div>
+
+      <ul className="relative mt-4 space-y-1.5">
+        {scenario.evaluation_focus.slice(0, 3).map((it) => (
+          <li key={it} className="flex items-start gap-2 text-xs text-slate-3 leading-relaxed">
+            <span className="mt-1.5 h-1 w-1 rounded-full bg-slate-3/60 shrink-0" />
+            {it}
+          </li>
+        ))}
+      </ul>
+
+      <div className="relative mt-5 flex items-center justify-between">
+        <span
+          className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border text-[10px] font-medium uppercase tracking-wider ${urgency.cls}`}
         >
-          {scenario.event}
-        </Badge>
-        <ChevronRight className="h-4 w-4 text-slate-400 group-hover:text-primary transition" />
-      </div>
-
-      <div className="relative mt-4 font-display text-lg text-slate leading-snug">
-        {scenario.employee.name}
-      </div>
-      <div className="text-xs text-slate-3 mt-1">
-        {scenario.employee.title} · {scenario.employee.department}
-      </div>
-      <div className="text-xs text-slate-4">{scenario.employee.location}</div>
-
-      <Separator className="my-4" />
-
-      <div className="text-xs text-slate-4 mb-1">{scenario.employee.eventDate}</div>
-      <p className="text-sm text-slate-2 leading-relaxed line-clamp-3">
-        {scenario.one_liner}
-      </p>
-
-      <div className="mt-5 flex items-center justify-between gap-2">
-        <span className="text-[11px] uppercase tracking-wider text-slate-4">
-          {scenario.queue_status_cue}
+          <span className={`h-1 w-1 rounded-full ${urgency.dot}`} />
+          {urgency.label}
         </span>
-        <span className="text-xs text-primary font-medium opacity-0 group-hover:opacity-100 transition">
-          Open event →
+        <span className="text-xs text-primary font-medium inline-flex items-center gap-1 opacity-80 group-hover:opacity-100">
+          Open event <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
         </span>
       </div>
-    </Card>
+    </button>
   );
 }
 
 /* ============================================================
- * STAGE 2 — LAUNCH
+ * STAGE 2 — LAUNCH (also visible behind run overlay)
  * ============================================================ */
 function LaunchStage({
   scenario,
   onBack,
   onRun,
+  running,
 }: {
   scenario: Scenario;
   onBack: () => void;
   onRun: () => void;
+  running: boolean;
 }) {
   const e = scenario.employee;
-  return (
-    <div className="grid lg:grid-cols-12 gap-8">
-      <div className="lg:col-span-8 space-y-6">
-        <Card className="p-7 lg:p-8 bg-white border border-border/70">
-          <div className="flex items-center justify-between flex-wrap gap-3">
-            <Badge
-              variant="outline"
-              className={`text-[10px] uppercase tracking-wider ${
-                scenario.event === "Termination"
-                  ? "border-red-200 text-red-700 bg-red-50"
-                  : "border-blue-200 text-blue-700 bg-blue-50"
-              }`}
-            >
-              {scenario.event}
-            </Badge>
-            <div className="text-xs text-slate-4">{e.eventDate}</div>
-          </div>
-          <h2 className="mt-5 font-display text-3xl text-slate leading-tight">{e.name}</h2>
-          <div className="mt-1 text-sm text-slate-3">
-            {e.title} · {e.department} · {e.location}
-          </div>
-          <div className="mt-1 text-xs text-slate-4">Manager: {e.manager}</div>
-
-          <Separator className="my-6" />
-
-          <dl className="grid sm:grid-cols-2 gap-x-8 gap-y-3 text-sm">
-            <div>
-              <dt className="text-[11px] uppercase tracking-wider text-slate-4">Employment</dt>
-              <dd className="text-slate mt-0.5">{e.employmentType}</dd>
-            </div>
-            {e.separationType && (
-              <div>
-                <dt className="text-[11px] uppercase tracking-wider text-slate-4">Separation</dt>
-                <dd className="text-slate mt-0.5">{e.separationType}</dd>
-              </div>
-            )}
-            {e.exceptionType && (
-              <div>
-                <dt className="text-[11px] uppercase tracking-wider text-slate-4">Exception</dt>
-                <dd className="text-slate mt-0.5">{e.exceptionType}</dd>
-              </div>
-            )}
-            <div>
-              <dt className="text-[11px] uppercase tracking-wider text-slate-4">PTO</dt>
-              <dd className="text-slate mt-0.5">{e.ptoNote}</dd>
-            </div>
-            <div>
-              <dt className="text-[11px] uppercase tracking-wider text-slate-4">Payroll</dt>
-              <dd className="text-slate mt-0.5">{e.payrollNote}</dd>
-            </div>
-          </dl>
-        </Card>
-
-        <Card className="p-7 bg-white border border-border/70">
-          <div className="text-[11px] uppercase tracking-[0.18em] text-primary mb-2">
-            Event context
-          </div>
-          <h3 className="font-display text-xl text-slate leading-snug">
-            Why this event is notable
-          </h3>
-          <p className="mt-3 text-sm text-slate-2 leading-relaxed">
-            {scenario.one_liner}
-          </p>
-          <p className="mt-3 text-sm text-slate-3 italic leading-relaxed">
-            {e.contextNote}
-          </p>
-        </Card>
-      </div>
-
-      <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-6 h-fit">
-        <Card className="p-6 bg-white border border-border/70">
-          <div className="text-[11px] uppercase tracking-[0.18em] text-primary mb-3">
-            What the agent will evaluate
-          </div>
-          <ul className="space-y-2.5">
-            {scenario.evaluation_focus.map((item) => (
-              <li key={item} className="flex items-start gap-2 text-sm text-slate-2">
-                <ChevronRight className="h-4 w-4 mt-0.5 text-primary shrink-0" />
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
-        </Card>
-
-        <Card className="p-6 bg-gradient-to-br from-slate to-slate-2 text-white border border-slate/20">
-          <div className="text-[11px] uppercase tracking-[0.18em] text-blue-200/80 mb-2">
-            Launch evaluation
-          </div>
-          <div className="font-display text-lg leading-snug mb-4">
-            Run the Lifecycle Agent against this event.
-          </div>
-          <Button
-            onClick={onRun}
-            size="lg"
-            className="w-full bg-white text-slate-900 hover:bg-slate-100"
-          >
-            <Play className="mr-2 h-4 w-4" /> Run Agent
-          </Button>
-          <button
-            onClick={onBack}
-            className="mt-3 w-full text-xs text-blue-200/80 hover:text-white transition"
-          >
-            ← Back to queue
-          </button>
-        </Card>
-      </div>
-    </div>
-  );
-}
-
-/* ============================================================
- * STAGE 3A — LIVE RUN
- * ============================================================ */
-function RunStage({
-  scenario,
-  onComplete,
-}: {
-  scenario: Scenario;
-  onComplete: () => void;
-}) {
-  const steps = runStepsFor(scenario.event);
-  const [currentStep, setCurrentStep] = useState(0);
-  const completedRef = useRef(false);
-
-  useEffect(() => {
-    if (currentStep < steps.length) {
-      const t = setTimeout(() => setCurrentStep((s) => s + 1), 850);
-      return () => clearTimeout(t);
-    }
-    if (!completedRef.current) {
-      completedRef.current = true;
-      const t = setTimeout(onComplete, 600);
-      return () => clearTimeout(t);
-    }
-  }, [currentStep, steps.length, onComplete]);
+  const isSensitive = Boolean(e.separationType);
+  const isTerm = scenario.event === "Termination";
 
   return (
-    <div className="max-w-3xl mx-auto">
-      <Card className="p-8 lg:p-10 bg-white border border-border/70">
-        <div className="flex items-center justify-between flex-wrap gap-3">
-          <div className="text-[11px] uppercase tracking-[0.18em] text-primary">
-            Agent running
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35 }}
+      className="space-y-6"
+    >
+      {isSensitive && (
+        <div className="rounded-xl border border-amber-200 bg-amber-50/70 px-4 py-3 flex items-center gap-3">
+          <ShieldAlert className="h-4 w-4 text-amber-700 shrink-0" />
+          <div className="text-sm text-amber-900">
+            <span className="font-medium">Sensitive separation path.</span>{" "}
+            Communications and downstream actions are held pending counsel and executive review.
           </div>
-          <Badge
-            variant="outline"
-            className={`text-[10px] uppercase tracking-wider ${
-              scenario.event === "Termination"
-                ? "border-red-200 text-red-700 bg-red-50"
-                : "border-blue-200 text-blue-700 bg-blue-50"
-            }`}
-          >
-            {scenario.event} · {scenario.employee.name}
-          </Badge>
         </div>
+      )}
 
-        <h2 className="mt-4 font-display text-2xl md:text-3xl text-slate leading-tight">
-          Evaluating lifecycle control conditions…
-        </h2>
-        <p className="mt-2 text-sm text-slate-3">
-          The agent is working through control & readiness checks for this event.
-        </p>
+      {/* Two-column event header / launch panel */}
+      <Card className="overflow-hidden border border-border/70">
+        <div className="grid md:grid-cols-[1.4fr_1fr]">
+          {/* LEFT — event detail */}
+          <div className="relative p-7 lg:p-8">
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background:
+                  "radial-gradient(ellipse at top left, rgba(43,92,230,0.06), transparent 60%)",
+              }}
+            />
+            <div className="relative">
+              <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.22em] text-slate-4 font-mono">
+                <span>01 · Lifecycle Event</span>
+                <span className="opacity-50">·</span>
+                <span className="text-primary">{isTerm ? "Employee Offboarding" : "New Hire Onboarding"}</span>
+              </div>
 
-        <ol className="mt-8 space-y-3">
-          {steps.map((label, i) => {
-            const state =
-              i < currentStep ? "done" : i === currentStep ? "active" : "pending";
-            return (
-              <li
-                key={label}
-                className={`flex items-start gap-3 rounded-lg border px-4 py-3 transition ${
-                  state === "done"
-                    ? "border-emerald-200 bg-emerald-50/60"
-                    : state === "active"
-                    ? "border-primary/40 bg-accent"
-                    : "border-border/70 bg-paper/40"
-                }`}
-              >
-                <div className="mt-0.5 shrink-0">
-                  {state === "done" && <CheckCircle2 className="h-5 w-5 text-emerald-600" />}
-                  {state === "active" && <Loader2 className="h-5 w-5 text-primary animate-spin" />}
-                  {state === "pending" && (
-                    <div className="h-5 w-5 rounded-full border-2 border-slate-300" />
-                  )}
+              <div className="mt-5 flex items-start gap-4">
+                <div
+                  className={`flex h-14 w-14 items-center justify-center rounded-2xl font-display text-lg ring-1 ${
+                    isTerm
+                      ? "bg-slate-50 text-slate-700 ring-slate-200"
+                      : "bg-blue-50 text-blue-700 ring-blue-200"
+                  }`}
+                >
+                  {initialsOf(e.name)}
                 </div>
-                <div className="flex-1">
+                <div className="min-w-0">
+                  <h1 className="font-display text-3xl text-slate leading-tight">{e.name}</h1>
+                  <div className="mt-1 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-sm text-slate-3">
+                    <span>{e.title}</span>
+                    <span className="text-slate-300">·</span>
+                    <span>{e.department}</span>
+                    <span className="text-slate-300">·</span>
+                    <span>{e.location}</span>
+                  </div>
+                  <div className="mt-1.5 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs text-slate-4">
+                    <span>Manager: {e.manager}</span>
+                    <span className="text-slate-300">·</span>
+                    <span className="font-mono">{e.eventDate}</span>
+                  </div>
+                </div>
+              </div>
+
+              <Separator className="my-6" />
+
+              <dl className="grid sm:grid-cols-2 gap-x-8 gap-y-3 text-sm">
+                <div>
+                  <dt className="text-[11px] uppercase tracking-wider text-slate-4">Employment</dt>
+                  <dd className="text-slate mt-0.5">{e.employmentType}</dd>
+                </div>
+                {e.separationType && (
+                  <div>
+                    <dt className="text-[11px] uppercase tracking-wider text-slate-4">Separation</dt>
+                    <dd className="text-slate mt-0.5">{e.separationType}</dd>
+                  </div>
+                )}
+                {e.exceptionType && (
+                  <div>
+                    <dt className="text-[11px] uppercase tracking-wider text-slate-4">Exception</dt>
+                    <dd className="text-slate mt-0.5">{e.exceptionType}</dd>
+                  </div>
+                )}
+                <div>
+                  <dt className="text-[11px] uppercase tracking-wider text-slate-4">PTO</dt>
+                  <dd className="text-slate mt-0.5">{e.ptoNote}</dd>
+                </div>
+                <div>
+                  <dt className="text-[11px] uppercase tracking-wider text-slate-4">Payroll</dt>
+                  <dd className="text-slate mt-0.5">{e.payrollNote}</dd>
+                </div>
+              </dl>
+
+              <div className="mt-6 rounded-xl border border-border/70 bg-paper/50 p-4">
+                <div className="text-[10px] uppercase tracking-[0.2em] text-slate-4 font-mono">
+                  Why this event is flagged
+                </div>
+                <p className="mt-1.5 text-sm text-slate-2 leading-relaxed">{scenario.one_liner}</p>
+                <p className="mt-2 text-sm text-slate-3 italic leading-relaxed">{e.contextNote}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* RIGHT — agent-ready / Run CTA */}
+          <div className="relative flex flex-col justify-between border-t md:border-t-0 md:border-l border-border/70 bg-gradient-to-br from-slate to-slate-2 text-white p-7 lg:p-8">
+            <div>
+              <div className="text-[10px] uppercase tracking-[0.22em] text-blue-200/80 font-mono">
+                Agent ready
+              </div>
+              <p className="mt-3 text-sm text-blue-100/90 leading-relaxed">
+                I'll evaluate this {scenario.event.toLowerCase()} against policy alignment, payroll
+                readiness, approvals, and release conditions — and surface anything that needs your
+                attention.
+              </p>
+
+              <div className="mt-5 space-y-2">
+                {scenario.evaluation_focus.map((f) => (
                   <div
-                    className={`text-sm font-medium ${
-                      state === "pending" ? "text-slate-400" : "text-slate"
-                    }`}
+                    key={f}
+                    className="flex items-start gap-2 text-xs text-blue-100/85"
                   >
-                    {label}
+                    <ChevronRight className="h-3.5 w-3.5 mt-0.5 text-blue-300 shrink-0" />
+                    <span>{f}</span>
                   </div>
-                  <div className="text-[11px] text-slate-4 mt-0.5">
-                    {state === "done" && "Complete"}
-                    {state === "active" && "In progress…"}
-                    {state === "pending" && "Queued"}
-                  </div>
-                </div>
-                <div className="text-[10px] uppercase tracking-wider text-slate-4">
-                  Step {String(i + 1).padStart(2, "0")}
-                </div>
-              </li>
-            );
-          })}
-        </ol>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-7">
+              <Button
+                onClick={onRun}
+                disabled={running}
+                size="lg"
+                className="group w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white shadow-[0_10px_30px_-10px_rgba(43,92,230,0.7)] hover:shadow-[0_18px_40px_-12px_rgba(43,92,230,0.8)] hover:-translate-y-px transition-all"
+              >
+                <Sparkles className="mr-2 h-4 w-4" />
+                {running ? "Running Lifecycle Agent…" : "Run Lifecycle Agent"}
+                {!running && (
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                )}
+              </Button>
+              <button
+                onClick={onBack}
+                className="mt-3 w-full text-xs text-blue-200/70 hover:text-white transition"
+              >
+                ← Back to queue
+              </button>
+            </div>
+          </div>
+        </div>
       </Card>
-    </div>
+    </motion.div>
   );
 }
 
 /* ============================================================
- * STAGE 3B — RESULTS
+ * STAGE 3 — RESULTS (orchestrated outcome surface)
  * ============================================================ */
 function ResultsStage({
   scenario,
@@ -765,36 +862,135 @@ function ResultsStage({
 }) {
   const s = STATUS_STYLES[scenario.summary.status];
   const blockers = scenario.gates.filter((g) => g.blocking);
-  const passed = scenario.readiness.filter((c) => c.status === "Passed");
-  const failedOrPending = scenario.readiness.filter(
-    (c) => c.status !== "Passed"
-  );
+  const passedCount = scenario.readiness.filter((c) => c.status === "Passed").length;
+  const totalChecks = scenario.readiness.length;
+  const readinessPct = Math.round((passedCount / totalChecks) * 100);
+
+  const actionsByClass = useMemo(() => {
+    const groups: Record<ActionClass, PreparedAction[]> = {
+      Communication: [],
+      Coordination: [],
+      "Control-status": [],
+    };
+    scenario.actions.forEach((a) => groups[a.actionClass].push(a));
+    return groups;
+  }, [scenario]);
+
+  const classMeta: Record<ActionClass, { title: string; caption: string; icon: typeof MessageSquare }> = {
+    Communication: { title: "Communications", caption: "Drafts & messages prepared", icon: MessageSquare },
+    Coordination: { title: "Coordination", caption: "Workstreams & handoffs", icon: Workflow },
+    "Control-status": { title: "Control posture", caption: "Release & hold state", icon: GitBranch },
+  };
 
   return (
-    <div className="space-y-6">
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="space-y-6"
+    >
       {/* 1 — Lifecycle Control Summary (dominant) */}
-      <Card className={`p-8 lg:p-10 border-2 ${s.border} ${s.bg}`}>
+      <Card
+        id="lifecycle-outcome"
+        className={`relative overflow-hidden p-8 lg:p-10 border-2 ${s.border} ${s.bg}`}
+      >
         <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <div className="text-[11px] uppercase tracking-[0.18em] text-slate-4 mb-3">
-              Lifecycle control result
+          <div className="min-w-0">
+            <div className="text-[11px] uppercase tracking-[0.18em] text-slate-4 mb-3 font-mono">
+              Lifecycle control result · {scenario.event}
             </div>
             <h2 className="font-display text-3xl md:text-[2.2rem] text-slate leading-tight">
-              {scenario.event} · {scenario.employee.name}
+              {scenario.employee.name}
             </h2>
+            <div className="mt-1 text-sm text-slate-3">
+              {scenario.employee.title} · {scenario.employee.department} · {scenario.employee.location}
+            </div>
           </div>
           <StatusPill status={scenario.summary.status} />
         </div>
+
         <p className="mt-5 text-base text-slate-2 leading-relaxed max-w-3xl">
           {scenario.summary.reason}
         </p>
+
+        <div className="mt-7 max-w-2xl">
+          <div className="flex items-end justify-between mb-2">
+            <div className="text-[10px] uppercase tracking-wider text-slate-4 font-mono">
+              Overall readiness
+            </div>
+            <div className="text-xl font-display text-slate tabular-nums">
+              {readinessPct}
+              <span className="text-sm text-slate-4">%</span>
+            </div>
+          </div>
+          <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/70">
+            <div
+              className="h-full rounded-full bg-gradient-to-r from-blue-400 to-blue-600"
+              style={{ width: `${readinessPct}%` }}
+            />
+          </div>
+          <div className="mt-2 flex justify-between text-[10px] text-slate-4 font-mono">
+            <span>{passedCount} of {totalChecks} checks passed</span>
+            <span>{totalChecks - passedCount} require attention</span>
+          </div>
+        </div>
       </Card>
 
-      {/* 2 — Readiness / validation outcomes */}
+      {/* 2 — Blocking conditions (or cleared confirmation) */}
+      {blockers.length > 0 ? (
+        <Card className="p-6 lg:p-7 bg-white border-2 border-amber-200/80">
+          <div className="flex items-start gap-3">
+            <ShieldAlert className="h-5 w-5 text-amber-600 mt-0.5 shrink-0" />
+            <div className="flex-1">
+              <div className="font-display text-lg text-slate">Blocking conditions</div>
+              <div className="text-xs text-slate-4 mt-0.5">
+                {blockers.length} control{blockers.length === 1 ? "" : "s"} actively preventing release.
+                Resolve to allow this event to progress.
+              </div>
+            </div>
+          </div>
+          <ul className="mt-5 space-y-3">
+            {blockers.map((g) => {
+              const gs = GATE_STYLES[g.status];
+              return (
+                <li
+                  key={g.label}
+                  className={`flex items-start gap-3 rounded-lg border px-4 py-3 ${gs.border} ${gs.bg}`}
+                >
+                  <Lock className="h-4 w-4 mt-0.5 shrink-0 text-slate-600" />
+                  <div className="flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-sm text-slate font-medium">{g.label}</span>
+                      <span className={`text-[10px] uppercase tracking-wider font-medium px-1.5 py-0.5 rounded border ${gs.bg} ${gs.text} ${gs.border}`}>
+                        {g.status}
+                      </span>
+                    </div>
+                    <div className="text-xs text-slate-3 mt-1 leading-relaxed">{g.reason}</div>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </Card>
+      ) : (
+        <Card className="p-6 bg-emerald-50/60 border-2 border-emerald-200/80">
+          <div className="flex items-center gap-3">
+            <ShieldCheck className="h-5 w-5 text-emerald-600 shrink-0" />
+            <div>
+              <div className="font-display text-lg text-slate">Cleared for release</div>
+              <div className="text-xs text-slate-3 mt-0.5">
+                No blocking gates. All required approvals and policy checks are satisfied.
+              </div>
+            </div>
+          </div>
+        </Card>
+      )}
+
+      {/* 3 — Readiness outcomes */}
       <Card className="p-6 lg:p-7 bg-white border border-border/70">
         <BlockHeader
-          title="Readiness & validation outcomes"
-          caption={`${passed.length} passed · ${failedOrPending.length} require attention`}
+          title="Readiness outcomes"
+          caption={`${passedCount} passed · ${totalChecks - passedCount} require attention`}
         />
         <ul className="mt-5 divide-y divide-border/60">
           {scenario.readiness.map((c) => {
@@ -807,7 +1003,7 @@ function ResultsStage({
                   <div className="text-xs text-slate-4 mt-0.5">{c.detail}</div>
                 </div>
                 <span
-                  className={`text-[10px] uppercase tracking-wider font-medium px-2 py-0.5 rounded border ${cs.bg} ${cs.text} ${cs.border}`}
+                  className={`text-[10px] uppercase tracking-wider font-medium px-2 py-0.5 rounded border ${cs.bg} ${cs.text} ${cs.border} shrink-0`}
                 >
                   {c.status}
                 </span>
@@ -817,100 +1013,56 @@ function ResultsStage({
         </ul>
       </Card>
 
-      {/* 3 — Blocking gates / approvals / exception path */}
+      {/* 4 — Prepared workstreams grouped by operational bucket */}
       <Card className="p-6 lg:p-7 bg-white border border-border/70">
         <BlockHeader
-          title="Blocking gates, approvals & exceptions"
-          caption={
-            blockers.length
-              ? `${blockers.length} control${blockers.length === 1 ? "" : "s"} actively blocking progression`
-              : "No active blockers — event is cleared to progress"
-          }
+          title="Prepared workstreams"
+          caption="Grouped by operational domain · subordinate to control state"
         />
-        <ul className="mt-5 space-y-3">
-          {scenario.gates.map((g) => {
-            const gs = GATE_STYLES[g.status];
-            const Icon =
-              g.status === "Blocking" || g.status === "Escalated"
-                ? ShieldAlert
-                : g.status === "Passed"
-                ? CheckCircle2
-                : g.status === "Open"
-                ? AlertTriangle
-                : Lock;
-            const iconColor =
-              g.status === "Blocking" || g.status === "Escalated"
-                ? "text-red-600"
-                : g.status === "Passed"
-                ? "text-emerald-600"
-                : g.status === "Open"
-                ? "text-amber-600"
-                : "text-slate-500";
+        <div className="mt-6 grid md:grid-cols-3 gap-4">
+          {(Object.keys(actionsByClass) as ActionClass[]).map((k) => {
+            const meta = classMeta[k];
+            const items = actionsByClass[k];
+            if (!items.length) return null;
+            const Icon = meta.icon;
             return (
-              <li
-                key={g.label}
-                className={`flex items-start gap-3 rounded-lg border px-4 py-3 ${
-                  g.blocking ? `${gs.border} ${gs.bg}` : "border-border/70 bg-paper/40"
-                }`}
+              <div
+                key={k}
+                className="rounded-xl border border-border/70 bg-paper/40 p-5"
               >
-                <Icon className={`h-4 w-4 mt-0.5 shrink-0 ${iconColor}`} />
-                <div className="flex-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-sm text-slate font-medium">{g.label}</span>
-                    {g.blocking && (
-                      <span className="text-[10px] uppercase tracking-wider font-medium text-red-700 bg-red-50 border border-red-200 rounded px-1.5 py-0.5">
-                        Blocking
-                      </span>
-                    )}
-                  </div>
-                  <div className="text-xs text-slate-4 mt-0.5">{g.reason}</div>
+                <div className="flex items-center gap-2 mb-1">
+                  <Icon className="h-4 w-4 text-primary" />
+                  <div className="text-sm font-display text-slate">{meta.title}</div>
                 </div>
-                <span
-                  className={`text-[10px] uppercase tracking-wider font-medium px-2 py-0.5 rounded border ${gs.bg} ${gs.text} ${gs.border}`}
-                >
-                  {g.status}
-                </span>
-              </li>
+                <div className="text-[11px] text-slate-4 mb-3">{meta.caption}</div>
+                <ul className="space-y-2.5">
+                  {items.map((a) => (
+                    <li
+                      key={a.label}
+                      className="rounded-lg border border-border/60 bg-white p-3"
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="text-sm text-slate font-medium leading-snug">{a.label}</div>
+                        <Badge
+                          variant="outline"
+                          className={`text-[10px] shrink-0 ${ACTION_STYLES[a.status]}`}
+                        >
+                          {a.status}
+                        </Badge>
+                      </div>
+                      <div className="text-xs text-slate-4 mt-1 leading-relaxed">{a.detail}</div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             );
           })}
-        </ul>
-      </Card>
-
-      {/* 4 — Prepared actions / communications */}
-      <Card className="p-6 lg:p-7 bg-white border border-border/70">
-        <BlockHeader
-          title="Prepared actions & communications"
-          caption="What the agent prepared next — subordinate to control state"
-        />
-        <ul className="mt-5 space-y-2">
-          {scenario.actions.map((a) => (
-            <li
-              key={a.label}
-              className="flex items-start gap-3 rounded-lg border border-border/70 bg-white px-4 py-3"
-            >
-              <div className="flex-1">
-                <div className="text-sm text-slate font-medium">{a.label}</div>
-                <div className="text-xs text-slate-4 mt-0.5">
-                  <span className="text-slate-3 font-medium">{a.actionClass}</span> · {a.detail}
-                </div>
-              </div>
-              <Badge
-                variant="outline"
-                className={`text-[10px] shrink-0 ${ACTION_STYLES[a.status]}`}
-              >
-                {a.status}
-              </Badge>
-            </li>
-          ))}
-        </ul>
+        </div>
       </Card>
 
       {/* 5 — Operating trail */}
       <Card className="p-6 lg:p-7 bg-white border border-border/70">
-        <BlockHeader
-          title="Operating trail"
-          caption="How the agent reached this result"
-        />
+        <BlockHeader title="Operating trail" caption="How the agent reached this result" />
         <ol className="mt-5 relative border-l border-border/70 ml-2">
           {scenario.trail.map((t, i) => {
             const dot =
@@ -922,7 +1074,7 @@ function ResultsStage({
             return (
               <li key={i} className="ml-4 pb-4 last:pb-0">
                 <span className={`absolute -left-[5px] mt-1.5 h-2 w-2 rounded-full ${dot}`} />
-                <div className="text-xs text-slate-4">{t.time}</div>
+                <div className="text-xs text-slate-4 font-mono">{t.time}</div>
                 <div className="text-sm text-slate mt-0.5">{t.text}</div>
               </li>
             );
@@ -936,10 +1088,10 @@ function ResultsStage({
           <ArrowLeft className="mr-2 h-4 w-4" /> Back to queue
         </Button>
         <Button className="bg-slate hover:bg-slate-2 text-white" onClick={onRequest}>
-          Request an Agent <ArrowRight className="ml-2 h-4 w-4" />
+          Request this agent for your team <ArrowRight className="ml-2 h-4 w-4" />
         </Button>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
