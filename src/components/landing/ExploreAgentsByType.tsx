@@ -1,5 +1,5 @@
 import { RevealDiv } from "@/components/RevealDiv";
-import { ShieldCheck, Compass } from "lucide-react";
+import { Compass } from "lucide-react";
 
 interface AgentTile {
   icon: string;
@@ -9,35 +9,6 @@ interface AgentTile {
   status: "Available" | "Coming Soon";
   pageId?: string;
 }
-
-const CONTROL_READINESS: AgentTile[] = [
-  {
-    pageId: "global-lifecycle-agent",
-    icon: "🌐",
-    name: "Global Lifecycle Agent",
-    subtitle: "BambooHR Edition",
-    outcome: "Evaluates new-hire and termination events for readiness, exceptions, and held actions.",
-    status: "Available",
-  },
-  {
-    icon: "🚀",
-    name: "New Hire Readiness",
-    outcome: "Determines whether a new hire is ready to start: equipment, access, payroll, manager prep.",
-    status: "Coming Soon",
-  },
-  {
-    icon: "🛑",
-    name: "Termination Control",
-    outcome: "Sequences final pay, access revocation, and policy exceptions before release.",
-    status: "Coming Soon",
-  },
-  {
-    icon: "💸",
-    name: "Payroll Exception Handling",
-    outcome: "Catches off-cycle, retro, and policy-conflict pay events before they hit the run.",
-    status: "Coming Soon",
-  },
-];
 
 const DECISION_AGENTS: AgentTile[] = [
   {
@@ -103,33 +74,17 @@ export default function ExploreAgentsByType({ setPage }: Props) {
     <section id="agent-gallery" className="py-24 md:py-32 bg-card border-t border-border">
       <div className="max-w-7xl mx-auto px-6 md:px-14">
         <RevealDiv>
-          <div className="text-center mb-14">
-            <span className="inline-block text-xs font-bold uppercase tracking-[3px] text-primary mb-4">Explore Agents by Type</span>
-            <h2 className="font-display text-3xl md:text-4xl text-foreground">
-              The UnfoldHRAI agent library.
+          <div className="max-w-2xl mb-10">
+            <span className="inline-block text-xs font-bold uppercase tracking-[3px] text-primary mb-3">Secondary Family</span>
+            <h2 className="font-display text-3xl md:text-4xl text-foreground leading-tight mb-3">
+              Decision Agents
             </h2>
+            <p className="text-muted-foreground text-lg leading-relaxed">
+              Turn workforce questions into recommendations, tradeoffs, and decision briefs for HR leaders.
+            </p>
           </div>
         </RevealDiv>
 
-        {/* Control & Readiness group */}
-        <RevealDiv delay={0.05}>
-          <div className="flex items-center gap-3 mb-6">
-            <span className="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-primary text-primary-foreground">
-              <ShieldCheck className="w-4 h-4" />
-            </span>
-            <div>
-              <h3 className="font-display text-xl text-foreground">Control &amp; Readiness Agents</h3>
-              <p className="text-xs text-muted-foreground">Determine whether workforce events can progress.</p>
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-16">
-            {CONTROL_READINESS.map((a, i) => (
-              <Tile key={i} a={a} onClick={() => a.pageId && setPage(a.pageId)} />
-            ))}
-          </div>
-        </RevealDiv>
-
-        {/* Decision Agents group */}
         <RevealDiv delay={0.1}>
           <div className="flex items-center gap-3 mb-6">
             <span className="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-accent text-primary">
