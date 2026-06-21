@@ -13,3 +13,5 @@ project_id = "vjjevcxsgymuollruzlc"
     verify_jwt = true
   [functions.send-transactional-email]
     verify_jwt = true
+  [functions.run-agent]
+    verify_jwt = true
