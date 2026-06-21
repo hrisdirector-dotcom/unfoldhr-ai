@@ -90,7 +90,7 @@ export function UnfoldNav({ page, setPage, currentUser }: NavProps) {
         <div className="hidden md:flex items-center gap-3">
           {/* Primary CTA - Try an Agent */}
           <button
-            onClick={() => navigate("try-agents", true)}
+            onClick={() => navigate("try-agents")}
             className="px-5 py-2.5 text-sm font-semibold rounded-lg cursor-pointer bg-primary text-primary-foreground border-none hover:bg-primary/90 transition-colors"
           >
             Try an Agent
@@ -159,7 +159,7 @@ export function UnfoldNav({ page, setPage, currentUser }: NavProps) {
 
             {/* Primary CTA - Try an Agent */}
             <button
-              onClick={() => navigate("try-agents", true)}
+              onClick={() => navigate("try-agents")}
               className="w-full px-4 py-3.5 text-base font-semibold rounded-lg cursor-pointer bg-primary text-primary-foreground border-none transition-colors"
             >
               Try an Agent
