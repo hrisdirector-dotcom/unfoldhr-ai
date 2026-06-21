@@ -1,10 +1,16 @@
 import { RevealDiv } from "@/components/RevealDiv";
 import AgentDemo from "@/components/AgentDemo";
+import AgentPageNav from "@/components/AgentPageNav";
 
-export default function WorkforcePlanningAgent() {
+interface WorkforcePlanningAgentProps {
+  setPage?: (p: string) => void;
+}
+
+export default function WorkforcePlanningAgent({ setPage }: WorkforcePlanningAgentProps) {
   return (
     <div className="bg-background min-h-screen">
       <div className="max-w-3xl mx-auto px-6 md:px-14 py-32 space-y-20">
+        {setPage && <AgentPageNav setPage={setPage} />}
 
         {/* HEADER */}
         <RevealDiv>
