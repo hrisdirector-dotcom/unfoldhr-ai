@@ -21,6 +21,7 @@ const NAV_LINKS: [string, string, boolean][] = [
 export function UnfoldNav({ page, setPage, currentUser }: NavProps) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const overDark = !scrolled && !mobileOpen && DARK_HERO_PAGES.has(page);
 
   useEffect(() => {
     const h = () => setScrolled(window.scrollY > 20);
