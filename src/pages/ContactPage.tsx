@@ -34,33 +34,25 @@ export default function RequestBuildPanel() {
     }
 
     try {
-      const submissionId = crypto.randomUUID();
-      const { error: dbError } = await supabase.from("submissions").insert({
-        id: submissionId,
-        request_type: "contact",
-        contact_name: name,
-        email,
-        company_name: company || "",
-        message: `AI Journey: ${aiJourney}\n\n${message}`,
+      const { data, error: fnError } = await supabase.functions.invoke("submit-contact", {
+        body: {
+          name,
+          email,
+          company,
+          aiJourney,
+          message,
+        },
       });
 
-      if (dbError) throw dbError;
+      if (fnError || !data?.success) {
+        throw fnError ?? new Error("submit failed");
+      }
 
       formData.append("ai_journey", aiJourney);
       await fetch("https://formspree.io/f/mgopojll", {
         method: "POST",
         body: formData,
         headers: { Accept: "application/json" },
-      });
-
-      // Send confirmation email to the user
-      await supabase.functions.invoke("send-transactional-email", {
-        body: {
-          templateName: "contact-confirmation",
-          recipientEmail: email,
-          idempotencyKey: `contact-confirm-${submissionId}`,
-          templateData: { name },
-        },
       });
 
       setSubmitted(true);
@@ -71,6 +63,7 @@ export default function RequestBuildPanel() {
       setSubmitting(false);
     }
   }
+
 
   if (submitted) {
     return (
