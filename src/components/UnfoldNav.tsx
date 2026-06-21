@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { UnfoldMark } from "./UnfoldMark";
 import { Menu, X } from "lucide-react";
 
+const DARK_HERO_PAGES = new Set(["home", "global-lifecycle-agent"]);
+
 interface NavProps {
   page: string;
   setPage: (p: string) => void;
