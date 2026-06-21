@@ -58,18 +58,21 @@ export default function PlatformHero({ setPage }: PlatformHeroProps) {
           <div className="flex flex-col items-center gap-4">
             <div className="flex flex-wrap justify-center gap-3">
               <button
-                onClick={() => scrollTo("agent-families")}
-                className="px-7 py-3.5 rounded-xl bg-foreground text-background font-semibold text-sm border-none cursor-pointer hover:bg-foreground/90 transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                onClick={() => setPage("global-lifecycle-agent")}
+                className="px-7 py-3.5 rounded-xl bg-foreground text-background font-semibold text-sm border-none cursor-pointer hover:bg-primary transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
               >
-                Explore Agents →
+                See the Flagship Agent →
               </button>
               <button
-                onClick={() => setPage("global-lifecycle-agent")}
+                onClick={() => scrollTo("agent-families")}
                 className="px-7 py-3.5 rounded-xl bg-card text-foreground font-semibold text-sm border border-border cursor-pointer hover:border-primary/50 hover:bg-accent transition-all duration-200"
               >
-                See the Flagship Agent
+                Explore All Agents
               </button>
             </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              Start with the Global Lifecycle Agent to see how Control &amp; Readiness works.
+            </p>
           </div>
         </RevealDiv>
       </div>
