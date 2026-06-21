@@ -23,6 +23,7 @@ import {
   GitBranch,
 } from "lucide-react";
 import { LifecycleRunOverlay } from "@/components/agent/LifecycleRunOverlay";
+import AgentPageNav from "@/components/AgentPageNav";
 
 type ControlStatus =
   | "Ready"
@@ -405,6 +406,7 @@ export default function GlobalLifecycleAgentPage({ setPage }: Props) {
       <section className="bg-gradient-to-b from-slate text-white relative">
         <div className="absolute inset-x-0 dot-grid opacity-[0.05] pointer-events-none" />
         <div className="relative max-w-7xl mx-auto px-6 lg:px-10 pt-12 pb-10 lg:pt-16 lg:pb-12">
+          <div className="mb-6"><AgentPageNav setPage={setPage} variant="light" /></div>
           <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-blue-200/90 flex-wrap">
             <span className="h-1.5 w-1.5 rounded-full bg-blue-300" />
             Global Lifecycle Agent

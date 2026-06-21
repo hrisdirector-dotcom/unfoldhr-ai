@@ -4,6 +4,7 @@ import { getAgentById } from "@/data/agents";
 import type { Agent } from "@/data/agents";
 import DecisionBriefCard from "@/components/DecisionBriefCard";
 import { RevealDiv } from "@/components/RevealDiv";
+import AgentPageNav from "@/components/AgentPageNav";
 
 interface AgentDetailPageProps {
   agentId: string;
@@ -51,6 +52,7 @@ export default function AgentDetailPage({ agentId, setPage }: AgentDetailPagePro
   return (
     <div className="bg-background min-h-screen">
       <div className="max-w-3xl mx-auto px-6 md:px-14 py-32 space-y-16">
+        <AgentPageNav setPage={setPage} />
         {/* Header */}
         <RevealDiv>
           <div className="flex items-center gap-3 mb-6">

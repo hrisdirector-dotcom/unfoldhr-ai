@@ -9,6 +9,7 @@ import { downloadCSV, downloadPDF } from "@/lib/downloadResult";
 import { Bookmark, Download, RotateCcw, Presentation } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import ExecutionStatus, { type ExecutionAction } from "@/components/ExecutionStatus";
+import AgentPageNav from "@/components/AgentPageNav";
 
 type Step = "start" | "decision" | "guided" | "result";
 
@@ -242,6 +243,7 @@ export default function TryUSWorkforceAgentPage({ setPage }: TryUSWorkforceAgent
   return (
     <div className="bg-background min-h-screen">
       <div className="max-w-2xl mx-auto px-6 md:px-14 py-32">
+        <div className="mb-10"><AgentPageNav setPage={setPage} /></div>
         {step === "start" && (
           <RevealDiv>
             <div className="text-center space-y-6">

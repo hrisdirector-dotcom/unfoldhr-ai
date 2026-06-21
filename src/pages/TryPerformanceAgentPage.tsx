@@ -3,6 +3,7 @@ import { RevealDiv } from "@/components/RevealDiv";
 import DecisionBriefCard from "@/components/DecisionBriefCard";
 import type { DecisionBriefProps } from "@/components/DecisionBriefCard";
 import { Textarea } from "@/components/ui/textarea";
+import AgentPageNav from "@/components/AgentPageNav";
 import {
   SIZES,
   DISTRIBUTIONS,
@@ -69,6 +70,7 @@ export default function TryPerformanceAgentPage({ setPage }: TryPerformanceAgent
   return (
     <div className="bg-background min-h-screen">
       <div className="max-w-2xl mx-auto px-6 md:px-14 py-32">
+        <div className="mb-10"><AgentPageNav setPage={setPage} /></div>
         {step === "start" && (
           <RevealDiv>
             <div className="text-center space-y-6">
