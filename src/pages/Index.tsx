@@ -18,6 +18,7 @@ import ExecutiveDeckPage from "@/pages/ExecutiveDeckPage";
 import ExecutiveSnapshotPage from "@/pages/ExecutiveSnapshotPage";
 import TodayDecisionsPage from "@/pages/TodayDecisionsPage";
 import GlobalLifecycleAgentPage from "@/pages/GlobalLifecycleAgentPage";
+import AgentsPage from "@/pages/AgentsPage";
 import OnboardingWalkthrough from "@/components/OnboardingWalkthrough";
 import type { SavedRun } from "@/hooks/useSavedRuns";
 
@@ -42,12 +43,9 @@ const Index = () => {
       return;
     }
 
-    // Redirect legacy "agents" route to homepage gallery
-    if (p === "agents" || p === "try-agents") {
-      setPage("home");
-      window.history.replaceState({ page: "home" }, "");
-      setTimeout(() => document.getElementById("agent-gallery")?.scrollIntoView({ behavior: "smooth" }), 150);
-      return;
+    // "Try the Flagship Agent" routes directly to Global Lifecycle Agent
+    if (p === "try-agents") {
+      p = "global-lifecycle-agent";
     }
 
     // Map free agent IDs to their interactive try-pages
@@ -151,6 +149,7 @@ const Index = () => {
       {page === "try-listening-agent" && <TryListeningAgentPage setPage={navigateTo} />}
       {page === "try-performance-agent" && <TryPerformanceAgentPage setPage={navigateTo} />}
       {page === "try-us-workforce-agent" && <TryUSWorkforceAgentPage setPage={navigateTo} />}
+      {page === "agents" && <AgentsPage onSelectAgent={navigateToAgent} onBuildAgent={handleBuildAgent} setPage={navigateTo} />}
       {page === "global-lifecycle-agent" && <GlobalLifecycleAgentPage setPage={navigateTo} />}
       {page === "workforce-planning" && <WorkforcePlanningAgent />}
       {page === "pricing" && <PricingPage setPage={navigateTo} />}
