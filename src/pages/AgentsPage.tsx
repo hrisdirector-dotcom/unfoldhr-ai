@@ -100,7 +100,7 @@ export default function AgentsPage({ onSelectAgent, onBuildAgent, setPage }: Age
           <RevealDiv delay={0.1}>
             <div
               onClick={() => setPage("global-lifecycle-agent")}
-              className="group cursor-pointer relative mt-14 bg-white border border-white/10 rounded-3xl overflow-hidden hover:border-primary/40 transition-all duration-300 shadow-[0_40px_120px_-30px_rgba(0,0,0,0.6)] hover:shadow-[0_50px_140px_-25px_rgba(43,92,230,0.55)]"
+              className="group cursor-pointer relative mt-20 bg-white border border-white/10 rounded-3xl overflow-hidden hover:border-primary/40 transition-all duration-300 shadow-[0_40px_120px_-30px_rgba(0,0,0,0.6)] hover:shadow-[0_50px_140px_-25px_rgba(43,92,230,0.55)]"
             >
               <div className="relative bg-gradient-to-r from-slate via-slate to-slate-2 text-white px-8 md:px-12 py-4 flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] font-mono">
                 <div className="absolute inset-0 dot-grid opacity-[0.05] pointer-events-none" />
@@ -111,18 +111,18 @@ export default function AgentsPage({ onSelectAgent, onBuildAgent, setPage }: Age
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-5">
-                <div className="lg:col-span-3 p-8 md:p-12">
-                  <h3 className="font-display text-3xl md:text-4xl text-slate mb-5 leading-tight tracking-tight">
+                <div className="lg:col-span-3 p-10 md:p-14 lg:p-16">
+                  <h3 className="font-display text-4xl md:text-5xl lg:text-[3.25rem] text-slate mb-6 leading-[1.05] tracking-tight">
                     Global Lifecycle Agent
                   </h3>
-                  <p className="text-slate-3 leading-relaxed text-base md:text-lg mb-8 max-w-2xl">
+                  <p className="text-slate-3 leading-relaxed text-base md:text-lg lg:text-xl mb-10 max-w-2xl">
                     Evaluates pending lifecycle events — hires, transfers, exits, role changes —
                     and returns a release verdict for each: ready, hold, or approval required,
                     with the operating trail.
                   </p>
                   <button
                     onClick={(e) => { e.stopPropagation(); setPage("global-lifecycle-agent"); }}
-                    className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-slate text-white font-semibold text-sm hover:bg-primary transition-all group-hover:gap-3 shadow-[0_18px_50px_-18px_rgba(43,92,230,0.6)]"
+                    className="inline-flex items-center gap-2.5 px-7 py-4 rounded-xl bg-slate text-white font-semibold text-sm hover:bg-primary transition-all group-hover:gap-3.5 shadow-[0_18px_50px_-18px_rgba(43,92,230,0.6)]"
                   >
                     Try the Flagship Agent <ArrowRight className="w-4 h-4" />
                   </button>
