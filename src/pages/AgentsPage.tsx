@@ -100,7 +100,7 @@ export default function AgentsPage({ onSelectAgent, onBuildAgent, setPage }: Age
           <RevealDiv delay={0.1}>
             <div
               onClick={() => setPage("global-lifecycle-agent")}
-              className="group cursor-pointer relative mt-14 bg-white border border-white/10 rounded-3xl overflow-hidden hover:border-primary/40 transition-all duration-300 shadow-[0_40px_120px_-30px_rgba(0,0,0,0.6)] hover:shadow-[0_50px_140px_-25px_rgba(43,92,230,0.55)]"
+              className="group cursor-pointer relative mt-20 bg-white border border-white/10 rounded-3xl overflow-hidden hover:border-primary/40 transition-all duration-300 shadow-[0_40px_120px_-30px_rgba(0,0,0,0.6)] hover:shadow-[0_50px_140px_-25px_rgba(43,92,230,0.55)]"
             >
               <div className="relative bg-gradient-to-r from-slate via-slate to-slate-2 text-white px-8 md:px-12 py-4 flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] font-mono">
                 <div className="absolute inset-0 dot-grid opacity-[0.05] pointer-events-none" />
@@ -111,18 +111,18 @@ export default function AgentsPage({ onSelectAgent, onBuildAgent, setPage }: Age
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-5">
-                <div className="lg:col-span-3 p-8 md:p-12">
-                  <h3 className="font-display text-3xl md:text-4xl text-slate mb-5 leading-tight tracking-tight">
+                <div className="lg:col-span-3 p-10 md:p-14 lg:p-16">
+                  <h3 className="font-display text-4xl md:text-5xl lg:text-[3.25rem] text-slate mb-6 leading-[1.05] tracking-tight">
                     Global Lifecycle Agent
                   </h3>
-                  <p className="text-slate-3 leading-relaxed text-base md:text-lg mb-8 max-w-2xl">
+                  <p className="text-slate-3 leading-relaxed text-base md:text-lg lg:text-xl mb-10 max-w-2xl">
                     Evaluates pending lifecycle events — hires, transfers, exits, role changes —
                     and returns a release verdict for each: ready, hold, or approval required,
                     with the operating trail.
                   </p>
                   <button
                     onClick={(e) => { e.stopPropagation(); setPage("global-lifecycle-agent"); }}
-                    className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-slate text-white font-semibold text-sm hover:bg-primary transition-all group-hover:gap-3 shadow-[0_18px_50px_-18px_rgba(43,92,230,0.6)]"
+                    className="inline-flex items-center gap-2.5 px-7 py-4 rounded-xl bg-slate text-white font-semibold text-sm hover:bg-primary transition-all group-hover:gap-3.5 shadow-[0_18px_50px_-18px_rgba(43,92,230,0.6)]"
                   >
                     Try the Flagship Agent <ArrowRight className="w-4 h-4" />
                   </button>
@@ -162,13 +162,17 @@ export default function AgentsPage({ onSelectAgent, onBuildAgent, setPage }: Age
             </div>
           </RevealDiv>
 
-          {/* Coming-soon roster — makes the family feel like a real category */}
+          {/* Secondary roster — makes the family feel intentional */}
           <RevealDiv delay={0.18}>
-            <div className="mt-16">
-              <p className="text-[11px] font-mono uppercase tracking-[0.22em] text-blue-200/80 mb-5 flex items-center gap-2">
-                <span className="h-1 w-1 rounded-full bg-blue-300" />
-                Expanding the family
-              </p>
+            <div className="mt-20">
+              <div className="mb-8 flex items-center gap-3">
+                <div className="h-px flex-1 bg-gradient-to-r from-blue-300/30 to-transparent" />
+                <p className="text-[11px] font-mono uppercase tracking-[0.22em] text-blue-200/80 flex items-center gap-2 shrink-0">
+                  <span className="h-1 w-1 rounded-full bg-blue-300" />
+                  More Control &amp; Readiness agents
+                </p>
+                <div className="h-px flex-1 bg-gradient-to-l from-blue-300/30 to-transparent" />
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {[
                   { icon: Lock, name: "Access &amp; Entitlement Agent", note: "Governs role-based access readiness across systems." },
@@ -203,8 +207,47 @@ export default function AgentsPage({ onSelectAgent, onBuildAgent, setPage }: Age
         </div>
       </section>
 
+      {/* ───────────── Interstitial — Family Transition ───────────── */}
+      <section className="relative py-20 md:py-28 bg-slate-2 border-y border-white/10 overflow-hidden">
+        <div className="absolute inset-0 dot-grid opacity-[0.04] pointer-events-none" />
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(ellipse 50% 40% at 50% 50%, rgba(43,92,230,0.12), transparent 70%)",
+          }}
+        />
+        <div className="relative max-w-7xl mx-auto px-6 lg:px-10">
+          <div className="flex flex-col md:flex-row md:items-center gap-8 md:gap-12">
+            <div className="md:flex-1">
+              <div className="mb-3 flex items-center gap-2 text-[11px] uppercase tracking-[0.22em] text-blue-200/80 font-mono">
+                <span className="h-1.5 w-1.5 rounded-full bg-blue-300" />
+                <span>Family 01 — Complete</span>
+              </div>
+              <h3 className="font-display text-2xl md:text-3xl text-white tracking-tight leading-[1.1]">
+                Control &amp; Readiness Agents
+              </h3>
+            </div>
+
+            <div className="hidden md:flex items-center justify-center">
+              <div className="h-12 w-px bg-gradient-to-b from-transparent via-white/20 to-transparent" />
+            </div>
+
+            <div className="md:flex-1 md:text-right">
+              <div className="mb-3 flex items-center gap-2 text-[11px] uppercase tracking-[0.22em] text-slate-4 font-mono md:justify-end">
+                <span>Family 02 — Up Next</span>
+                <span className="h-1.5 w-1.5 rounded-full bg-slate-4" />
+              </div>
+              <h3 className="font-display text-2xl md:text-3xl text-white tracking-tight leading-[1.1]">
+                Decision Agents
+              </h3>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ───────────── Section 2 — Decision Agents (secondary catalog) ───────────── */}
-      <section className="py-20 md:py-24 bg-background border-t border-border">
+      <section className="py-20 md:py-28 bg-background">
         <div className="max-w-7xl mx-auto px-6 lg:px-10">
           <RevealDiv>
             <div className="mb-6 flex items-center gap-2 text-[11px] uppercase tracking-[0.22em] text-slate-4 font-mono">
