@@ -207,8 +207,47 @@ export default function AgentsPage({ onSelectAgent, onBuildAgent, setPage }: Age
         </div>
       </section>
 
+      {/* ───────────── Interstitial — Family Transition ───────────── */}
+      <section className="relative py-20 md:py-28 bg-slate-2 border-y border-white/10 overflow-hidden">
+        <div className="absolute inset-0 dot-grid opacity-[0.04] pointer-events-none" />
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(ellipse 50% 40% at 50% 50%, rgba(43,92,230,0.12), transparent 70%)",
+          }}
+        />
+        <div className="relative max-w-7xl mx-auto px-6 lg:px-10">
+          <div className="flex flex-col md:flex-row md:items-center gap-8 md:gap-12">
+            <div className="md:flex-1">
+              <div className="mb-3 flex items-center gap-2 text-[11px] uppercase tracking-[0.22em] text-blue-200/80 font-mono">
+                <span className="h-1.5 w-1.5 rounded-full bg-blue-300" />
+                <span>Family 01 — Complete</span>
+              </div>
+              <h3 className="font-display text-2xl md:text-3xl text-white tracking-tight leading-[1.1]">
+                Control &amp; Readiness Agents
+              </h3>
+            </div>
+
+            <div className="hidden md:flex items-center justify-center">
+              <div className="h-12 w-px bg-gradient-to-b from-transparent via-white/20 to-transparent" />
+            </div>
+
+            <div className="md:flex-1 md:text-right">
+              <div className="mb-3 flex items-center gap-2 text-[11px] uppercase tracking-[0.22em] text-slate-4 font-mono md:justify-end">
+                <span>Family 02 — Up Next</span>
+                <span className="h-1.5 w-1.5 rounded-full bg-slate-4" />
+              </div>
+              <h3 className="font-display text-2xl md:text-3xl text-white tracking-tight leading-[1.1]">
+                Decision Agents
+              </h3>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ───────────── Section 2 — Decision Agents (secondary catalog) ───────────── */}
-      <section className="py-20 md:py-24 bg-background border-t border-border">
+      <section className="py-20 md:py-28 bg-background">
         <div className="max-w-7xl mx-auto px-6 lg:px-10">
           <RevealDiv>
             <div className="mb-6 flex items-center gap-2 text-[11px] uppercase tracking-[0.22em] text-slate-4 font-mono">
