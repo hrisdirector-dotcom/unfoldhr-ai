@@ -162,13 +162,17 @@ export default function AgentsPage({ onSelectAgent, onBuildAgent, setPage }: Age
             </div>
           </RevealDiv>
 
-          {/* Coming-soon roster — makes the family feel like a real category */}
+          {/* Secondary roster — makes the family feel intentional */}
           <RevealDiv delay={0.18}>
-            <div className="mt-16">
-              <p className="text-[11px] font-mono uppercase tracking-[0.22em] text-blue-200/80 mb-5 flex items-center gap-2">
-                <span className="h-1 w-1 rounded-full bg-blue-300" />
-                Expanding the family
-              </p>
+            <div className="mt-20">
+              <div className="mb-8 flex items-center gap-3">
+                <div className="h-px flex-1 bg-gradient-to-r from-blue-300/30 to-transparent" />
+                <p className="text-[11px] font-mono uppercase tracking-[0.22em] text-blue-200/80 flex items-center gap-2 shrink-0">
+                  <span className="h-1 w-1 rounded-full bg-blue-300" />
+                  More Control &amp; Readiness agents
+                </p>
+                <div className="h-px flex-1 bg-gradient-to-l from-blue-300/30 to-transparent" />
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {[
                   { icon: Lock, name: "Access &amp; Entitlement Agent", note: "Governs role-based access readiness across systems." },
