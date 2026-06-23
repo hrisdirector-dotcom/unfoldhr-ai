@@ -320,7 +320,7 @@ const SCENARIO_TERM_HELD: LifecycleScenario = {
 
   launchTitle: "Separation event — held for control review",
   launchEventSummary:
-    "Final pay, PTO payout handling, and HR / control approval are unresolved. Communications are held and offboarding coordination is held pending review.",
+    "Open control conditions: final pay review, PTO payout handling, HR / control approval, and communications hold.",
   evaluationFocus: [
     "Separation event integrity",
     "Final pay readiness",
