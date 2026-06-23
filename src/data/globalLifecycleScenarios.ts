@@ -105,7 +105,7 @@ const SCENARIO_HIRE_READY: LifecycleScenario = {
 
   launchTitle: "New hire onboarding — ready for control review",
   launchEventSummary:
-    "Worker record, org placement, PTO assignment and payroll readiness all appear aligned. Run the agent to confirm release readiness.",
+    "Control checks pending: worker record, org placement, PTO assignment, payroll readiness.",
   evaluationFocus: [
     "Worker record integrity",
     "Start-date and org placement integrity",
@@ -209,7 +209,7 @@ const SCENARIO_HIRE_APPROVAL: LifecycleScenario = {
 
   launchTitle: "New hire onboarding — held for compensation approval",
   launchEventSummary:
-    "Worker record and payroll readiness look mostly complete, but a configured compensation / threshold approval is still open and the event cannot be released until that approval clears.",
+    "Open control conditions: configured compensation / threshold approval, release hold, communications hold.",
   evaluationFocus: [
     "Worker record integrity",
     "Payroll readiness",
@@ -320,7 +320,7 @@ const SCENARIO_TERM_HELD: LifecycleScenario = {
 
   launchTitle: "Separation event — held for control review",
   launchEventSummary:
-    "Final pay, PTO payout handling, and HR / control approval are unresolved. Communications are held and offboarding coordination is held pending review.",
+    "Open control conditions: final pay review, PTO payout handling, HR / control approval, and communications hold.",
   evaluationFocus: [
     "Separation event integrity",
     "Final pay readiness",

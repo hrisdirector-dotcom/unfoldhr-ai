@@ -230,7 +230,7 @@ export default function GlobalLifecycleAgentPage({ setPage }: Props) {
  * STAGE 1 — QUEUE
  * ============================================================ */
 function QueueStage({ onOpen }: { onOpen: (id: string) => void }) {
-  // Group by event type, termination first so the heaviest event leads.
+  // Render new hires first; termination remains visually heaviest via its card styling.
   const terminationItems = GLOBAL_LIFECYCLE_SCENARIOS.filter(
     (s) => s.eventType === "Termination"
   );
@@ -240,16 +240,16 @@ function QueueStage({ onOpen }: { onOpen: (id: string) => void }) {
 
   const groups = [
     {
-      type: "offboarding" as const,
-      title: "Employee Offboarding",
-      icon: UserMinus,
-      items: terminationItems,
-    },
-    {
       type: "onboarding" as const,
       title: "New Hire Onboarding",
       icon: UserPlus,
       items: hireItems,
+    },
+    {
+      type: "offboarding" as const,
+      title: "Employee Offboarding",
+      icon: UserMinus,
+      items: terminationItems,
     },
   ];
 
@@ -697,37 +697,35 @@ function ResultsStage({
       </div>
 
 
-      {/* 4 — Prepared workstreams */}
-      <Card className="p-6 bg-white border border-border/70">
+      {/* 4 — Prepared workstreams (compressed) */}
+      <Card className="p-5 bg-white border border-border/70">
         <BlockHeader
           title="Prepared workstreams"
-          caption="Operational actions prepared and grouped by domain — subordinate to the control verdict"
+          caption="Operational actions prepared by domain — supporting the verdict"
         />
-        <div className="mt-5 grid md:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div className="mt-4 grid md:grid-cols-2 lg:grid-cols-3 gap-2.5">
           {scenario.preparedWorkstreams.map((w) => {
             const meta = WORKSTREAM_META[w.domain];
             const Icon = meta.icon;
             return (
               <div
                 key={w.domain}
-                className="rounded-xl border border-border/70 bg-paper/40 p-4"
+                className="rounded-lg border border-border/70 bg-paper/40 px-3 py-2.5"
               >
-                <div className="flex items-center gap-2">
-                  <Icon className="h-4 w-4 text-primary" />
-                  <div className="text-sm font-display text-slate">
+                <div className="flex items-center gap-1.5">
+                  <Icon className="h-3.5 w-3.5 text-primary shrink-0" />
+                  <div className="text-[13px] font-medium text-slate leading-tight">
                     {w.domain}
                   </div>
                 </div>
-                <div className="text-[11px] text-slate-4 mt-0.5">
-                  {meta.caption}
-                </div>
-                <ul className="mt-3 space-y-2">
+                <ul className="mt-1.5 space-y-1">
                   {w.items.map((i) => (
                     <li
                       key={i}
-                      className="rounded-lg border border-border/60 bg-white px-2.5 py-2 text-[13px] text-slate leading-snug"
+                      className="flex items-start gap-1.5 text-[12.5px] text-slate-2 leading-snug"
                     >
-                      {i}
+                      <span className="mt-1.5 h-1 w-1 rounded-full bg-slate-3/60 shrink-0" />
+                      <span>{i}</span>
                     </li>
                   ))}
                 </ul>
@@ -737,13 +735,13 @@ function ResultsStage({
         </div>
       </Card>
 
-      {/* 5 — Human accountability */}
-      <Card className="p-6 bg-white border border-border/70">
+      {/* 5 — Human accountability (concise governance strip) */}
+      <Card className="p-5 bg-white border border-border/70">
         <BlockHeader
           title="Human accountability"
           caption="Who must approve, review, and release"
         />
-        <div className="mt-4 grid md:grid-cols-3 gap-3">
+        <div className="mt-3 grid md:grid-cols-3 gap-2.5">
           <AccountabilityColumn
             label="Must approve"
             items={scenario.humanAccountability.mustApprove}
@@ -789,16 +787,16 @@ function AccountabilityColumn({
   emptyText: string;
 }) {
   return (
-    <div className="rounded-xl border border-border/70 bg-paper/40 p-4">
+    <div className="rounded-lg border border-border/70 bg-paper/40 px-3 py-2.5">
       <div className="text-[10px] uppercase tracking-[0.2em] text-slate-4 font-mono">
         {label}
       </div>
       {items.length > 0 ? (
-        <ul className="mt-2 space-y-1.5">
+        <ul className="mt-1.5 space-y-1">
           {items.map((i) => (
             <li
               key={i}
-              className="text-sm text-slate-2 leading-snug flex items-start gap-2"
+              className="text-[12.5px] text-slate-2 leading-snug flex items-start gap-1.5"
             >
               <span className="mt-1.5 h-1 w-1 rounded-full bg-slate-3/60 shrink-0" />
               {i}
@@ -806,7 +804,7 @@ function AccountabilityColumn({
           ))}
         </ul>
       ) : (
-        <div className="mt-2 text-sm text-slate-4 italic">{emptyText}</div>
+        <div className="mt-1.5 text-[12.5px] text-slate-4 italic">{emptyText}</div>
       )}
     </div>
   );
