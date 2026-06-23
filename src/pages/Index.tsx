@@ -19,6 +19,7 @@ import ExecutiveDeckPage from "@/pages/ExecutiveDeckPage";
 import ExecutiveSnapshotPage from "@/pages/ExecutiveSnapshotPage";
 import TodayDecisionsPage from "@/pages/TodayDecisionsPage";
 import GlobalLifecycleAgentPage from "@/pages/GlobalLifecycleAgentPage";
+import LeaveControlAgentPage from "@/pages/LeaveControlAgentPage";
 import AgentsPage from "@/pages/AgentsPage";
 import AgentDetailPage from "@/pages/AgentDetailPage";
 import OnboardingWalkthrough from "@/components/OnboardingWalkthrough";
