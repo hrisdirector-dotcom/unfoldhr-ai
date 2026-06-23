@@ -131,6 +131,9 @@ const SCENARIO_HIRE_READY: LifecycleScenario = {
   verdict: "Ready",
   verdictSummary:
     "New hire is ready to progress — worker record, PTO, payroll and manager readiness are all aligned.",
+  recommendedNextAction:
+    "Release onboarding workstreams on the scheduled start date.",
+  humanReviewPosture: "Recommended (light touch)",
   topReasons: [
     "Worker record is complete and aligned to org placement",
     "PTO policy assignment and payroll readiness confirmed for the next cycle",
