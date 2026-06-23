@@ -123,7 +123,7 @@ export default function GlobalLifecycleAgentPage({ setPage }: Props) {
   const completeRun = () => {
     setStage("results");
     requestAnimationFrame(() => {
-      const el = document.getElementById("lifecycle-outcome");
+      const el = document.getElementById("lifecycle-control-verdict");
       if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
     });
   };
