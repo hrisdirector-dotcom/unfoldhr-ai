@@ -230,7 +230,7 @@ export default function GlobalLifecycleAgentPage({ setPage }: Props) {
  * STAGE 1 — QUEUE
  * ============================================================ */
 function QueueStage({ onOpen }: { onOpen: (id: string) => void }) {
-  // Group by event type, termination first so the heaviest event leads.
+  // Render new hires first; termination remains visually heaviest via its card styling.
   const terminationItems = GLOBAL_LIFECYCLE_SCENARIOS.filter(
     (s) => s.eventType === "Termination"
   );
@@ -240,16 +240,16 @@ function QueueStage({ onOpen }: { onOpen: (id: string) => void }) {
 
   const groups = [
     {
-      type: "offboarding" as const,
-      title: "Employee Offboarding",
-      icon: UserMinus,
-      items: terminationItems,
-    },
-    {
       type: "onboarding" as const,
       title: "New Hire Onboarding",
       icon: UserPlus,
       items: hireItems,
+    },
+    {
+      type: "offboarding" as const,
+      title: "Employee Offboarding",
+      icon: UserMinus,
+      items: terminationItems,
     },
   ];
 
