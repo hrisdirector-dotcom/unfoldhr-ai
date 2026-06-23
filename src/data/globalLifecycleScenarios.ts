@@ -209,7 +209,7 @@ const SCENARIO_HIRE_APPROVAL: LifecycleScenario = {
 
   launchTitle: "New hire onboarding — held for compensation approval",
   launchEventSummary:
-    "Worker record and payroll readiness look mostly complete, but a configured compensation / threshold approval is still open and the event cannot be released until that approval clears.",
+    "Open control conditions: configured compensation / threshold approval, release hold, communications hold.",
   evaluationFocus: [
     "Worker record integrity",
     "Payroll readiness",
