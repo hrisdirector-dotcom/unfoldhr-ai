@@ -71,6 +71,8 @@ export interface LifecycleScenario {
   /* ---------- Result payload ---------- */
   verdict: LifecycleVerdict;
   verdictSummary: string;        // single sentence
+  recommendedNextAction: string; // one short sentence
+  humanReviewPosture: string;    // e.g. "Required", "Recommended"
   topReasons: string[];          // 1–3 reasons the verdict was reached
   blockingConditions: string[];  // empty array => "no active blocking conditions"
   preparedWorkstreams: LifecycleWorkstream[];
@@ -129,6 +131,9 @@ const SCENARIO_HIRE_READY: LifecycleScenario = {
   verdict: "Ready",
   verdictSummary:
     "New hire is ready to progress — worker record, PTO, payroll and manager readiness are all aligned.",
+  recommendedNextAction:
+    "Release onboarding workstreams on the scheduled start date.",
+  humanReviewPosture: "Recommended (light touch)",
   topReasons: [
     "Worker record is complete and aligned to org placement",
     "PTO policy assignment and payroll readiness confirmed for the next cycle",
@@ -229,6 +234,9 @@ const SCENARIO_HIRE_APPROVAL: LifecycleScenario = {
   verdict: "Approval Required",
   verdictSummary:
     "New hire is mostly ready, but a configured compensation / threshold approval is still open — release is held until it clears.",
+  recommendedNextAction:
+    "Clear the configured compensation / threshold approval to release the hire.",
+  humanReviewPosture: "Required",
   topReasons: [
     "Worker record and payroll readiness are largely complete",
     "Compensation falls above a configured approval threshold",
@@ -339,6 +347,9 @@ const SCENARIO_TERM_HELD: LifecycleScenario = {
   verdict: "Held",
   verdictSummary:
     "Separation event is held — final pay, PTO payout, and HR / control approval are unresolved, and communications remain on hold.",
+  recommendedNextAction:
+    "Resolve final pay and PTO payout review, then obtain HR / control release approval.",
+  humanReviewPosture: "Required",
   topReasons: [
     "Final pay treatment has not been resolved",
     "PTO payout handling is unresolved",
