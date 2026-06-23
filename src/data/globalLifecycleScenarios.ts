@@ -105,7 +105,7 @@ const SCENARIO_HIRE_READY: LifecycleScenario = {
 
   launchTitle: "New hire onboarding — ready for control review",
   launchEventSummary:
-    "Worker record, org placement, PTO assignment and payroll readiness all appear aligned. Run the agent to confirm release readiness.",
+    "Control checks pending: worker record, org placement, PTO assignment, payroll readiness.",
   evaluationFocus: [
     "Worker record integrity",
     "Start-date and org placement integrity",
