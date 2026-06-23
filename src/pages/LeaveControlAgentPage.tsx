@@ -1,0 +1,809 @@
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import {
+  CheckCircle2,
+  AlertTriangle,
+  ShieldAlert,
+  ShieldCheck,
+  Lock,
+  ArrowRight,
+  ArrowLeft,
+  Sparkles,
+  ChevronRight,
+  CalendarClock,
+  CalendarCheck,
+  Wallet,
+  HeartHandshake,
+  Users,
+  MessageSquare,
+  FileCheck,
+} from "lucide-react";
+import { LifecycleRunOverlay } from "@/components/agent/LifecycleRunOverlay";
+import AgentPageNav from "@/components/AgentPageNav";
+import {
+  LEAVE_CONTROL_SCENARIOS,
+  type LoaScenario,
+  type LoaVerdict,
+  type LoaWorkstreamDomain,
+} from "@/data/leaveControlScenarios";
+
+/* ---------- shared verdict styling ---------- */
+const VERDICT_STYLES: Record<
+  LoaVerdict,
+  { dot: string; text: string; bg: string; border: string; chip: string; headline: string; icon: typeof CheckCircle2 }
+> = {
+  Ready: {
+    dot: "bg-emerald-500",
+    text: "text-emerald-700",
+    bg: "bg-emerald-50",
+    border: "border-emerald-200",
+    chip: "border-emerald-200 text-emerald-700 bg-emerald-50",
+    headline: "Ready to progress",
+    icon: CheckCircle2,
+  },
+  "Approval Required": {
+    dot: "bg-blue-500",
+    text: "text-blue-700",
+    bg: "bg-blue-50",
+    border: "border-blue-200",
+    chip: "border-blue-200 text-blue-700 bg-blue-50",
+    headline: "Approval required to release",
+    icon: AlertTriangle,
+  },
+  Held: {
+    dot: "bg-red-500",
+    text: "text-red-700",
+    bg: "bg-red-50",
+    border: "border-red-200",
+    chip: "border-red-200 text-red-700 bg-red-50",
+    headline: "Held for control review",
+    icon: ShieldAlert,
+  },
+};
+
+function VerdictPill({ status }: { status: LoaVerdict }) {
+  const s = VERDICT_STYLES[status];
+  return (
+    <span
+      className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium border ${s.bg} ${s.text} ${s.border}`}
+    >
+      <span className={`h-1.5 w-1.5 rounded-full ${s.dot}`} />
+      {status}
+    </span>
+  );
+}
+
+function initialsOf(name: string) {
+  return name
+    .split(" ")
+    .map((w) => w[0])
+    .filter(Boolean)
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+}
+
+/* ============================================================
+ * MAIN PAGE
+ * ============================================================ */
+interface Props {
+  setPage: (p: string) => void;
+}
+
+type Stage = "queue" | "launch" | "running" | "results";
+
+export default function LeaveControlAgentPage({ setPage }: Props) {
+  const [stage, setStage] = useState<Stage>("queue");
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
+  }, []);
+
+  const selected =
+    LEAVE_CONTROL_SCENARIOS.find((s) => s.id === selectedId) ?? null;
+
+  const goQueue = () => {
+    setStage("queue");
+    setSelectedId(null);
+    window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
+  };
+
+  const openEvent = (id: string) => {
+    setSelectedId(id);
+    setStage("launch");
+    window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
+  };
+
+  const startRun = () => setStage("running");
+
+  const completeRun = () => {
+    setStage("results");
+    requestAnimationFrame(() => {
+      const el = document.getElementById("loa-control-verdict");
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  };
+
+  const caseId = selected
+    ? `CASE · ${selected.id.toUpperCase()}-${new Date().getFullYear()}`
+    : "";
+
+  return (
+    <main className="bg-paper min-h-screen">
+      {/* Identity band */}
+      <section className="bg-gradient-to-b from-slate text-white relative">
+        <div className="absolute inset-x-0 dot-grid opacity-[0.05] pointer-events-none" />
+        <div className="relative max-w-7xl mx-auto px-6 lg:px-10 pt-12 pb-10 lg:pt-16 lg:pb-12">
+          <div className="mb-6">
+            <AgentPageNav setPage={setPage} variant="light" />
+          </div>
+          <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-blue-200/90 flex-wrap">
+            <span className="h-1.5 w-1.5 rounded-full bg-blue-300" />
+            Leave / LOA Control Agent
+            <span className="opacity-50">·</span>
+            BambooHR Edition
+            <span className="opacity-50">·</span>
+            Workforce Event Control &amp; Readiness
+            {stage !== "queue" && selected && (
+              <>
+                <span className="opacity-50">·</span>
+                <span className="font-mono text-blue-100/70">{caseId}</span>
+              </>
+            )}
+          </div>
+
+          {stage === "queue" && (
+            <>
+              <h1 className="mt-5 font-display text-3xl md:text-5xl leading-[1.05] tracking-tight max-w-3xl">
+                Which leave event requires action?
+              </h1>
+              <p className="mt-5 text-base md:text-lg text-slate-200/85 max-w-2xl leading-relaxed">
+                Leave, return-to-work and extension events ingested from
+                BambooHR are queued here for control &amp; readiness
+                evaluation. Open an event to review and run the agent.
+              </p>
+            </>
+          )}
+
+          {stage !== "queue" && selected && (
+            <div className="mt-5 flex items-center gap-3 flex-wrap">
+              <button
+                onClick={goQueue}
+                className="inline-flex items-center gap-1.5 text-sm text-blue-200/90 hover:text-white transition"
+              >
+                <ArrowLeft className="h-4 w-4" /> Leave queue
+              </button>
+              <span className="text-slate-400/60">/</span>
+              <span className="text-sm text-white/90">
+                {selected.employee.name}
+              </span>
+              <span className="text-slate-400/60">·</span>
+              <span className="text-xs text-blue-200/70">
+                {selected.eventType}
+              </span>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Stage content */}
+      <section className="py-12 lg:py-16">
+        <div className="max-w-7xl mx-auto px-6 lg:px-10">
+          {stage === "queue" && <QueueStage onOpen={openEvent} />}
+          {(stage === "launch" || stage === "running") && selected && (
+            <LaunchStage
+              scenario={selected}
+              onBack={goQueue}
+              onRun={startRun}
+              running={stage === "running"}
+            />
+          )}
+          {stage === "results" && selected && (
+            <ResultsStage
+              scenario={selected}
+              onBack={goQueue}
+              onRequest={() => setPage("contact")}
+            />
+          )}
+        </div>
+      </section>
+
+      {/* Run overlay (reused from Lifecycle Agent) */}
+      {selected && (
+        <LifecycleRunOverlay
+          show={stage === "running"}
+          steps={selected.runSteps}
+          eventLabel={selected.eventType}
+          employeeName={selected.employee.name}
+          onDone={completeRun}
+        />
+      )}
+    </main>
+  );
+}
+
+/* ============================================================
+ * STAGE 1 — QUEUE
+ * ============================================================ */
+function QueueStage({ onOpen }: { onOpen: (id: string) => void }) {
+  const leaveItems = LEAVE_CONTROL_SCENARIOS.filter(
+    (s) => s.eventType === "Leave Request"
+  );
+  const returnItems = LEAVE_CONTROL_SCENARIOS.filter(
+    (s) => s.eventType === "Return / Extension"
+  );
+
+  const groups = [
+    {
+      type: "leave" as const,
+      title: "Leave Requests",
+      icon: CalendarClock,
+      items: leaveItems,
+    },
+    {
+      type: "return" as const,
+      title: "Return-to-Work / Extension",
+      icon: CalendarCheck,
+      items: returnItems,
+    },
+  ];
+
+  return (
+    <div>
+      <div className="flex items-end justify-between flex-wrap gap-4 mb-2">
+        <div>
+          <div className="text-[11px] uppercase tracking-[0.18em] text-primary mb-2 font-mono">
+            Leave queue · standing by
+          </div>
+          <h2 className="font-display text-2xl md:text-3xl text-slate leading-tight">
+            Leave events awaiting control evaluation
+          </h2>
+        </div>
+        <div className="text-xs text-slate-4">
+          <span className="font-mono">
+            {LEAVE_CONTROL_SCENARIOS.length} events queued
+          </span>{" "}
+          · synthetic demo data
+        </div>
+      </div>
+
+      <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-[11px] text-slate-4 font-mono">
+        <span>Synthetic workforce only</span>
+        <span className="opacity-50">·</span>
+        <span>No real PII</span>
+        <span className="opacity-50">·</span>
+        <span>Simulated integrations</span>
+        <span className="opacity-50">·</span>
+        <span>Human-in-the-loop</span>
+      </div>
+
+      <div className="mt-10 space-y-10">
+        {groups.map((g, gi) => (
+          <motion.section
+            key={g.type}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45, delay: 0.05 + gi * 0.08 }}
+          >
+            <div className="mb-3 flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] text-slate-3 font-mono">
+              <g.icon className="h-3.5 w-3.5" />
+              {g.title}
+              <span className="opacity-40">·</span>
+              <span className="opacity-70">
+                {g.items.length} event{g.items.length === 1 ? "" : "s"}
+              </span>
+            </div>
+            <div className="grid md:grid-cols-2 gap-5">
+              {g.items.map((s) => (
+                <QueueCard
+                  key={s.id}
+                  scenario={s}
+                  onOpen={() => onOpen(s.id)}
+                />
+              ))}
+            </div>
+          </motion.section>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function QueueCard({
+  scenario,
+  onOpen,
+}: {
+  scenario: LoaScenario;
+  onOpen: () => void;
+}) {
+  const v = VERDICT_STYLES[scenario.queueStatus];
+  const isHeld = scenario.queueStatus === "Held";
+
+  return (
+    <button
+      onClick={onOpen}
+      className={`group relative overflow-hidden rounded-2xl border text-left transition-all focus:outline-none focus:ring-2 focus:ring-primary/40 ${
+        isHeld
+          ? "border-red-200 bg-white p-6 hover:-translate-y-px hover:shadow-[0_22px_60px_-22px_rgba(220,38,38,0.45)] ring-1 ring-red-100/70"
+          : "border-border/70 bg-white p-6 hover:border-primary/40 hover:shadow-[0_18px_50px_-20px_rgba(43,92,230,0.35)] hover:-translate-y-px"
+      }`}
+    >
+      {isHeld && (
+        <div
+          className="absolute inset-0 pointer-events-none opacity-100"
+          style={{
+            background:
+              "radial-gradient(ellipse at top right, rgba(220,38,38,0.06), transparent 60%)",
+          }}
+        />
+      )}
+
+      <div className="relative flex items-start justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div
+            className={`flex h-11 w-11 items-center justify-center rounded-xl text-sm font-display ring-1 ${
+              isHeld
+                ? "bg-red-50 text-red-700 ring-red-200"
+                : "bg-blue-50 text-blue-700 ring-blue-200"
+            }`}
+          >
+            {initialsOf(scenario.employee.name)}
+          </div>
+          <div className="min-w-0">
+            <div className="text-[15px] font-semibold text-slate truncate">
+              {scenario.employee.name}
+            </div>
+            <div className="text-xs text-slate-3 truncate">
+              {scenario.employee.title} · {scenario.employee.department}
+            </div>
+          </div>
+        </div>
+        <span className="shrink-0 rounded-full border border-border/70 bg-paper/60 px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider text-slate-4">
+          via BambooHR
+        </span>
+      </div>
+
+      <div className="relative mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-4">
+        <span>{scenario.employee.location}</span>
+        <span className="opacity-50">·</span>
+        <span>{scenario.employee.eventDate}</span>
+      </div>
+
+      <div className="relative mt-4">
+        <div className="text-sm font-medium text-slate leading-snug">
+          {scenario.queueTitle}
+        </div>
+        <p className="mt-1 text-xs text-slate-3 leading-relaxed">
+          {scenario.queueSummary}
+        </p>
+      </div>
+
+      <div className="relative mt-5 flex items-center justify-between">
+        <span
+          className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border text-[10px] font-medium uppercase tracking-wider ${v.chip}`}
+        >
+          <span className={`h-1 w-1 rounded-full ${v.dot}`} />
+          {scenario.queueStatus}
+        </span>
+        <span className="text-xs text-primary font-medium inline-flex items-center gap-1 opacity-80 group-hover:opacity-100">
+          Open event{" "}
+          <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+        </span>
+      </div>
+    </button>
+  );
+}
+
+/* ============================================================
+ * STAGE 2 — LAUNCH
+ * ============================================================ */
+function LaunchStage({
+  scenario,
+  onBack,
+  onRun,
+  running,
+}: {
+  scenario: LoaScenario;
+  onBack: () => void;
+  onRun: () => void;
+  running: boolean;
+}) {
+  const e = scenario.employee;
+  const isHeld = scenario.queueStatus === "Held";
+  const isReturn = scenario.eventType === "Return / Extension";
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35 }}
+      className="space-y-6"
+    >
+      <Card className="overflow-hidden border border-border/70">
+        <div className="grid md:grid-cols-[1.4fr_1fr]">
+          {/* LEFT — event detail */}
+          <div className="relative p-7 lg:p-8">
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background:
+                  "radial-gradient(ellipse at top left, rgba(43,92,230,0.06), transparent 60%)",
+              }}
+            />
+            <div className="relative">
+              {/* A. Event header */}
+              <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.22em] text-slate-4 font-mono">
+                <span>Leave Event</span>
+                <span className="opacity-50">·</span>
+                <span className="text-primary">
+                  {isReturn ? "Return-to-Work / Extension" : "Leave Request"}
+                </span>
+                <span className="opacity-50">·</span>
+                <VerdictPill status={scenario.queueStatus} />
+              </div>
+
+              <div className="mt-5 flex items-start gap-4">
+                <div
+                  className={`flex h-14 w-14 items-center justify-center rounded-2xl font-display text-lg ring-1 ${
+                    isHeld
+                      ? "bg-red-50 text-red-700 ring-red-200"
+                      : "bg-blue-50 text-blue-700 ring-blue-200"
+                  }`}
+                >
+                  {initialsOf(e.name)}
+                </div>
+                <div className="min-w-0">
+                  <h1 className="font-display text-3xl text-slate leading-tight">
+                    {e.name}
+                  </h1>
+                  <div className="mt-1 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-sm text-slate-3">
+                    <span>{e.title}</span>
+                    <span className="text-slate-300">·</span>
+                    <span>{e.department}</span>
+                    <span className="text-slate-300">·</span>
+                    <span>{e.location}</span>
+                  </div>
+                  <div className="mt-1.5 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs text-slate-4">
+                    <span>Manager: {e.manager}</span>
+                    <span className="text-slate-300">·</span>
+                    <span className="font-mono">{e.eventDate}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* B. One-line event summary */}
+              <p className="mt-6 text-sm text-slate-2 leading-relaxed">
+                {scenario.launchEventSummary}
+              </p>
+
+              {/* C. Known control flags */}
+              {scenario.preRunNotes.length > 0 && (
+                <div className="mt-6">
+                  <div className="text-[10px] uppercase tracking-[0.2em] text-slate-4 font-mono">
+                    Known control flags
+                  </div>
+                  <ul className="mt-2 space-y-1.5">
+                    {scenario.preRunNotes.slice(0, 5).map((n) => (
+                      <li
+                        key={n}
+                        className="flex items-start gap-2 text-sm text-slate-2 leading-snug"
+                      >
+                        <span className="mt-1.5 h-1 w-1 rounded-full bg-slate-3/60 shrink-0" />
+                        {n}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* RIGHT — Agent will evaluate + dominant Run CTA */}
+          <div className="relative flex flex-col justify-between border-t md:border-t-0 md:border-l border-border/70 bg-gradient-to-br from-slate to-slate-2 text-white p-7 lg:p-8">
+            <div>
+              <div className="text-[10px] uppercase tracking-[0.22em] text-blue-200/80 font-mono">
+                Agent will evaluate
+              </div>
+              <div className="mt-4 space-y-2">
+                {scenario.evaluationFocus.slice(0, 6).map((f) => (
+                  <div
+                    key={f}
+                    className="flex items-start gap-2 text-xs text-blue-100/90"
+                  >
+                    <ChevronRight className="h-3.5 w-3.5 mt-0.5 text-blue-300 shrink-0" />
+                    <span>{f}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-7">
+              <Button
+                onClick={onRun}
+                disabled={running}
+                size="lg"
+                className="group w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white shadow-[0_10px_30px_-10px_rgba(43,92,230,0.7)] hover:shadow-[0_18px_40px_-12px_rgba(43,92,230,0.8)] hover:-translate-y-px transition-all"
+              >
+                <Sparkles className="mr-2 h-4 w-4" />
+                {running ? "Running Leave / LOA Agent…" : "Run Leave / LOA Agent"}
+                {!running && (
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                )}
+              </Button>
+              <button
+                onClick={onBack}
+                className="mt-3 w-full text-xs text-blue-200/70 hover:text-white transition"
+              >
+                ← Back to queue
+              </button>
+            </div>
+          </div>
+        </div>
+      </Card>
+    </motion.div>
+  );
+}
+
+/* ============================================================
+ * STAGE 3 — RESULTS (5-part verdict-driven model)
+ * ============================================================ */
+const WORKSTREAM_META: Record<
+  LoaWorkstreamDomain,
+  { icon: typeof Wallet }
+> = {
+  Payroll: { icon: Wallet },
+  "Benefits / Leave Administration": { icon: HeartHandshake },
+  "Manager / HRBP": { icon: Users },
+  "Employee Communications": { icon: MessageSquare },
+  "Documentation / Audit": { icon: FileCheck },
+};
+
+function ResultsStage({
+  scenario,
+  onBack,
+  onRequest,
+}: {
+  scenario: LoaScenario;
+  onBack: () => void;
+  onRequest: () => void;
+}) {
+  const v = VERDICT_STYLES[scenario.verdict];
+  const VerdictIcon = v.icon;
+  const e = scenario.employee;
+  const hasBlockers = scenario.blockingConditions.length > 0;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="space-y-5"
+    >
+      {/* 1 — Control Verdict (dominant) */}
+      <Card
+        id="loa-control-verdict"
+        className={`relative overflow-hidden p-7 lg:p-9 border-2 ${v.border} ${v.bg}`}
+      >
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="text-[11px] uppercase tracking-[0.18em] text-slate-4 font-mono">
+            Control verdict · {scenario.eventType} · {e.name}
+          </div>
+          <VerdictPill status={scenario.verdict} />
+        </div>
+
+        <div className="mt-4 flex items-center gap-3">
+          <VerdictIcon className={`h-7 w-7 ${v.text}`} />
+          <h2 className="font-display text-4xl md:text-5xl lg:text-[3.25rem] leading-[1.05] text-slate tracking-tight">
+            {v.headline}
+          </h2>
+        </div>
+
+        <p className="mt-4 text-base text-slate-2 leading-relaxed max-w-3xl">
+          {scenario.verdictSummary}
+        </p>
+
+        <div className="mt-6 grid sm:grid-cols-2 gap-3 max-w-3xl">
+          <div className="rounded-xl border border-border/70 bg-white/70 p-4">
+            <div className="text-[10px] uppercase tracking-[0.2em] text-slate-4 font-mono">
+              Recommended next action
+            </div>
+            <div className="mt-1.5 text-sm text-slate leading-snug">
+              {scenario.recommendedNextAction}
+            </div>
+          </div>
+          <div className="rounded-xl border border-border/70 bg-white/70 p-4">
+            <div className="text-[10px] uppercase tracking-[0.2em] text-slate-4 font-mono">
+              Human review
+            </div>
+            <div className="mt-1.5 text-sm text-slate leading-snug">
+              {scenario.humanReviewPosture}
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-3">
+          <span className="font-medium text-slate">{e.name}</span>
+          <span className="opacity-50">·</span>
+          <span>
+            {e.title} · {e.department}
+          </span>
+          <span className="opacity-50">·</span>
+          <span className="font-mono">{e.eventDate}</span>
+        </div>
+      </Card>
+
+      {/* 2 + 3 — Why & Blocking Conditions */}
+      <div className="grid lg:grid-cols-2 gap-5">
+        <Card className="p-6 bg-white border border-border/70">
+          <BlockHeader title="Why" caption="Top reasons the verdict was reached" />
+          <ul className="mt-4 space-y-2">
+            {scenario.topReasons.map((r) => (
+              <li key={r} className="flex items-start gap-2.5">
+                <ChevronRight className="h-4 w-4 mt-0.5 text-primary shrink-0" />
+                <span className="text-sm text-slate-2 leading-snug">{r}</span>
+              </li>
+            ))}
+          </ul>
+        </Card>
+
+        <Card className="p-6 bg-white border border-border/70">
+          <BlockHeader
+            title="Blocking conditions"
+            caption={
+              hasBlockers
+                ? "Conditions that must clear before release"
+                : "Conditions preventing release"
+            }
+          />
+          {hasBlockers ? (
+            <ul className="mt-4 space-y-2">
+              {scenario.blockingConditions.map((b) => (
+                <li
+                  key={b}
+                  className="flex items-start gap-2.5 rounded-lg border border-amber-200 bg-amber-50/60 px-3 py-2"
+                >
+                  <Lock className="h-4 w-4 mt-0.5 text-amber-700 shrink-0" />
+                  <span className="text-sm text-slate leading-snug">{b}</span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div className="mt-4 flex items-center gap-2.5 rounded-lg border border-emerald-200 bg-emerald-50/70 px-3 py-2.5">
+              <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0" />
+              <span className="text-sm text-slate">
+                <span className="font-medium">
+                  No active blocking conditions.
+                </span>{" "}
+                <span className="text-slate-3">
+                  Cleared for release on schedule.
+                </span>
+              </span>
+            </div>
+          )}
+        </Card>
+      </div>
+
+      {/* 4 — Prepared workstreams */}
+      <Card className="p-5 bg-white border border-border/70">
+        <BlockHeader
+          title="Prepared workstreams"
+          caption="Operational actions prepared by domain — supporting the verdict"
+        />
+        <div className="mt-4 grid md:grid-cols-2 lg:grid-cols-3 gap-2.5">
+          {scenario.preparedWorkstreams.map((w) => {
+            const meta = WORKSTREAM_META[w.domain];
+            const Icon = meta.icon;
+            return (
+              <div
+                key={w.domain}
+                className="rounded-lg border border-border/70 bg-paper/40 px-3 py-2.5"
+              >
+                <div className="flex items-center gap-1.5">
+                  <Icon className="h-3.5 w-3.5 text-primary shrink-0" />
+                  <div className="text-[13px] font-medium text-slate leading-tight">
+                    {w.domain}
+                  </div>
+                </div>
+                <ul className="mt-1.5 space-y-1">
+                  {w.items.map((i) => (
+                    <li
+                      key={i}
+                      className="flex items-start gap-1.5 text-[12.5px] text-slate-2 leading-snug"
+                    >
+                      <span className="mt-1.5 h-1 w-1 rounded-full bg-slate-3/60 shrink-0" />
+                      <span>{i}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })}
+        </div>
+      </Card>
+
+      {/* 5 — Human accountability */}
+      <Card className="p-5 bg-white border border-border/70">
+        <BlockHeader
+          title="Human accountability"
+          caption="Who must approve, review, and release"
+        />
+        <div className="mt-3 grid md:grid-cols-3 gap-2.5">
+          <AccountabilityColumn
+            label="Must approve"
+            items={scenario.humanAccountability.mustApprove}
+            emptyText="No additional approval required"
+          />
+          <AccountabilityColumn
+            label="Must review"
+            items={scenario.humanAccountability.mustReview}
+            emptyText="No additional review required"
+          />
+          <AccountabilityColumn
+            label="Can release"
+            items={scenario.humanAccountability.canRelease}
+            emptyText="—"
+          />
+        </div>
+      </Card>
+
+      {/* Closing actions */}
+      <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+        <Button variant="outline" onClick={onBack}>
+          <ArrowLeft className="mr-2 h-4 w-4" /> Back to queue
+        </Button>
+        <Button
+          className="bg-slate hover:bg-slate-2 text-white"
+          onClick={onRequest}
+        >
+          Request this agent for your team{" "}
+          <ArrowRight className="ml-2 h-4 w-4" />
+        </Button>
+      </div>
+    </motion.div>
+  );
+}
+
+function AccountabilityColumn({
+  label,
+  items,
+  emptyText,
+}: {
+  label: string;
+  items: string[];
+  emptyText: string;
+}) {
+  return (
+    <div className="rounded-lg border border-border/70 bg-paper/40 px-3 py-2.5">
+      <div className="text-[10px] uppercase tracking-[0.2em] text-slate-4 font-mono">
+        {label}
+      </div>
+      {items.length > 0 ? (
+        <ul className="mt-1.5 space-y-1">
+          {items.map((i) => (
+            <li
+              key={i}
+              className="text-[12.5px] text-slate-2 leading-snug flex items-start gap-1.5"
+            >
+              <span className="mt-1.5 h-1 w-1 rounded-full bg-slate-3/60 shrink-0" />
+              {i}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div className="mt-1.5 text-[12.5px] text-slate-4 italic">{emptyText}</div>
+      )}
+    </div>
+  );
+}
+
+function BlockHeader({ title, caption }: { title: string; caption: string }) {
+  return (
+    <div>
+      <div className="font-display text-lg text-slate">{title}</div>
+      <div className="text-xs text-slate-4 mt-0.5">{caption}</div>
+    </div>
+  );
+}
