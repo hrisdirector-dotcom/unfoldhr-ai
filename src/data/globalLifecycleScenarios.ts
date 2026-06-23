@@ -347,6 +347,9 @@ const SCENARIO_TERM_HELD: LifecycleScenario = {
   verdict: "Held",
   verdictSummary:
     "Separation event is held — final pay, PTO payout, and HR / control approval are unresolved, and communications remain on hold.",
+  recommendedNextAction:
+    "Resolve final pay and PTO payout review, then obtain HR / control release approval.",
+  humanReviewPosture: "Required",
   topReasons: [
     "Final pay treatment has not been resolved",
     "PTO payout handling is unresolved",
