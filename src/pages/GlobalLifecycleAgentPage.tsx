@@ -787,16 +787,16 @@ function AccountabilityColumn({
   emptyText: string;
 }) {
   return (
-    <div className="rounded-xl border border-border/70 bg-paper/40 p-4">
+    <div className="rounded-lg border border-border/70 bg-paper/40 px-3 py-2.5">
       <div className="text-[10px] uppercase tracking-[0.2em] text-slate-4 font-mono">
         {label}
       </div>
       {items.length > 0 ? (
-        <ul className="mt-2 space-y-1.5">
+        <ul className="mt-1.5 space-y-1">
           {items.map((i) => (
             <li
               key={i}
-              className="text-sm text-slate-2 leading-snug flex items-start gap-2"
+              className="text-[12.5px] text-slate-2 leading-snug flex items-start gap-1.5"
             >
               <span className="mt-1.5 h-1 w-1 rounded-full bg-slate-3/60 shrink-0" />
               {i}
@@ -804,7 +804,7 @@ function AccountabilityColumn({
           ))}
         </ul>
       ) : (
-        <div className="mt-2 text-sm text-slate-4 italic">{emptyText}</div>
+        <div className="mt-1.5 text-[12.5px] text-slate-4 italic">{emptyText}</div>
       )}
     </div>
   );
