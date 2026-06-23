@@ -71,6 +71,8 @@ export interface LifecycleScenario {
   /* ---------- Result payload ---------- */
   verdict: LifecycleVerdict;
   verdictSummary: string;        // single sentence
+  recommendedNextAction: string; // one short sentence
+  humanReviewPosture: string;    // e.g. "Required", "Recommended"
   topReasons: string[];          // 1–3 reasons the verdict was reached
   blockingConditions: string[];  // empty array => "no active blocking conditions"
   preparedWorkstreams: LifecycleWorkstream[];
