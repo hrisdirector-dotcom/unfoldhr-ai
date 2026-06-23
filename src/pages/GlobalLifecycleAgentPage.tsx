@@ -415,7 +415,6 @@ function LaunchStage({
 }) {
   const e = scenario.employee;
   const isTerm = scenario.eventType === "Termination";
-  const isHeld = scenario.verdict === "Held";
 
   return (
     <motion.div
@@ -424,19 +423,9 @@ function LaunchStage({
       transition={{ duration: 0.35 }}
       className="space-y-6"
     >
-      {isHeld && (
-        <div className="rounded-xl border border-amber-200 bg-amber-50/70 px-4 py-3 flex items-center gap-3">
-          <ShieldAlert className="h-4 w-4 text-amber-700 shrink-0" />
-          <div className="text-sm text-amber-900">
-            <span className="font-medium">Held for control review.</span>{" "}
-            Communications and offboarding coordination are held pending review.
-          </div>
-        </div>
-      )}
-
       <Card className="overflow-hidden border border-border/70">
         <div className="grid md:grid-cols-[1.4fr_1fr]">
-          {/* LEFT — event detail */}
+          {/* LEFT — event detail (compressed) */}
           <div className="relative p-7 lg:p-8">
             <div
               className="absolute inset-0 pointer-events-none"
@@ -446,12 +435,15 @@ function LaunchStage({
               }}
             />
             <div className="relative">
+              {/* A. Event header */}
               <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.22em] text-slate-4 font-mono">
-                <span>01 · Lifecycle Event</span>
+                <span>Lifecycle Event</span>
                 <span className="opacity-50">·</span>
                 <span className="text-primary">
                   {isTerm ? "Employee Offboarding" : "New Hire Onboarding"}
                 </span>
+                <span className="opacity-50">·</span>
+                <VerdictPill status={scenario.queueStatus} />
               </div>
 
               <div className="mt-5 flex items-start gap-4">
@@ -483,27 +475,19 @@ function LaunchStage({
                 </div>
               </div>
 
-              <Separator className="my-6" />
+              {/* B. One-line event summary */}
+              <p className="mt-6 text-sm text-slate-2 leading-relaxed">
+                {scenario.launchEventSummary}
+              </p>
 
-              <div>
-                <div className="text-[10px] uppercase tracking-[0.2em] text-slate-4 font-mono">
-                  {scenario.launchTitle}
-                </div>
-                <p className="mt-2 text-sm text-slate-2 leading-relaxed">
-                  {scenario.launchEventSummary}
-                </p>
-                <p className="mt-2 text-sm text-slate-3 italic leading-relaxed">
-                  {scenario.eventSummary}
-                </p>
-              </div>
-
+              {/* C. Known control flags */}
               {scenario.preRunNotes.length > 0 && (
-                <div className="mt-6 rounded-xl border border-border/70 bg-paper/50 p-4">
+                <div className="mt-6">
                   <div className="text-[10px] uppercase tracking-[0.2em] text-slate-4 font-mono">
-                    Known flags / pre-run notes
+                    Known control flags
                   </div>
                   <ul className="mt-2 space-y-1.5">
-                    {scenario.preRunNotes.map((n) => (
+                    {scenario.preRunNotes.slice(0, 5).map((n) => (
                       <li
                         key={n}
                         className="flex items-start gap-2 text-sm text-slate-2 leading-snug"
@@ -518,24 +502,17 @@ function LaunchStage({
             </div>
           </div>
 
-          {/* RIGHT — agent-ready / Run CTA */}
+          {/* RIGHT — Agent will evaluate + dominant Run CTA */}
           <div className="relative flex flex-col justify-between border-t md:border-t-0 md:border-l border-border/70 bg-gradient-to-br from-slate to-slate-2 text-white p-7 lg:p-8">
             <div>
               <div className="text-[10px] uppercase tracking-[0.22em] text-blue-200/80 font-mono">
-                Agent ready
+                Agent will evaluate
               </div>
-              <p className="mt-3 text-sm text-blue-100/90 leading-relaxed">
-                I'll evaluate this{" "}
-                {scenario.eventType.toLowerCase()} against worker record
-                integrity, payroll readiness, approvals, and release conditions —
-                and surface anything that needs your attention.
-              </p>
-
-              <div className="mt-5 space-y-2">
-                {scenario.evaluationFocus.map((f) => (
+              <div className="mt-4 space-y-2">
+                {scenario.evaluationFocus.slice(0, 6).map((f) => (
                   <div
                     key={f}
-                    className="flex items-start gap-2 text-xs text-blue-100/85"
+                    className="flex items-start gap-2 text-xs text-blue-100/90"
                   >
                     <ChevronRight className="h-3.5 w-3.5 mt-0.5 text-blue-300 shrink-0" />
                     <span>{f}</span>
