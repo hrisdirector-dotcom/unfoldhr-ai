@@ -234,6 +234,9 @@ const SCENARIO_HIRE_APPROVAL: LifecycleScenario = {
   verdict: "Approval Required",
   verdictSummary:
     "New hire is mostly ready, but a configured compensation / threshold approval is still open — release is held until it clears.",
+  recommendedNextAction:
+    "Clear the configured compensation / threshold approval to release the hire.",
+  humanReviewPosture: "Required",
   topReasons: [
     "Worker record and payroll readiness are largely complete",
     "Compensation falls above a configured approval threshold",
