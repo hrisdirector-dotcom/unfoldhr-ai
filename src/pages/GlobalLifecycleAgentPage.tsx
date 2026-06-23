@@ -594,7 +594,7 @@ function ResultsStage({
     >
       {/* 1 — Control Verdict (dominant) */}
       <Card
-        id="lifecycle-outcome"
+        id="lifecycle-control-verdict"
         className={`relative overflow-hidden p-7 lg:p-9 border-2 ${v.border} ${v.bg}`}
       >
         <div className="flex flex-wrap items-start justify-between gap-3">
@@ -615,6 +615,25 @@ function ResultsStage({
           {scenario.verdictSummary}
         </p>
 
+        <div className="mt-6 grid sm:grid-cols-2 gap-3 max-w-3xl">
+          <div className="rounded-xl border border-border/70 bg-white/70 p-4">
+            <div className="text-[10px] uppercase tracking-[0.2em] text-slate-4 font-mono">
+              Recommended next action
+            </div>
+            <div className="mt-1.5 text-sm text-slate leading-snug">
+              {scenario.recommendedNextAction}
+            </div>
+          </div>
+          <div className="rounded-xl border border-border/70 bg-white/70 p-4">
+            <div className="text-[10px] uppercase tracking-[0.2em] text-slate-4 font-mono">
+              Human review
+            </div>
+            <div className="mt-1.5 text-sm text-slate leading-snug">
+              {scenario.humanReviewPosture}
+            </div>
+          </div>
+        </div>
+
         <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-3">
           <span className="font-medium text-slate">{e.name}</span>
           <span className="opacity-50">·</span>
@@ -626,55 +645,57 @@ function ResultsStage({
         </div>
       </Card>
 
-      {/* 2 — Why */}
-      <Card className="p-6 bg-white border border-border/70">
-        <BlockHeader title="Why" caption="Top reasons the verdict was reached" />
-        <ul className="mt-4 space-y-2.5">
-          {scenario.topReasons.map((r) => (
-            <li key={r} className="flex items-start gap-2.5">
-              <ChevronRight className="h-4 w-4 mt-0.5 text-primary shrink-0" />
-              <span className="text-sm text-slate-2 leading-relaxed">{r}</span>
-            </li>
-          ))}
-        </ul>
-      </Card>
-
-      {/* 3 — Blocking Conditions */}
-      <Card className="p-6 bg-white border border-border/70">
-        <BlockHeader
-          title="Blocking conditions"
-          caption={
-            hasBlockers
-              ? "Conditions that must clear before release"
-              : "Conditions preventing release"
-          }
-        />
-        {hasBlockers ? (
+      {/* 2 + 3 — Why & Blocking Conditions (compact, side-by-side) */}
+      <div className="grid lg:grid-cols-2 gap-5">
+        <Card className="p-6 bg-white border border-border/70">
+          <BlockHeader title="Why" caption="Top reasons the verdict was reached" />
           <ul className="mt-4 space-y-2">
-            {scenario.blockingConditions.map((b) => (
-              <li
-                key={b}
-                className="flex items-start gap-2.5 rounded-lg border border-amber-200 bg-amber-50/60 px-3 py-2"
-              >
-                <Lock className="h-4 w-4 mt-0.5 text-amber-700 shrink-0" />
-                <span className="text-sm text-slate leading-snug">{b}</span>
+            {scenario.topReasons.map((r) => (
+              <li key={r} className="flex items-start gap-2.5">
+                <ChevronRight className="h-4 w-4 mt-0.5 text-primary shrink-0" />
+                <span className="text-sm text-slate-2 leading-snug">{r}</span>
               </li>
             ))}
           </ul>
-        ) : (
-          <div className="mt-4 flex items-center gap-2.5 rounded-lg border border-emerald-200 bg-emerald-50/70 px-3 py-2.5">
-            <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0" />
-            <span className="text-sm text-slate">
-              <span className="font-medium">
-                No active blocking conditions.
-              </span>{" "}
-              <span className="text-slate-3">
-                Cleared for release on schedule.
+        </Card>
+
+        <Card className="p-6 bg-white border border-border/70">
+          <BlockHeader
+            title="Blocking conditions"
+            caption={
+              hasBlockers
+                ? "Conditions that must clear before release"
+                : "Conditions preventing release"
+            }
+          />
+          {hasBlockers ? (
+            <ul className="mt-4 space-y-2">
+              {scenario.blockingConditions.map((b) => (
+                <li
+                  key={b}
+                  className="flex items-start gap-2.5 rounded-lg border border-amber-200 bg-amber-50/60 px-3 py-2"
+                >
+                  <Lock className="h-4 w-4 mt-0.5 text-amber-700 shrink-0" />
+                  <span className="text-sm text-slate leading-snug">{b}</span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div className="mt-4 flex items-center gap-2.5 rounded-lg border border-emerald-200 bg-emerald-50/70 px-3 py-2.5">
+              <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0" />
+              <span className="text-sm text-slate">
+                <span className="font-medium">
+                  No active blocking conditions.
+                </span>{" "}
+                <span className="text-slate-3">
+                  Cleared for release on schedule.
+                </span>
               </span>
-            </span>
-          </div>
-        )}
-      </Card>
+            </div>
+          )}
+        </Card>
+      </div>
+
 
       {/* 4 — Prepared workstreams */}
       <Card className="p-6 bg-white border border-border/70">
