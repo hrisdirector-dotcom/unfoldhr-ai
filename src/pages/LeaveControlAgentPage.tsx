@@ -219,6 +219,7 @@ export default function LeaveControlAgentPage({ setPage }: Props) {
           eventLabel={selected.eventType}
           employeeName={selected.employee.name}
           onDone={completeRun}
+          agentLabel="Leave / LOA Control Agent"
         />
       )}
     </main>
