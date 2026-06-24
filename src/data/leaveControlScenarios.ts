@@ -108,7 +108,7 @@ const SCENARIO_LEAVE_READY: LoaScenario = {
 
   launchTitle: "Leave request — ready for control review",
   launchEventSummary:
-    "Control checks pending: leave dates, approval completion, documentation posture, payroll and leave administration readiness.",
+    "Control checks pending: leave window integrity, approval completion, documentation posture, payroll / leave administration readiness, and coverage / communications preparation.",
   evaluationFocus: [
     "Leave event completeness",
     "Leave dates and event integrity",
