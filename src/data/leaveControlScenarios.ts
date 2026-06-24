@@ -92,7 +92,7 @@ const SCENARIO_LEAVE_READY: LoaScenario = {
   queueTitle: "Leave Request — Ready to Progress",
   queueStatus: "Ready",
   queueSummary:
-    "Clean leave request. Dates, approvals, documentation and payroll posture all aligned.",
+    "Leave window, approvals, documentation and payroll posture all aligned — coverage and communications prepared for release.",
 
   employee: {
     name: "Hannah Becker",
