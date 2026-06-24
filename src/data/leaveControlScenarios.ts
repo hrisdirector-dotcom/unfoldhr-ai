@@ -330,7 +330,7 @@ const SCENARIO_RETURN_HELD: LoaScenario = {
 
   launchTitle: "Return / extension event — held for control review",
   launchEventSummary:
-    "Open control conditions: unresolved return / extension details, incomplete return documentation, payroll / benefits coordination, HR / control review, and communications hold.",
+    "Open control conditions: return-to-work / extension posture unresolved, return documentation incomplete, payroll / benefits coordination not releasable, HR / control review open, communications hold active.",
   evaluationFocus: [
     "Return / extension event integrity",
     "Return date and extension detail clarity",
