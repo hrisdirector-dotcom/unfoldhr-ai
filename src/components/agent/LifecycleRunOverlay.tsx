@@ -81,7 +81,7 @@ function RunOverlayInner({
         <div className="flex items-center justify-between border-b border-white/10 pb-5">
           <div>
             <div className="text-[10px] uppercase tracking-[0.22em] text-blue-300/80 font-mono">
-              Global Lifecycle Agent
+              {agentLabel ?? "Global Lifecycle Agent"}
             </div>
             <div className="mt-1 font-display text-white text-lg leading-tight">
               {eventLabel} · {employeeName}
