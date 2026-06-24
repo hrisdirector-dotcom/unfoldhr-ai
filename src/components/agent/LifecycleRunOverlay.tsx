@@ -8,9 +8,10 @@ interface Props {
   eventLabel: string;
   employeeName: string;
   onDone: () => void;
+  agentLabel?: string;
 }
 
-export function LifecycleRunOverlay({ show, steps, eventLabel, employeeName, onDone }: Props) {
+export function LifecycleRunOverlay({ show, steps, eventLabel, employeeName, onDone, agentLabel }: Props) {
   return (
     <AnimatePresence>
       {show && (
@@ -19,6 +20,7 @@ export function LifecycleRunOverlay({ show, steps, eventLabel, employeeName, onD
           eventLabel={eventLabel}
           employeeName={employeeName}
           onDone={onDone}
+          agentLabel={agentLabel}
         />
       )}
     </AnimatePresence>
@@ -30,6 +32,7 @@ function RunOverlayInner({
   eventLabel,
   employeeName,
   onDone,
+  agentLabel,
 }: Omit<Props, "show">) {
   const [active, setActive] = useState(0);
   const total = steps.length;
@@ -78,7 +81,7 @@ function RunOverlayInner({
         <div className="flex items-center justify-between border-b border-white/10 pb-5">
           <div>
             <div className="text-[10px] uppercase tracking-[0.22em] text-blue-300/80 font-mono">
-              Global Lifecycle Agent
+              {agentLabel ?? "Global Lifecycle Agent"}
             </div>
             <div className="mt-1 font-display text-white text-lg leading-tight">
               {eventLabel} · {employeeName}

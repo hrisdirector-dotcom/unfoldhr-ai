@@ -92,7 +92,7 @@ const SCENARIO_LEAVE_READY: LoaScenario = {
   queueTitle: "Leave Request — Ready to Progress",
   queueStatus: "Ready",
   queueSummary:
-    "Clean leave request. Dates, approvals, documentation and payroll posture all aligned.",
+    "Leave window, approvals, documentation and payroll posture all aligned — coverage and communications prepared for release.",
 
   employee: {
     name: "Hannah Becker",
@@ -108,7 +108,7 @@ const SCENARIO_LEAVE_READY: LoaScenario = {
 
   launchTitle: "Leave request — ready for control review",
   launchEventSummary:
-    "Control checks pending: leave dates, approval completion, documentation posture, payroll and leave administration readiness.",
+    "Control checks pending: leave window integrity, approval completion, documentation posture, payroll / leave administration readiness, and coverage / communications preparation.",
   evaluationFocus: [
     "Leave event completeness",
     "Leave dates and event integrity",
@@ -198,7 +198,7 @@ const SCENARIO_LEAVE_APPROVAL: LoaScenario = {
   queueTitle: "Leave Request — Documentation / Approval Hold",
   queueStatus: "Approval Required",
   queueSummary:
-    "Leave is structurally ready, but supporting documentation and/or approval is still open.",
+    "Leave window is structurally valid, but supporting documentation and approval posture are still open — release held until both clear.",
 
   employee: {
     name: "Marcus Tilden",
@@ -214,7 +214,7 @@ const SCENARIO_LEAVE_APPROVAL: LoaScenario = {
 
   launchTitle: "Leave request — held for documentation / approval",
   launchEventSummary:
-    "Open control conditions: supporting documentation incomplete, leave approval not complete, release hold and communications hold active.",
+    "Open control conditions: documentation posture incomplete, leave approval not cleared, release hold and communications hold active on payroll / benefits workstreams.",
   evaluationFocus: [
     "Leave event completeness",
     "Supporting documentation status",
@@ -314,7 +314,7 @@ const SCENARIO_RETURN_HELD: LoaScenario = {
   queueTitle: "Return-to-Work / Extension — Held for Control Review",
   queueStatus: "Held",
   queueSummary:
-    "Return / extension event with multiple unresolved control conditions — workstreams are held pending review.",
+    "Return / extension release conditions unresolved — payroll, benefits and communications workstreams held pending HR / control review.",
 
   employee: {
     name: "Aisha N'Doye",
@@ -330,7 +330,7 @@ const SCENARIO_RETURN_HELD: LoaScenario = {
 
   launchTitle: "Return / extension event — held for control review",
   launchEventSummary:
-    "Open control conditions: unresolved return / extension details, incomplete return documentation, payroll / benefits coordination, HR / control review, and communications hold.",
+    "Open control conditions: return-to-work / extension posture unresolved, return documentation incomplete, payroll / benefits coordination not releasable, HR / control review open, communications hold active.",
   evaluationFocus: [
     "Return / extension event integrity",
     "Return date and extension detail clarity",
@@ -356,9 +356,9 @@ const SCENARIO_RETURN_HELD: LoaScenario = {
 
   verdict: "Held",
   verdictSummary:
-    "Return / extension event is held — return details, documentation, payroll / benefits coordination and HR / control review remain unresolved, and communications are on hold.",
+    "Return-to-work / extension event is held — return posture, documentation, payroll / benefits coordination and HR / control review are unresolved, and the communications hold remains active. Workstreams are prepared but not releasable.",
   recommendedNextAction:
-    "Resolve return / extension details and documentation, then complete HR / control review before release.",
+    "Resolve return / extension posture and documentation, complete payroll / benefits coordination, then clear HR / control review before releasing the communications hold.",
   humanReviewPosture: "Required",
   topReasons: [
     "Return / extension details are not fully resolved on the record",
