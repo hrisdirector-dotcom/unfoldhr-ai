@@ -20,6 +20,7 @@ import ExecutiveSnapshotPage from "@/pages/ExecutiveSnapshotPage";
 import TodayDecisionsPage from "@/pages/TodayDecisionsPage";
 import GlobalLifecycleAgentPage from "@/pages/GlobalLifecycleAgentPage";
 import LeaveControlAgentPage from "@/pages/LeaveControlAgentPage";
+import CompensationChangeAgentPage from "@/pages/CompensationChangeAgentPage";
 import AgentsPage from "@/pages/AgentsPage";
 import AgentDetailPage from "@/pages/AgentDetailPage";
 import OnboardingWalkthrough from "@/components/OnboardingWalkthrough";
