@@ -214,7 +214,7 @@ const SCENARIO_LEAVE_APPROVAL: LoaScenario = {
 
   launchTitle: "Leave request — held for documentation / approval",
   launchEventSummary:
-    "Open control conditions: supporting documentation incomplete, leave approval not complete, release hold and communications hold active.",
+    "Open control conditions: documentation posture incomplete, leave approval not cleared, release hold and communications hold active on payroll / benefits workstreams.",
   evaluationFocus: [
     "Leave event completeness",
     "Supporting documentation status",
