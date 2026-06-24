@@ -314,7 +314,7 @@ const SCENARIO_RETURN_HELD: LoaScenario = {
   queueTitle: "Return-to-Work / Extension — Held for Control Review",
   queueStatus: "Held",
   queueSummary:
-    "Return / extension event with multiple unresolved control conditions — workstreams are held pending review.",
+    "Return / extension release conditions unresolved — payroll, benefits and communications workstreams held pending HR / control review.",
 
   employee: {
     name: "Aisha N'Doye",
