@@ -20,6 +20,7 @@ import ExecutiveSnapshotPage from "@/pages/ExecutiveSnapshotPage";
 import TodayDecisionsPage from "@/pages/TodayDecisionsPage";
 import GlobalLifecycleAgentPage from "@/pages/GlobalLifecycleAgentPage";
 import LeaveControlAgentPage from "@/pages/LeaveControlAgentPage";
+import CompensationChangeAgentPage from "@/pages/CompensationChangeAgentPage";
 import AgentsPage from "@/pages/AgentsPage";
 import AgentDetailPage from "@/pages/AgentDetailPage";
 import OnboardingWalkthrough from "@/components/OnboardingWalkthrough";
@@ -157,6 +158,7 @@ const Index = () => {
       {page === "agent-detail" && agentId && <AgentDetailPage agentId={agentId} setPage={navigateTo} />}
       {page === "global-lifecycle-agent" && <GlobalLifecycleAgentPage setPage={navigateTo} />}
       {page === "leave-control-agent" && <LeaveControlAgentPage setPage={navigateTo} />}
+      {page === "compensation-change-agent" && <CompensationChangeAgentPage setPage={navigateTo} />}
       {page === "workforce-planning" && <WorkforcePlanningAgent setPage={navigateTo} />}
       {page === "pricing" && <PricingPage setPage={navigateTo} />}
       {page === "about" && <AboutPage />}
