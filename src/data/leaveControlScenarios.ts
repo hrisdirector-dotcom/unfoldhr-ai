@@ -356,9 +356,9 @@ const SCENARIO_RETURN_HELD: LoaScenario = {
 
   verdict: "Held",
   verdictSummary:
-    "Return / extension event is held — return details, documentation, payroll / benefits coordination and HR / control review remain unresolved, and communications are on hold.",
+    "Return-to-work / extension event is held — return posture, documentation, payroll / benefits coordination and HR / control review are unresolved, and the communications hold remains active. Workstreams are prepared but not releasable.",
   recommendedNextAction:
-    "Resolve return / extension details and documentation, then complete HR / control review before release.",
+    "Resolve return / extension posture and documentation, complete payroll / benefits coordination, then clear HR / control review before releasing the communications hold.",
   humanReviewPosture: "Required",
   topReasons: [
     "Return / extension details are not fully resolved on the record",
