@@ -198,7 +198,7 @@ const SCENARIO_LEAVE_APPROVAL: LoaScenario = {
   queueTitle: "Leave Request — Documentation / Approval Hold",
   queueStatus: "Approval Required",
   queueSummary:
-    "Leave is structurally ready, but supporting documentation and/or approval is still open.",
+    "Leave window is structurally valid, but supporting documentation and approval posture are still open — release held until both clear.",
 
   employee: {
     name: "Marcus Tilden",
