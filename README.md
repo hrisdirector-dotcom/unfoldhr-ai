@@ -18,14 +18,14 @@ Purpose-built AI agents that evaluate workforce events, verify organizational re
 
 # Overview
 
-unfoldHR AI is an enterprise AI platform designed to help HR organizations move beyond chatbots and into operational decision intelligence.
+unfoldHR AI explores what enterprise HR operations could look like when AI moves beyond answering questions and begins making structured, explainable operational recommendations.
 
-Instead of simply answering questions, the platform evaluates workforce events, verifies organizational readiness, recommends next actions, and prepares downstream operational work before employee lifecycle events move forward.
+Rather than acting as another chatbot, the platform evaluates employee lifecycle events, verifies organizational readiness, surfaces operational risks, and prepares downstream work before critical workforce changes occur.
 
 The platform introduces two complementary AI agent families:
 
-- **Control & Readiness Agents** verify workforce events are operationally ready.
-- **Decision Agents** help leaders evaluate complex workforce scenarios and determine the best course of action.
+- **Control & Readiness Agents** — verify that workforce events are operationally ready to proceed.
+- **Decision Agents** — help leaders evaluate complex workforce scenarios using explainable AI.
 
 Together they provide organizations with greater operational confidence, consistency, transparency, and accountability.
 
@@ -33,13 +33,17 @@ Together they provide organizations with greater operational confidence, consist
 
 # Why I Built It
 
-After more than twenty years helping organizations modernize HR technology, I noticed the same challenge everywhere.
+After more than twenty years helping organizations modernize HR technology, I kept seeing the same pattern.
 
-Critical workforce events—new hires, transfers, promotions, payroll changes, and employee exits—were still managed through spreadsheets, email, disconnected systems, and manual checklists.
+The systems had improved.
 
-Meanwhile, AI was primarily being used to answer questions instead of helping organizations make operational decisions.
+The data had improved.
 
-I wanted to explore what HR would look like if AI became an operational decision layer rather than simply another assistant.
+The AI had improved.
+
+Yet critical workforce events—new hires, promotions, transfers, payroll changes, and employee exits—were still coordinated through spreadsheets, emails, disconnected workflows, and manual checklists.
+
+I wanted to explore what HR would look like if AI became an operational decision layer instead of simply another assistant.
 
 unfoldHR AI is that exploration.
 
@@ -49,7 +53,11 @@ unfoldHR AI is that exploration.
 
 ## Agent Catalog
 
-The platform is organized around two AI agent families that support both operational readiness and workforce decision intelligence.
+The platform organizes AI into two distinct agent families.
+
+Control & Readiness Agents verify whether workforce events are ready to move forward.
+
+Decision Agents help HR leaders evaluate more complex organizational decisions.
 
 ![Agent Catalog](docs/images/02-agent-catalog.png)
 
@@ -72,63 +80,89 @@ It verifies:
 
 ---
 
-## Scenario 1 — New Hire (Ready)
+## AI Verdicts
 
-The Lifecycle Agent evaluates a new hire event and performs readiness checks across multiple operational domains.
+Every workforce event receives a clear operational recommendation supported by evidence.
 
-![Agent Evaluation Ready](docs/images/04-agent-evaluation-ready.png)
+The platform intentionally separates AI recommendations from human accountability.
 
----
+### Ready
 
-### AI Verdict
+When operational controls are satisfied, the platform recommends release.
 
-Once all readiness checks pass, the platform returns a release recommendation with supporting evidence.
+![Ready Verdict](docs/images/04-ready-verdict.png)
 
-![Ready Verdict](docs/images/05-ready-verdict.png)
+### Held
 
----
+When blocking conditions exist, the platform identifies the unresolved controls, explains why the event cannot proceed, and recommends next actions.
 
-### Operational Workstreams
-
-Rather than stopping with a recommendation, the platform prepares downstream operational work across payroll, HR, communications, IT, documentation, and audit.
-
-![Ready Workstreams](docs/images/06-ready-workstreams.png)
+![Held Verdict](docs/images/05-held-verdict.png)
 
 ---
 
-## Scenario 2 — Employee Offboarding (Held)
+## AI Evaluation
 
-The same workflow evaluates an employee termination event.
+Each workforce event moves through a structured evaluation process.
 
-Because operational controls remain unresolved, the event is held for review.
+Rather than generating generic responses, the agent evaluates multiple operational domains before reaching a recommendation.
 
-![Agent Evaluation Held](docs/images/07-agent-evaluation-held.png)
-
----
-
-### AI Verdict
-
-The platform clearly identifies blocking conditions, required human approvals, and recommended next actions.
-
-![Held Verdict](docs/images/08-held-verdict.png)
+![Agent Evaluation](docs/images/06-agent-evaluation-progress.png)
 
 ---
 
-### Operational Workstreams
+## Operational Work Preparation
 
-Even when an event is held, unfoldHR AI prepares operational work so teams understand exactly what must happen before release.
+The recommendation is only the beginning.
 
-![Held Workstreams](docs/images/09-held-workstreams.png)
+Once a verdict has been reached, unfoldHR AI prepares downstream operational work across functions including:
+
+- Payroll
+- HR Business Partners
+- IT Coordination
+- Employee Communications
+- Documentation
+- Audit
+
+![Operational Workstreams](docs/images/07-operational-workstreams.png)
+
+---
+
+## Enterprise Integrations
+
+The platform is designed to connect with modern enterprise ecosystems through secure APIs and customer-controlled integrations.
+
+Potential integration points include:
+
+- HRIS
+- ATS
+- Identity Platforms
+- AI Models
+- Workflow Automation
+- Forms
+- Communications
+- Enterprise APIs
+
+![Enterprise Integrations](docs/images/08-integrations.png)
+
+---
+
+## About
+
+Built by HR practitioners who wanted to bridge the gap between enterprise HR strategy and practical AI execution.
+
+Rather than replacing HR professionals, unfoldHR AI is designed to provide better operational intelligence, greater confidence, and more explainable decision support.
+
+![About](docs/images/09-about.png)
 
 ---
 
 # Design Principles
 
-The platform was intentionally designed around several principles.
+The platform is built around several core principles:
 
-- AI should support operational decisions—not replace accountability.
+- AI should improve operational decision-making.
+- Human accountability should always remain.
 - Every recommendation should be explainable.
-- Human review remains part of the workflow.
 - Operational readiness should be measurable.
 - Every decision should produce an auditable trail.
 - AI should prepare work—not simply answer questions.
@@ -149,7 +183,7 @@ The platform was intentionally designed around several principles.
 
 # Areas of Exploration
 
-This project explores practical applications of AI across enterprise HR operations, including:
+This project explores practical enterprise AI applications including:
 
 - Workforce Event Control
 - AI Decision Intelligence
@@ -165,9 +199,9 @@ This project explores practical applications of AI across enterprise HR operatio
 
 # Current Status
 
-🚧 **Active product development**
+🚧 **Active Product Development**
 
-Current work focuses on expanding the platform with additional enterprise agents covering:
+Current work focuses on expanding the platform with additional enterprise agents supporting:
 
 - Global Mobility
 - Payroll
@@ -179,13 +213,11 @@ Current work focuses on expanding the platform with additional enterprise agents
 
 ---
 
-# About
+# About the Builder
 
-I'm an Enterprise Solutions Consultant with more than twenty years of experience helping global organizations modernize HR technology and workforce operations.
+I'm an Enterprise Solutions Consultant with more than twenty years of experience helping organizations modernize HR technology and workforce operations.
 
 This project combines that enterprise experience with modern AI development tools to explore how intelligent agents can improve operational decision-making across the employee lifecycle.
-
-The goal isn't to replace HR professionals—it's to give them better operational intelligence, greater confidence, and more time to focus on people instead of process.
 
 ---
 
@@ -193,7 +225,7 @@ The goal isn't to replace HR professionals—it's to give them better operationa
 
 Ideas, suggestions, and thoughtful discussion are always welcome.
 
-If you're interested in enterprise AI, workforce technology, operational decision intelligence, or product design, I'd love to connect.
+If you're interested in enterprise AI, HR technology, operational decision intelligence, or product design, I'd love to connect.
 
 ---
 
