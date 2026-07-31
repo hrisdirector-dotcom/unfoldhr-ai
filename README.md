@@ -12,7 +12,7 @@ Purpose-built AI agents that evaluate workforce events, verify organizational re
 
 ---
 
-![Homepage](docs/images/01-homepage.png)
+![Homepage](docs/01-homepage.png)
 
 ---
 
@@ -59,7 +59,7 @@ Control & Readiness Agents verify whether workforce events are ready to move for
 
 Decision Agents help HR leaders evaluate more complex organizational decisions.
 
-![Agent Catalog](docs/images/02-agent-catalog.png)
+![Agent Catalog](docs/02-agent-catalog.png)
 
 ---
 
@@ -76,7 +76,7 @@ It verifies:
 - Manager readiness
 - Operational controls
 
-![Global Lifecycle Agent](docs/images/03-global-lifecycle-agent.png)
+![Global Lifecycle Agent](docs/03-global-lifecycle-agent.png)
 
 ---
 
@@ -90,13 +90,13 @@ The platform intentionally separates AI recommendations from human accountabilit
 
 When operational controls are satisfied, the platform recommends release.
 
-![Ready Verdict](docs/images/04-ready-verdict.png)
+![Ready Verdict](docs/04-ready-verdict.png)
 
 ### Held
 
 When blocking conditions exist, the platform identifies the unresolved controls, explains why the event cannot proceed, and recommends next actions.
 
-![Held Verdict](docs/images/05-held-verdict.png)
+![Held Verdict](docs/05-held-verdict.png)
 
 ---
 
@@ -106,7 +106,7 @@ Each workforce event moves through a structured evaluation process.
 
 Rather than generating generic responses, the agent evaluates multiple operational domains before reaching a recommendation.
 
-![Agent Evaluation](docs/images/06-agent-evaluation-progress.png)
+![Agent Evaluation](docs/06-agent-evaluation-progress.png)
 
 ---
 
@@ -123,7 +123,7 @@ Once a verdict has been reached, unfoldHR AI prepares downstream operational wor
 - Documentation
 - Audit
 
-![Operational Workstreams](docs/images/07-operational-workstreams.png)
+![Operational Workstreams](docs/07-operational-workstreams.png)
 
 ---
 
@@ -142,7 +142,7 @@ Potential integration points include:
 - Communications
 - Enterprise APIs
 
-![Enterprise Integrations](docs/images/08-integrations.png)
+![Enterprise Integrations](docs/08-integrations.png)
 
 ---
 
@@ -152,7 +152,7 @@ Built by HR practitioners who wanted to bridge the gap between enterprise HR str
 
 Rather than replacing HR professionals, unfoldHR AI is designed to provide better operational intelligence, greater confidence, and more explainable decision support.
 
-![About](docs/images/09-about.png)
+![About](docs/09-about.png)
 
 ---
 
