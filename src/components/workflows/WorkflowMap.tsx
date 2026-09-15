@@ -34,7 +34,7 @@ export default function WorkflowMap({ workflow }: Props) {
 
   return (
     <div>
-      <ol className="grid gap-3 md:grid-cols-2 lg:grid-cols-3" role="list">
+      <ol className="columns-1 md:columns-2 lg:columns-3 gap-3 [&>li]:mb-3" role="list">
         {workflow.futureStateSteps.map((step, i) => {
           const gate = gateAfter(step.id);
           const s = classificationStyles(step.classification);
