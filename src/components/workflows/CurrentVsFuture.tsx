@@ -55,7 +55,7 @@ export default function CurrentVsFuture({ workflow }: Props) {
         </p>
       </div>
 
-      <div className="bg-slate text-white rounded-2xl p-6 relative overflow-hidden">
+      <div className="bg-slate text-white rounded-2xl p-6 relative overflow-hidden self-start">
         <div className="absolute inset-0 dot-grid opacity-[0.05] pointer-events-none" />
         <div className="relative">
           <p className="text-[10px] font-mono uppercase tracking-[0.18em] text-blue-200/80 mb-3">

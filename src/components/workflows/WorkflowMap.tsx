@@ -149,7 +149,7 @@ function StepDetail({ step }: { step: WorkflowStep }) {
 
       <Block label="Human control">
         <span className="font-semibold text-foreground">
-          {control.short} — {control.label}
+          {control.short === "—" ? control.label : `${control.short} — ${control.label}`}
         </span>
         <p className="mt-1">{control.body}</p>
       </Block>
@@ -215,7 +215,7 @@ function GateDetail({ gate }: { gate: ControlGate }) {
       <Block label="Escalates when">{gate.escalateCondition}</Block>
       <Block label="Human control">
         <span className="font-semibold text-foreground">
-          {control.short} — {control.label}
+          {control.short === "—" ? control.label : `${control.short} — ${control.label}`}
         </span>
         <p className="mt-1">{control.body}</p>
       </Block>
