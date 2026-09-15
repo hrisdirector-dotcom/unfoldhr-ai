@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Toast } from "@/components/Toast";
 import PlatformHero from "@/components/landing/PlatformHero";
 import PlatformExplainer from "@/components/landing/PlatformExplainer";
+import WorkDesignSection from "@/components/landing/WorkDesignSection";
 import AgentFamiliesSection from "@/components/landing/AgentFamiliesSection";
 import FlagshipAgentSection from "@/components/landing/FlagshipAgentSection";
 import ExploreAgentsByType from "@/components/landing/ExploreAgentsByType";
@@ -20,6 +21,7 @@ export default function HomePage({ setPage }: HomePageProps) {
     <div className="bg-background">
       <PlatformHero setPage={setPage} />
       <PlatformExplainer />
+      <WorkDesignSection setPage={setPage} />
       <AgentFamiliesSection setPage={setPage} />
       <FlagshipAgentSection setPage={setPage} />
       <ExploreAgentsByType setPage={setPage} />

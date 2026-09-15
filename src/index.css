@@ -47,6 +47,16 @@
     --blue-soft: 225 84% 95%;
     --blue-mid: 222 84% 77%;
     --green-soft: 152 60% 94%;
+
+    /* Work classification (restrained, letter + label always shown) */
+    --cls-eliminate: 215 16% 47%;
+    --cls-eliminate-soft: 215 20% 93%;
+    --cls-human: 20 70% 42%;
+    --cls-human-soft: 24 70% 94%;
+    --cls-deterministic: 190 70% 30%;
+    --cls-deterministic-soft: 190 55% 93%;
+    --cls-agent: 225 74% 53%;
+    --cls-agent-soft: 225 84% 95%;
     --green-mid: 152 56% 46%;
     --emerald: 160 84% 39%;
     --gradient-hero: linear-gradient(135deg, hsl(225 74% 53% / 0.08), hsl(152 56% 46% / 0.06));

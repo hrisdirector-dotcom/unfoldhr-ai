@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { UnfoldMark } from "./UnfoldMark";
 import { Menu, X } from "lucide-react";
 
-const DARK_HERO_PAGES = new Set(["home", "global-lifecycle-agent", "agents"]);
+const DARK_HERO_PAGES = new Set(["home", "global-lifecycle-agent", "agents", "workflows"]);
 
 interface NavProps {
   page: string;
@@ -13,6 +13,7 @@ interface NavProps {
 const NAV_LINKS: [string, string, boolean][] = [
   ["how-it-works", "How It Works", false],
   ["agents", "Agents", false],
+  ["workflows", "Workflows", false],
   ["integrations", "Integrations", false],
   ["about", "About", false],
 ];
