@@ -22,6 +22,7 @@ import GlobalLifecycleAgentPage from "@/pages/GlobalLifecycleAgentPage";
 import LeaveControlAgentPage from "@/pages/LeaveControlAgentPage";
 import CompensationChangeAgentPage from "@/pages/CompensationChangeAgentPage";
 import AgentsPage from "@/pages/AgentsPage";
+import WorkflowsPage from "@/pages/WorkflowsPage";
 import AgentDetailPage from "@/pages/AgentDetailPage";
 import OnboardingWalkthrough from "@/components/OnboardingWalkthrough";
 import type { SavedRun } from "@/hooks/useSavedRuns";
