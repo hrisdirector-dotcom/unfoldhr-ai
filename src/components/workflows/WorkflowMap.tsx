@@ -39,7 +39,7 @@ export default function WorkflowMap({ workflow }: Props) {
           const gate = gateAfter(step.id);
           const s = classificationStyles(step.classification);
           return (
-            <li key={step.id} className="contents">
+            <li key={step.id} className="break-inside-avoid">
               <div className="flex flex-col">
                 <button
                   onClick={() => setSelected({ kind: "step", step })}
