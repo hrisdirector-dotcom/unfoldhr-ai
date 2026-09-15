@@ -18,8 +18,12 @@ export function PrincipleCallout({ variant = "dark" }: { variant?: "dark" | "lig
         dark ? "bg-slate text-white" : "bg-paper-2 border border-border text-foreground"
       }`}
     >
-      <p className="text-[10px] font-mono uppercase tracking-[0.18em] mb-4 ${}">
-        <span className={dark ? "text-blue-200/80" : "text-primary"}>The principle</span>
+      <p
+        className={`text-[10px] font-mono uppercase tracking-[0.18em] mb-4 ${
+          dark ? "text-blue-200/80" : "text-primary"
+        }`}
+      >
+        The principle
       </p>
       <p className="font-display text-2xl md:text-4xl leading-[1.15]">
         {PRINCIPLE_LINES.map((l) => (
