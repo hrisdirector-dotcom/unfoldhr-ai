@@ -156,6 +156,7 @@ const Index = () => {
       {page === "try-us-workforce-agent" && <TryUSWorkforceAgentPage setPage={navigateTo} />}
       {page === "try-agent" && <TryAgentPage setPage={navigateTo} />}
       {page === "agents" && <AgentsPage onSelectAgent={navigateToAgent} onBuildAgent={handleBuildAgent} setPage={navigateTo} />}
+      {page === "workflows" && <WorkflowsPage setPage={navigateTo} />}
       {page === "agent-detail" && agentId && <AgentDetailPage agentId={agentId} setPage={navigateTo} />}
       {page === "global-lifecycle-agent" && <GlobalLifecycleAgentPage setPage={navigateTo} />}
       {page === "leave-control-agent" && <LeaveControlAgentPage setPage={navigateTo} />}
