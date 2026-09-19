@@ -7,6 +7,7 @@ import WorkDesignSection from "@/components/landing/WorkDesignSection";
 import AgentFamiliesSection from "@/components/landing/AgentFamiliesSection";
 import FlagshipAgentSection from "@/components/landing/FlagshipAgentSection";
 import ExploreAgentsByType from "@/components/landing/ExploreAgentsByType";
+import EngagementModels from "@/components/landing/EngagementModels";
 import SprintOfferSection from "@/components/landing/SprintOfferSection";
 import FinalCTA from "@/components/landing/FinalCTA";
 import Footer from "@/components/landing/Footer";
@@ -28,6 +29,7 @@ export default function HomePage({ setPage }: HomePageProps) {
       <AgentFamiliesSection setPage={setPage} />
       <FlagshipAgentSection setPage={setPage} />
       <ExploreAgentsByType setPage={setPage} />
+      <EngagementModels setPage={setPage} />
       <SprintOfferSection />
       <FinalCTA setPage={setPage} showToast={showToast} />
       <Footer setPage={setPage} />
