@@ -16,9 +16,23 @@ interface Props {
   onBack: () => void;
   onOpenWorkflow: (id: string) => void;
   setPage: (p: string) => void;
+  onContact?: () => void;
 }
 
-export default function WorkflowDetail({ workflow, onBack, onOpenWorkflow, setPage }: Props) {
+const SAMPLE_WORKFLOW_ID = "leave-of-absence";
+
+const SAMPLE_COVERAGE = [
+  "Workflow objective",
+  "Current-state friction",
+  "Work allocation",
+  "Human judgment boundaries",
+  "Controls",
+  "Systems and architecture",
+  "Measures",
+];
+
+export default function WorkflowDetail({ workflow, onBack, onOpenWorkflow, setPage, onContact }: Props) {
+  const isSample = workflow.id === SAMPLE_WORKFLOW_ID;
   const related = WORKFLOWS.filter(
     (w) => w.domain === workflow.domain && w.id !== workflow.id
   ).slice(0, 3);
@@ -68,6 +82,41 @@ export default function WorkflowDetail({ workflow, onBack, onOpenWorkflow, setPa
             </p>
             <p className="text-white leading-relaxed">{workflow.outcome}</p>
           </div>
+
+          {isSample && (
+            <div className="mt-10 rounded-2xl border border-white/15 bg-white/[0.04] p-6 md:p-7 max-w-3xl">
+              <p className="text-[11px] font-mono uppercase tracking-[0.22em] text-blue-200/80">
+                Sample Workflow Redesign
+              </p>
+              <h2 className="mt-3 font-display text-xl md:text-2xl text-white leading-snug">
+                What a Leave Workflow Redesign Sprint Produces
+              </h2>
+              <p className="mt-4 text-sm text-slate-200/85 leading-relaxed">
+                This example shows how one HR workflow can be examined across current-state friction,
+                work elimination, AI reasoning, deterministic execution, human judgment, controls,
+                architecture, and measurable outcomes.
+              </p>
+              <p className="mt-3 text-sm text-slate-300/75 leading-relaxed">
+                This is a representative UnfoldHR.ai example. It is not a customer case study and does
+                not contain customer or employee data.
+              </p>
+              <div className="mt-5">
+                <p className="text-[10px] font-mono uppercase tracking-[0.18em] text-blue-200/70 mb-2.5">
+                  What this example covers
+                </p>
+                <ul className="flex flex-wrap gap-2">
+                  {SAMPLE_COVERAGE.map((label) => (
+                    <li
+                      key={label}
+                      className="rounded-full border border-white/15 px-3 py-1.5 text-xs text-slate-200/90"
+                    >
+                      {label}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          )}
 
           <div className="mt-10">
             <WorkflowScoreStrip workflow={workflow} />
@@ -156,6 +205,27 @@ export default function WorkflowDetail({ workflow, onBack, onOpenWorkflow, setPa
                 </span>
               </button>
             ))}
+          </div>
+        </Section>
+      )}
+
+      {isSample && (
+        <Section eyebrow="From example to engagement" title="How this becomes your workflow">
+          <div className="bg-card border border-border rounded-2xl p-6 md:p-7 max-w-3xl">
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Pilot scope, baseline measures, system access, controls, evaluation criteria, and
+              rollout decisions are defined with your organisation during a sprint. They are not
+              assumed here.
+            </p>
+            {onContact && (
+              <button
+                onClick={onContact}
+                className="group mt-6 inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              >
+                Bring Us Your Workflow
+                <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+              </button>
+            )}
           </div>
         </Section>
       )}

@@ -13,7 +13,11 @@ const DELIVERABLES = [
   "Executive decision readout",
 ];
 
-export default function SprintOfferSection() {
+interface SprintOfferSectionProps {
+  onOpenWorkflow?: (id: string) => void;
+}
+
+export default function SprintOfferSection({ onOpenWorkflow }: SprintOfferSectionProps) {
   const scrollTo = (id: string) =>
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
 
@@ -42,13 +46,24 @@ export default function SprintOfferSection() {
                 include production software, a production AI agent, or completed integrations.
               </p>
 
-              <button
-                onClick={() => scrollTo("final-cta")}
-                className="group mt-8 inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-              >
-                Book a Confidential Introduction
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-              </button>
+              <div className="mt-8 flex flex-wrap items-center gap-3">
+                <button
+                  onClick={() => scrollTo("final-cta")}
+                  className="group inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                >
+                  Book a Confidential Introduction
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                </button>
+                {onOpenWorkflow && (
+                  <button
+                    onClick={() => onOpenWorkflow("leave-of-absence")}
+                    className="group inline-flex items-center gap-2 px-6 py-3.5 rounded-xl border border-border bg-card text-foreground font-semibold text-sm hover:border-primary/40 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                  >
+                    See a Sample Workflow Redesign
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                  </button>
+                )}
+              </div>
             </div>
           </RevealDiv>
 

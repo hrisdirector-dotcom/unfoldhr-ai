@@ -14,9 +14,10 @@ import Footer from "@/components/landing/Footer";
 
 interface HomePageProps {
   setPage: (p: string) => void;
+  onOpenWorkflow?: (id: string) => void;
 }
 
-export default function HomePage({ setPage }: HomePageProps) {
+export default function HomePage({ setPage, onOpenWorkflow }: HomePageProps) {
   const [toast, setToast] = useState("");
   const showToast = (msg: string) => { setToast(msg); setTimeout(() => setToast(""), 5000); };
 
@@ -30,7 +31,7 @@ export default function HomePage({ setPage }: HomePageProps) {
       <FlagshipAgentSection setPage={setPage} />
       <ExploreAgentsByType setPage={setPage} />
       <EngagementModels setPage={setPage} />
-      <SprintOfferSection />
+      <SprintOfferSection onOpenWorkflow={onOpenWorkflow} />
       <FinalCTA setPage={setPage} showToast={showToast} />
       <Footer setPage={setPage} />
       <Toast message={toast} />
