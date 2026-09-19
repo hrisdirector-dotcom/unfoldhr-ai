@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { supabase } from "@/lib/cloudClient";
+import { submitContactRequest } from "@/lib/submitContact";
 
 const AI_JOURNEY_OPTIONS = [
   "It's a new language to me",
@@ -33,35 +33,18 @@ export default function RequestBuildPanel() {
       return;
     }
 
-    try {
-      const { data, error: fnError } = await supabase.functions.invoke("submit-contact", {
-        body: {
-          name,
-          email,
-          company,
-          aiJourney,
-          message,
-        },
-      });
+    const result = await submitContactRequest({ name, email, company, aiJourney, message });
 
-      if (fnError || !data?.success) {
-        throw fnError ?? new Error("submit failed");
-      }
-
-      formData.append("ai_journey", aiJourney);
-      await fetch("https://formspree.io/f/mgopojll", {
-        method: "POST",
-        body: formData,
-        headers: { Accept: "application/json" },
-      });
-
+    if (result === "saved") {
       setSubmitted(true);
       form.reset();
-    } catch {
+    } else if (result === "unknown") {
+      setError("We couldn't confirm your request was received. Please check back before resending.");
+    } else {
       setError("Request failed. Please try again.");
-    } finally {
-      setSubmitting(false);
     }
+
+    setSubmitting(false);
   }
 
 
