@@ -3,7 +3,7 @@ import { LevelBadge } from "./LevelBadge";
 import AgentDemo from "@/components/AgentDemo";
 import ModuleVideoEmbed from "@/components/ModuleVideoEmbed";
 import { getModuleVideoById } from "@/data/moduleVideos";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/cloudClient";
 import type { Module } from "@/data/modules";
 
 interface DrawerProps {

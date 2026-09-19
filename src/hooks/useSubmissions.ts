@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/cloudClient";
 import type { Tables } from "@/integrations/supabase/types";
 
 export type Submission = Tables<"submissions">;

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { cloudPublishableKey, cloudUrl, supabase } from "@/lib/cloudClient";
 
 type Status = "loading" | "valid" | "already_unsubscribed" | "invalid" | "success" | "error";
 
@@ -19,8 +19,8 @@ export default function UnsubscribePage() {
     const validate = async () => {
       try {
         const res = await fetch(
-          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/handle-email-unsubscribe?token=${token}`,
-          { headers: { apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY } }
+          `${cloudUrl}/functions/v1/handle-email-unsubscribe?token=${token}`,
+          { headers: { apikey: cloudPublishableKey } }
         );
         const data = await res.json();
         if (res.ok && data.valid) {

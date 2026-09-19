@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { RevealDiv } from "@/components/RevealDiv";
 import DecisionBriefCard from "@/components/DecisionBriefCard";
 import type { DecisionBriefProps } from "@/components/DecisionBriefCard";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/cloudClient";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { downloadCSV, downloadPDF } from "@/lib/downloadResult";

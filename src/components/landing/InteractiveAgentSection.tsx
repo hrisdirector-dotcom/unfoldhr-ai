@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { RevealDiv } from "@/components/RevealDiv";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/cloudClient";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { downloadCSV, downloadPDF } from "@/lib/downloadResult";
