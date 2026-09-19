@@ -1,44 +1,67 @@
-# Release 8 — Commercialization audit and launch QA
+# Release 9 — Final launch closeout (findings and proposed scope)
 
-Audit-only release with a small set of targeted corrections. No new features, pages, routes, pricing, workflow content, or visual concepts.
+No code was changed during this review. Everything below is a proposal.
 
-## Audit findings so far (from reading the code)
+## 1. Pricing page — findings
 
-**PASS (verified by inspection)**
-- Homepage section order matches the required sequence exactly: hero, platform explainer, business problem, UnfoldHR Method, agent families, flagship agent, explore agents by type, Engagement Models, Sprint Offer, application form, footer. No duplicates.
-- Hero carries the approved eyebrow, headline and both buttons.
-- Exactly one Leave record; its identifier is the flagship identifier; the workflow library data is untouched.
-- The sample framing on the Leave page renders only for Leave; another workflow page was checked and shows no trace of it.
+**Files:** `src/pages/PricingPage.tsx` (the whole page), rendered from `src/pages/Index.tsx` on the `pricing` screen.
 
-**FAIL — stale visiting card (search/social wording)**
-`index.html` still says "AI Agents for Every HR Workflow" and "Build AI agents for every HR workflow…" in the page title, description, and the social sharing title/description. This is exactly the outdated positioning the audit asks to find.
+**Public?** Yes. It is reachable while signed out, with no gate.
 
-**FAIL — the library can open on the wrong screen**
-After using "See a Sample Workflow Redesign", the remembered Leave selection is never cleared. Opening Workflows later from the top menu re-opens the Leave page instead of the catalog. Cause: `src/pages/Index.tsx` keeps the chosen workflow and never resets it on ordinary navigation.
+**Linked from?** Not from the main menu or any footer, but it *is* linked publicly: the homepage application block (`src/components/landing/FinalCTA.tsx`, "View pricing →") sends visitors straight to it. It is also linked from the signed-in dashboard and from Decision Support.
 
-**Known-good, unchanged**
-- One hard-coded Leave identifier remains in `SprintOfferSection.tsx` and one in `WorkflowDetail.tsx`. Both can be replaced with the single authoritative constant already exported by the workflow library — no circular dependency.
+**What it displays:** four plans — Free ($0), Growth ($179/mo or $149 billed annually, marked "Most Popular"), Professional ($699 / $599), Enterprise (Custom); a monthly/annual toggle promising 20% off; a nine-row plan comparison table (monthly agent runs, deployed live agents, HRIS/ATS integrations, autonomous actions, multi-agent orchestration, support level, SOC 2/GDPR, dedicated success manager); a note about "Build It For Me / Co-Build / Advisory"; and the closing pair of buttons "Start Free Trial" and "Book a Demo". Plan buttons read "Try Gallery Now", "Start Growth Plan", "Start Professional Plan", "Contact Sales".
 
-**Not yet verified (will be checked during the audit pass, before any further edits)**
-Form behaviour end to end, Engagement Models buttons, Contact page, agents, login and the paid dashboard, console output on every main screen, accessibility checks, and desktop/tablet/mobile layout. Backend, database, policies, routes and pricing will be inspected for any change during Releases 1–7; the expectation is none.
+**Exact behaviour of "Start Free Trial":** it switches to the homepage and scrolls to the agent gallery section. That is all. No account is created, no trial record is written, no duration, entitlement, expiry, conversion path or billing state exists anywhere in the product — there is no billing system, no subscription or plan data, and no payment provider. It behaves identically signed out and signed in. The only "trial" in the code is a single browser-side flag that limits the daily brief to one generation per browser; it is not connected to this page, is not enforced server-side, and is cleared by clearing browser data. "Start Growth Plan" and "Start Professional Plan" simply open the contact form; no purchase is possible.
 
-## Corrections proposed
+**Classification: Misleading / nonfunctional.** The button claims a free trial that does not exist, and the page as a whole advertises seat-free monthly subscriptions, run quotas, deployed-agent limits, integrations and compliance guarantees that the current commercial model (Workflow Redesign Sprint, $7,500 founding client) does not offer and the product does not enforce.
 
-1. `index.html` — update the page title and description, and the matching social title/description, to:
-   - Title: `UnfoldHR.ai | Agentic HR Work Design`
-   - Description: `UnfoldHR.ai helps HR leaders redesign workflows across human judgment, AI reasoning, deterministic rules, system transactions, and work elimination.`
-   Canonical address, social image, robots and sitemap untouched.
-2. `src/pages/Index.tsx` — clear the remembered workflow whenever the visitor navigates normally, so Workflows always opens the catalog unless the sample button was just used.
-3. `src/components/landing/SprintOfferSection.tsx` and `src/components/workflows/WorkflowDetail.tsx` — use the library's single authoritative Leave identifier instead of repeating the text, so it can never drift.
-4. Any further defect the audit pass proves exists — smallest possible correction, reported individually.
+### Proposed correction (smallest truthful option)
 
-## Technical notes
+Two candidate scopes — the plan assumes **Option A** unless you say otherwise:
 
-- `Index.tsx`: reset `workflowId` inside `navigateTo` (set to `undefined` for every destination) while `navigateToWorkflow` continues to set it; this keeps `WorkflowsPage`'s `initialWorkflowId` accurate on each mount.
-- Replace the literals with `FLAGSHIP_WORKFLOW_ID` from `@/data/workflows`; `WorkflowDetail`'s `SAMPLE_WORKFLOW_ID` becomes an alias of it.
-- No database, migration, function, secret, environment variable, route, policy or entitlement change.
-- No new test records will be created; the existing form tests and the 88-test suite, typecheck and production build will be run.
+- **Option A (recommended, content-only, one file plus one link):** remove the false trial claim and the unsupported subscription page from the public path.
+  - `src/pages/PricingPage.tsx` — replace the plan grid, billing toggle and comparison table with a short truthful engagement-and-pricing statement using the existing page shell, typography and spacing: the Workflow Redesign Sprint at $7,500 for founding clients (already published on the homepage), plus "Implementation and ongoing engagement are scoped individually." Closing buttons become "Book a Confidential Introduction" (contact) and "Explore the Workflow Library". No new prices are invented; no plan, quota or compliance claim survives.
+  - `src/components/landing/FinalCTA.tsx` line ~358 — leave the link in place pointing at the corrected page.
+- **Option B (most minimal):** leave the plan content untouched and only remove the "Start Free Trial" button and the "Start trying agents for free" line. This removes the trial lie but leaves four unsold subscription plans and their feature promises live on a public page, which the spec explicitly warns against.
 
-## Final report you will receive
+No pricing value, entitlement, billing, dashboard, authentication or backend behaviour would change in either option.
 
-Launch verdict, a PASS / PARTIAL / FAIL / NOT VERIFIED table for every requirement, each issue graded blocker / important / optional, every file changed with the exact correction, typecheck, build, test and lint results, the screens and device sizes actually tested, logged-out and logged-in coverage, confirmation that nothing in the backend changed, and the remaining known limitations (including the unconfirmed submission state when a connection drops).
+## 2. Contact page — findings
+
+**File:** `src/pages/ContactPage.tsx` (140 lines). It renders only the form card — no eyebrow, no `h1`, no supporting copy. The only heading in the file is the `h2` "Request sent" in the success state (line 55). `src/pages/Index.tsx` renders it with no wrapper, so the page genuinely has no heading. Release 7's "Bring Us Your Workflow" button lands here.
+
+### Proposed change (content only)
+
+In `src/pages/ContactPage.tsx`, inside the existing returned markup and above the existing form card, add a header block using the page's existing width, typography and spacing:
+
+- eyebrow "Contact UnfoldHR"
+- `h1` "Bring us one HR workflow that needs to change"
+- supporting line "Tell us where the work is breaking down. We will use the initial conversation to determine the most appropriate next step."
+
+Lines of responsibility: wrap the current `return (` at line 61 in a page container and insert the header before the `<form>`; the success branch at lines 51–59 gets the same header so the page never loses its `h1`. Every field, label, placeholder, validation rule, submission call, storage, notification and email path stays exactly as it is. `src/lib/submitContact.ts` is not touched. No second form, no new questions, no redesign.
+
+## 3. Signed-in verification
+
+**No authorized test account exists.** There are three sign-in accounts on the project and none is a development or test account; an attempt to mint a session for the requesting email failed because no account matches it. I will not request or handle your credentials, so these items are reported as NOT VERIFIED rather than passed.
+
+Owner-operated checklist for you to run with your own account:
+
+1. Sign in through the normal interface; confirm a wrong password is rejected cleanly.
+2. Confirm My Dashboard loads.
+3. Open paid Decision Support.
+4. Confirm saved runs and expected access appear.
+5. Refresh each signed-in page and confirm it stays signed in without flicker.
+6. Open a protected page while signed out and confirm correct handling.
+7. Sign out and confirm protected content is no longer reachable.
+8. Repeat on a phone, including the menu.
+9. Report any browser error without including personal data.
+
+## Protected scope
+
+Releases 1–8, homepage section order, agents, Global Lifecycle priority, the 20-workflow library, the Leave sample, workflow calculations, authentication, paid Decision Support, entitlements, billing, database schema, backend functions, security policies, stored data, routes, submission logic and email/Formspree behaviour all remain untouched.
+
+## Files proposed for modification
+
+- `src/pages/PricingPage.tsx` (truthfulness correction — pending your choice of Option A or B)
+- `src/pages/ContactPage.tsx` (header block only)
