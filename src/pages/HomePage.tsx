@@ -31,7 +31,7 @@ export default function HomePage({ setPage, onOpenWorkflow }: HomePageProps) {
       <FlagshipAgentSection setPage={setPage} />
       <ExploreAgentsByType setPage={setPage} />
       <EngagementModels setPage={setPage} />
-      <SprintOfferSection />
+      <SprintOfferSection onOpenWorkflow={onOpenWorkflow} />
       <FinalCTA setPage={setPage} showToast={showToast} />
       <Footer setPage={setPage} />
       <Toast message={toast} />

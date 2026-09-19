@@ -27,12 +27,13 @@ import {
 
 interface Props {
   setPage: (p: string) => void;
+  initialWorkflowId?: string;
 }
 
 type SortKey = "number" | "ai" | "elimination" | "risk";
 
-export default function WorkflowsPage({ setPage }: Props) {
-  const [selected, setSelected] = useState<string | null>(null);
+export default function WorkflowsPage({ setPage, initialWorkflowId }: Props) {
+  const [selected, setSelected] = useState<string | null>(initialWorkflowId ?? null);
   const [query, setQuery] = useState("");
   const [domain, setDomain] = useState<DomainId | "all">("all");
   const [sort, setSort] = useState<SortKey>("number");
@@ -93,6 +94,7 @@ export default function WorkflowsPage({ setPage }: Props) {
         }}
         onOpenWorkflow={open}
         setPage={setPage}
+        onContact={() => setPage("contact")}
       />
     );
   }
