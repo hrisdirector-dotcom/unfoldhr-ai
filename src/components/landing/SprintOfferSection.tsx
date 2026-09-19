@@ -1,5 +1,6 @@
 import { ArrowRight } from "lucide-react";
 import { RevealDiv } from "@/components/RevealDiv";
+import { FLAGSHIP_WORKFLOW_ID } from "@/data/workflows";
 
 const DELIVERABLES = [
   "Current-state workflow and friction analysis",
