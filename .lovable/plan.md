@@ -36,7 +36,10 @@ The current statistics panel (workflows modelled / domains / activities eliminat
 - Keeps `ClassificationBadge` and the `CLASSIFICATION_MAP` labels/colors from `@/data/workflows` — no second classification system, no new colors. `eliminate`, `agent` (displayed as AI), `deterministic`, `human` are rendered in the required sequence rather than the array's storage order.
 - Drops the `WORKFLOWS`, `DOMAINS`, `computeCounts`, and `CLASSIFICATIONS` imports so the homepage no longer pulls the dataset for static copy.
 - Keeps the section wrapper, `bg-paper-2`, top/bottom borders, padding, `RevealDiv` motion, typography, and the `setPage("workflows")` button styling.
-- Lenses render as a four-up grid on desktop collapsing to two-up on tablet and single column on mobile; `h2` for the headline, `h3` for each lens name.
+- Each lens name appears exactly once, rendered by `ClassificationBadge` (letter + label). No second visible heading repeating the name.
+- Accessible structure: each lens is a list item in a labelled list, and the card is named by its badge text via `aria-labelledby` pointing at the badge — no duplicated screen-reader-only heading. `h2` remains the only heading added in this section.
+- Explanations wrap naturally; no forced single-line or truncation.
+- Lenses render as a four-up grid on desktop collapsing to two-up on tablet and single column on mobile.
 
 ## Verification
 
