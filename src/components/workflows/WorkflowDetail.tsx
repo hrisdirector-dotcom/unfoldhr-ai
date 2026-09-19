@@ -209,6 +209,27 @@ export default function WorkflowDetail({ workflow, onBack, onOpenWorkflow, setPa
         </Section>
       )}
 
+      {isSample && (
+        <Section eyebrow="From example to engagement" title="How this becomes your workflow">
+          <div className="bg-card border border-border rounded-2xl p-6 md:p-7 max-w-3xl">
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Pilot scope, baseline measures, system access, controls, evaluation criteria, and
+              rollout decisions are defined with your organisation during a sprint. They are not
+              assumed here.
+            </p>
+            {onContact && (
+              <button
+                onClick={onContact}
+                className="group mt-6 inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              >
+                Bring Us Your Workflow
+                <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+              </button>
+            )}
+          </div>
+        </Section>
+      )}
+
       {/* Provenance + related workflows */}
       <Section eyebrow="Provenance" title="Where this analysis comes from">
         <div className="grid lg:grid-cols-2 gap-6">
