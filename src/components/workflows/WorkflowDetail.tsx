@@ -7,6 +7,7 @@ import WorkflowScoreStrip from "./WorkflowScoreStrip";
 import { PrincipleCallout } from "./FrameworkPanels";
 import {
   DOMAIN_LABEL,
+  FLAGSHIP_WORKFLOW_ID,
   WORKFLOWS,
   type Workflow,
 } from "@/data/workflows";
@@ -19,7 +20,7 @@ interface Props {
   onContact?: () => void;
 }
 
-const SAMPLE_WORKFLOW_ID = "leave-of-absence";
+const SAMPLE_WORKFLOW_ID = FLAGSHIP_WORKFLOW_ID;
 
 const SAMPLE_COVERAGE = [
   "Workflow objective",

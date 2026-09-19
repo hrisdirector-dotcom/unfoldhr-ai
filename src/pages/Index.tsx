@@ -66,6 +66,7 @@ const Index = () => {
     }
 
     setPage(p);
+    setWorkflowId(undefined);
     if (p !== "agent-detail") setAgentId(undefined);
 
     const stateObj = { page: p, agentId: p === "agent-detail" ? agentId : undefined };
