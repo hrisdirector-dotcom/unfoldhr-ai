@@ -60,11 +60,8 @@ export default function WorkDesignSection({ setPage }: Props) {
                 <ClassificationBadge
                   classification={lens.key}
                   size="md"
-                  className="align-middle"
+                  id={`${uid}-${lens.key}`}
                 />
-                <span id={`${uid}-${lens.key}`} className="sr-only">
-                  {lens.key === "agent" ? "AI" : lens.key}
-                </span>
                 <p className="mt-4 text-sm text-muted-foreground leading-relaxed">{lens.body}</p>
               </li>
             ))}
