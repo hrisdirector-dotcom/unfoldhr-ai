@@ -1,50 +1,82 @@
-# Release 5 — Sprint application and contact flow
+# Release 5 (revised) — Sprint application and contact flow
 
-Turn the homepage contact block into the real application form for the Workflow Redesign Sprint, using the submission path that already exists. One form, no new backend, no database changes.
+One homepage form, real submission, and a genuine general-contact path.
 
-## What exists today (inspected)
+## How submission works today (inspected)
 
-- The homepage engagement block is `src/components/landing/FinalCTA.tsx`, anchor `final-cta`, headline "Not seeing the right agent for your system?".
-- Its current fields are Work email (required), Company & role (optional), workflow question (optional) — all placeholder-only, no labels.
-- **It does not actually submit anywhere.** It shows a success toast on submit and saves nothing. This is the main defect Release 5 fixes.
-- The real, working submission path is on the Contact page: it calls the existing `submit-contact` function, which saves a record and sends the sender a confirmation email, and it also posts a notification to the existing Formspree inbox.
-- Saved record fields: request type, contact name (required), email (required), company, module, message (required), status.
-- CTAs pointing at `final-cta`: Release 1 hero "Book a Workflow Redesign Sprint", Release 4 "Book a Confidential Introduction", and the interactive agent section. All keep working unchanged.
+- `submit-contact` is a single server-side function: it saves the record **and** triggers the confirmation email inside that one call. The email failure is caught and ignored — the record stays saved.
+- Formspree is called **by the browser**, on the Contact page, after `submit-contact` returns successfully. It is not part of the server function.
+- Returns: successful save → `{ success: true, id }`; save failure → HTTP 500 `{ error: "Failed to record submission" }`; confirmation-email failure after a successful save → still `{ success: true }`; Formspree failure → happens in the browser afterwards and does not affect the saved record.
+- There is **no shared submission helper** today; the logic is inline in the Contact page. This release extracts it so both forms use one path.
 
-## Storage without schema changes
+## Files to modify
 
-| Form field | Stored as |
+1. `src/lib/submitContact.ts` — **new** shared helper: builds the request, calls `submit-contact` exactly once, then (only on confirmed save) posts the Formspree notification. Returns `saved` / `failed` / `unknown`.
+2. `src/pages/ContactPage.tsx` — switched to the shared helper; no change to its fields, copy, or behaviour.
+3. `src/components/landing/FinalCTA.tsx` — the form inside the existing card is rebuilt; section shell, `final-cta` anchor, position, headline and the links below stay as they are.
+
+No backend, function contract, schema, policy, notification recipient, or email provider changes.
+
+## The form
+
+Above the fields: eyebrow "Start the Conversation", heading "Bring us one HR workflow that needs to change", and the supporting line. The existing section headline stays.
+
+Always visible and required: Name, Work email, Company, Role, Preferred next step (Confidential introduction / Workflow Redesign Sprint / Executive briefing / General question).
+
+- Next step is Confidential introduction, Workflow Redesign Sprint or Executive briefing → also show and require: HR workflow or process, What is not working today, What outcome the organization needs.
+- Next step is General question → those three are hidden, removed from validation, their errors cleared, and their values never submitted. One required multiline field "Your question" appears instead.
+- Switching between options keeps Name, Work email, Company, Role and Preferred next step intact.
+
+Every field has a visible label; required fields marked. Submit button "Request a Confidential Introduction", disabled while pending so repeat clicks cannot double-submit. Privacy line directly above it: "Please do not submit employee records, payroll information, medical information, candidate data, or other sensitive personal data through this form."
+
+## Field-to-storage mapping (no schema change)
+
+| Field | Stored as |
 | --- | --- |
 | Name | contact name |
 | Work email | email |
 | Company | company |
-| Role | first line of message, labelled `Role:` |
-| HR workflow or process | message, labelled `HR workflow or process:` |
-| What is not working today | message, labelled `What is not working today:` |
-| What outcome the organization needs | message, labelled `Outcome needed:` |
-| Preferred next step | stored in the existing choice field, and repeated in the message as `Preferred next step:` |
+| Preferred next step | the existing choice field, and repeated in the message |
+| Role, workflow answers / question | message, labelled |
 
-Every label is written with its submitted value; nothing is dropped, nothing is stored empty. No migration, no new columns, no new function.
+Sprint message body:
 
-Name is required because the saved record requires a contact name — you confirmed adding a visible required Name field rather than inventing one.
+```text
+Role: [value]
+HR workflow or process:
+[value]
+What is not working today:
+[value]
+Outcome needed:
+[value]
+Preferred next step:
+[value]
+```
 
-## The form
+General question message body:
 
-Inside the existing dark card, above the fields: eyebrow "Start the Conversation", heading "Bring us one HR workflow that needs to change", and the supporting line about where the work is breaking down. The existing section headline and surrounding links stay as they are.
+```text
+Role: [value]
+Preferred next step:
+General question
+General question:
+[value]
+```
 
-Fields, all required, all with visible labels: Name, Work email, Company, Role, HR workflow or process, What is not working today, What outcome the organization needs, Preferred next step (Confidential introduction / Workflow Redesign Sprint / Executive briefing / General question).
+No label is ever written with an empty value, and nothing is discarded.
 
-Submit button: "Request a Confidential Introduction" — disabled with a submitting state so repeated clicks cannot double-submit. Privacy line directly above it: "Please do not submit employee records, payroll information, medical information, candidate data, or other sensitive personal data through this form."
+## Submission order and outcomes
 
-Success (only after the submission is confirmed): "Request received. We will review the information and respond within two business days." On failure: a plain error message, entered values kept, retry allowed, no backend detail and nothing logged to the console. The form clears only on confirmed success.
+1. Validate in the browser (required fields for the current mode, email format).
+2. Call `submit-contact` once. No automatic retry.
+3. Only if it confirms the record was saved, post the Formspree notification.
 
-## Files
+- **Saved** → success message "Request received. We will review the information and respond within two business days."; form cleared once. A failed Formspree or confirmation email is treated as a notification issue only — no resubmission prompt, nothing logged to the console.
+- **Not saved** → accessible error message, all entered values preserved, manual retry allowed, no success state.
+- **Unknown** (network dropped, no confirmation received) → neutral message that the submission could not be confirmed, values preserved, no automatic retry. This is an existing limitation of the current function contract and will be noted in the final report rather than changed here.
 
-1. `src/components/landing/FinalCTA.tsx` — rewrite of the form inside the existing section shell (anchor, position, styling, links preserved).
-2. `src/pages/HomePage.tsx` — only if the unused toast prop needs tidying; otherwise untouched.
-
-Nothing else changes: hero, business-problem, methodology, sprint-offer sections, navigation, agents, workflow library, auth, dashboard, routes, schema, policies, and the existing notification destination all stay exactly as they are.
+No backend detail, raw error, or form value is written to the console.
 
 ## Verification
 
-Submit a real complete request through the live path and confirm the stored record contains every entered value with its label; test each Preferred next step option including General question; test required fields, an invalid email, and rapid repeat clicks; test a failure and confirm values survive it; confirm no form values in the console; confirm all hero and sprint CTAs reach this one form; check logged-out and logged-in, desktop, tablet and mobile, labels, error associations, keyboard and focus, wrapping and horizontal scroll; run typecheck, build and the test suite; then report every file changed and the final field-to-storage mapping.
+Submit a real sprint request and a real General question through the live path, and confirm each stored record contains exactly the mapped values in the documented format; confirm the three workflow fields are absent from a General question record and that stale values never leak after switching options; test each of the four options; test required-field validation per mode, an invalid email, and rapid repeat clicks; test a forced failure and confirm values survive with no success shown; confirm no form values in the console; confirm the hero and sprint CTAs both reach this one form; check logged-out and logged-in, desktop, tablet and mobile, labels, error associations, keyboard and focus, wrapping and horizontal scroll; run typecheck, build and the test suite; report every file changed, the final mapping, and the test results.
