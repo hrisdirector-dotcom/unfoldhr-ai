@@ -22,6 +22,7 @@ export default function HomePage({ setPage }: HomePageProps) {
     <div className="bg-background">
       <PlatformHero setPage={setPage} />
       <PlatformExplainer />
+      <BusinessProblemSection />
       <WorkDesignSection setPage={setPage} />
       <AgentFamiliesSection setPage={setPage} />
       <FlagshipAgentSection setPage={setPage} />
