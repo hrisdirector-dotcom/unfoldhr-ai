@@ -156,6 +156,8 @@ export default function RequestBuildPanel() {
       >
         {submitting ? "Sending..." : "Get in Touch →"}
       </button>
-    </form>
+        </form>
+      </div>
+    </div>
   );
 }
