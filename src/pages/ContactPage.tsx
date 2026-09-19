@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/cloudClient";
 
 const AI_JOURNEY_OPTIONS = [
   "It's a new language to me",
