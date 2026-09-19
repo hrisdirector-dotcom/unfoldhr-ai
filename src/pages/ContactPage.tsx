@@ -48,18 +48,39 @@ export default function RequestBuildPanel() {
   }
 
 
+  const header = (
+    <header className="mb-10 text-center">
+      <p className="text-xs font-bold uppercase tracking-[3px] text-primary mb-4">Contact UnfoldHR</p>
+      <h1 className="font-display text-3xl md:text-4xl text-foreground mb-4">
+        Bring us one HR workflow that needs to change
+      </h1>
+      <p className="text-base text-muted-foreground max-w-xl mx-auto">
+        Tell us where the work is breaking down. We will use the initial conversation to determine
+        the most appropriate next step.
+      </p>
+    </header>
+  );
+
   if (submitted) {
     return (
-      <div className="bg-background border border-border rounded-2xl p-10 text-center">
-        <div className="text-4xl mb-4">✓</div>
-        <h2 className="font-display text-2xl text-foreground mb-2">Request sent</h2>
-        <p className="text-muted-foreground">We'll be in contact within 48 hours.</p>
+      <div className="pt-24 pb-20 px-6 bg-background">
+        <div className="max-w-2xl mx-auto">
+          {header}
+          <div className="bg-background border border-border rounded-2xl p-10 text-center">
+            <div className="text-4xl mb-4">✓</div>
+            <h2 className="font-display text-2xl text-foreground mb-2">Request sent</h2>
+            <p className="text-muted-foreground">We'll be in contact within 48 hours.</p>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-background border border-border rounded-2xl p-8 md:p-10 space-y-5">
+    <div className="pt-24 pb-20 px-6 bg-background">
+      <div className="max-w-2xl mx-auto">
+        {header}
+        <form onSubmit={handleSubmit} className="bg-background border border-border rounded-2xl p-8 md:p-10 space-y-5">
       <input type="hidden" name="form_type" value="contact" />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -135,6 +156,8 @@ export default function RequestBuildPanel() {
       >
         {submitting ? "Sending..." : "Get in Touch →"}
       </button>
-    </form>
+        </form>
+      </div>
+    </div>
   );
 }
