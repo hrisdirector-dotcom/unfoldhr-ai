@@ -57,7 +57,7 @@ export default function SprintOfferSection({ onOpenWorkflow }: SprintOfferSectio
                 </button>
                 {onOpenWorkflow && (
                   <button
-                    onClick={() => onOpenWorkflow("leave-of-absence")}
+                    onClick={() => onOpenWorkflow(FLAGSHIP_WORKFLOW_ID)}
                     className="group inline-flex items-center gap-2 px-6 py-3.5 rounded-xl border border-border bg-card text-foreground font-semibold text-sm hover:border-primary/40 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                   >
                     See a Sample Workflow Redesign
