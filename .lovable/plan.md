@@ -27,7 +27,7 @@ Directly after the "Explore agents by type" block and before the Sprint Offer se
 
 ## Files
 
-- `src/components/landing/EngagementModels.tsx` — rewritten: new eyebrow/headline/copy, three stage cards, `setPage("workflows")` for Explore, `final-cta` scroll for the two commercial CTAs, existing card/typography/spacing/motion tokens and icons kept, `setPage` accepted as a prop instead of the current manual history push.
+- `src/components/landing/EngagementModels.tsx` — rewritten: new eyebrow/headline/copy, three stage cards, `setPage("workflows")` for Explore, `final-cta` scroll for the two commercial CTAs, existing card/typography/spacing/motion tokens kept, `setPage` accepted as a prop instead of the current manual history push. Icons come from the same existing icon set but the outdated ones are replaced — nothing implying "free", upgrading, software deployment or pricing. Explore gets a map/compass-style mark, Redesign a drafting/redesign mark, Implement a governed-rollout mark; all three are decorative and hidden from screen readers.
 - `src/pages/HomePage.tsx` — one import and one render line.
 
 Nothing else: no route, modal, calendar, second form, backend, schema, pricing, navigation, agent, workflow-library, or Decision Support change.
