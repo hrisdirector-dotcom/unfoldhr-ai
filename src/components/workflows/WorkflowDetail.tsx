@@ -16,9 +16,23 @@ interface Props {
   onBack: () => void;
   onOpenWorkflow: (id: string) => void;
   setPage: (p: string) => void;
+  onContact?: () => void;
 }
 
-export default function WorkflowDetail({ workflow, onBack, onOpenWorkflow, setPage }: Props) {
+const SAMPLE_WORKFLOW_ID = "leave-of-absence";
+
+const SAMPLE_COVERAGE = [
+  "Workflow objective",
+  "Current-state friction",
+  "Work allocation",
+  "Human judgment boundaries",
+  "Controls",
+  "Systems and architecture",
+  "Measures",
+];
+
+export default function WorkflowDetail({ workflow, onBack, onOpenWorkflow, setPage, onContact }: Props) {
+  const isSample = workflow.id === SAMPLE_WORKFLOW_ID;
   const related = WORKFLOWS.filter(
     (w) => w.domain === workflow.domain && w.id !== workflow.id
   ).slice(0, 3);
