@@ -36,6 +36,7 @@ const Index = () => {
     const state = window.history.state;
     return state?.agentId;
   });
+  const [workflowId, setWorkflowId] = useState<string | undefined>(undefined);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [deckState, setDeckState] = useState<{ run: SavedRun; branding: { logoUrl: string | null; primaryColor: string; accentColor: string } } | null>(null);
   const { user, isAdmin, loading, signOut } = useAuth();
