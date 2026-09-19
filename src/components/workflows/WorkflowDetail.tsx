@@ -83,6 +83,41 @@ export default function WorkflowDetail({ workflow, onBack, onOpenWorkflow, setPa
             <p className="text-white leading-relaxed">{workflow.outcome}</p>
           </div>
 
+          {isSample && (
+            <div className="mt-10 rounded-2xl border border-white/15 bg-white/[0.04] p-6 md:p-7 max-w-3xl">
+              <p className="text-[11px] font-mono uppercase tracking-[0.22em] text-blue-200/80">
+                Sample Workflow Redesign
+              </p>
+              <h2 className="mt-3 font-display text-xl md:text-2xl text-white leading-snug">
+                What a Leave Workflow Redesign Sprint Produces
+              </h2>
+              <p className="mt-4 text-sm text-slate-200/85 leading-relaxed">
+                This example shows how one HR workflow can be examined across current-state friction,
+                work elimination, AI reasoning, deterministic execution, human judgment, controls,
+                architecture, and measurable outcomes.
+              </p>
+              <p className="mt-3 text-sm text-slate-300/75 leading-relaxed">
+                This is a representative UnfoldHR.ai example. It is not a customer case study and does
+                not contain customer or employee data.
+              </p>
+              <div className="mt-5">
+                <p className="text-[10px] font-mono uppercase tracking-[0.18em] text-blue-200/70 mb-2.5">
+                  What this example covers
+                </p>
+                <ul className="flex flex-wrap gap-2">
+                  {SAMPLE_COVERAGE.map((label) => (
+                    <li
+                      key={label}
+                      className="rounded-full border border-white/15 px-3 py-1.5 text-xs text-slate-200/90"
+                    >
+                      {label}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          )}
+
           <div className="mt-10">
             <WorkflowScoreStrip workflow={workflow} />
           </div>
