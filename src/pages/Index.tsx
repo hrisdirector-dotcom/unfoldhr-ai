@@ -76,6 +76,13 @@ const Index = () => {
     window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
   }, [agentId]);
 
+  const navigateToWorkflow = useCallback((id: string) => {
+    setWorkflowId(id);
+    setPage("workflows");
+    window.history.pushState({ page: "workflows" }, "");
+    window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
+  }, []);
+
   const navigateToAgent = useCallback((id: string) => {
     const freeRoutes: Record<string, string> = {
       "workforce-planning": "try-agent",
@@ -150,13 +157,13 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       {page !== "admin" && <UnfoldNav page={page} setPage={navigateTo} currentUser={currentUser} />}
 
-      {page === "home" && <HomePage setPage={navigateTo} />}
+      {page === "home" && <HomePage setPage={navigateTo} onOpenWorkflow={navigateToWorkflow} />}
       {page === "try-listening-agent" && <TryListeningAgentPage setPage={navigateTo} />}
       {page === "try-performance-agent" && <TryPerformanceAgentPage setPage={navigateTo} />}
       {page === "try-us-workforce-agent" && <TryUSWorkforceAgentPage setPage={navigateTo} />}
       {page === "try-agent" && <TryAgentPage setPage={navigateTo} />}
       {page === "agents" && <AgentsPage onSelectAgent={navigateToAgent} onBuildAgent={handleBuildAgent} setPage={navigateTo} />}
-      {page === "workflows" && <WorkflowsPage setPage={navigateTo} />}
+      {page === "workflows" && <WorkflowsPage setPage={navigateTo} initialWorkflowId={workflowId} />}
       {page === "agent-detail" && agentId && <AgentDetailPage agentId={agentId} setPage={navigateTo} />}
       {page === "global-lifecycle-agent" && <GlobalLifecycleAgentPage setPage={navigateTo} />}
       {page === "leave-control-agent" && <LeaveControlAgentPage setPage={navigateTo} />}
