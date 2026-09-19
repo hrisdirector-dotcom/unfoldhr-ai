@@ -1,74 +1,86 @@
 import { ArrowRight } from "lucide-react";
+import { useId } from "react";
 import { RevealDiv } from "@/components/RevealDiv";
 import ClassificationBadge from "@/components/workflows/ClassificationBadge";
-import { CLASSIFICATIONS, DOMAINS, WORKFLOWS, computeCounts } from "@/data/workflows";
+import type { Classification } from "@/data/workflows";
 
 interface Props {
   setPage: (p: string) => void;
 }
 
+const LENSES: { key: Classification; body: string }[] = [
+  {
+    key: "eliminate",
+    body: "Remove work, approvals, handoffs, and reporting that no longer create value.",
+  },
+  {
+    key: "agent",
+    body: "Use AI where interpretation, synthesis, recommendation, or contextual reasoning improves the outcome.",
+  },
+  {
+    key: "deterministic",
+    body: "Use policies, business rules, calculations, validations, and systems when the result must be consistent.",
+  },
+  {
+    key: "human",
+    body: "Preserve human judgment where accountability, empathy, material risk, or consequential decisions require it.",
+  },
+];
+
 export default function WorkDesignSection({ setPage }: Props) {
-  const eliminated = WORKFLOWS.reduce((n, w) => n + computeCounts(w).eliminated, 0);
+  const uid = useId();
 
   return (
     <section className="bg-paper-2 border-y border-border">
       <div className="max-w-7xl mx-auto px-6 lg:px-10 py-20 lg:py-28">
         <RevealDiv>
           <p className="text-[11px] font-mono uppercase tracking-[0.22em] text-primary mb-4">
-            HR Work, Reimagined
+            The UnfoldHR Method
           </p>
-          <div className="grid lg:grid-cols-[1.15fr_1fr] gap-12 lg:gap-16 items-start">
-            <div>
-              <h2 className="font-display text-3xl md:text-5xl text-foreground leading-[1.08] tracking-tight">
-                Before choosing an agent,
-                <br />
-                <span className="font-serif-alt italic text-primary">redesign the work.</span>
-              </h2>
-              <p className="mt-6 text-base md:text-lg text-muted-foreground leading-relaxed max-w-xl">
-                We decomposed {WORKFLOWS.length} HR workflows across {DOMAINS.length} domains,
-                activity by activity. Each one names what should stop happening, what a rule should
-                decide, what a system should execute, and what a person must still own.
-              </p>
 
-              <div className="mt-8 flex flex-wrap gap-2">
-                {CLASSIFICATIONS.map((c) => (
-                  <ClassificationBadge key={c.key} classification={c.key} size="md" />
-                ))}
-              </div>
+          <div className="max-w-3xl">
+            <h2 className="font-display text-3xl md:text-5xl text-foreground leading-[1.08] tracking-tight">
+              Do not automate the process.
+              <br />
+              <span className="font-serif-alt italic text-primary">Redesign the work.</span>
+            </h2>
+            <p className="mt-6 text-base md:text-lg text-muted-foreground leading-relaxed">
+              Every workflow is examined through four lenses to determine how the work should operate
+              before technology is selected or deployed.
+            </p>
+          </div>
 
-              <button
-                onClick={() => setPage("workflows")}
-                className="mt-9 inline-flex items-center gap-2 bg-slate text-white px-6 py-3.5 rounded-xl text-sm font-semibold hover:bg-slate-2 transition"
+          <ul className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {LENSES.map((lens) => (
+              <li
+                key={lens.key}
+                aria-labelledby={`${uid}-${lens.key}`}
+                className="bg-card border border-border rounded-2xl p-6 md:p-7 h-full"
               >
-                Explore the workflow library
-                <ArrowRight className="h-4 w-4" />
-              </button>
-            </div>
+                <ClassificationBadge
+                  classification={lens.key}
+                  size="md"
+                  className="align-middle"
+                />
+                <span id={`${uid}-${lens.key}`} className="sr-only">
+                  {lens.key === "agent" ? "AI" : lens.key}
+                </span>
+                <p className="mt-4 text-sm text-muted-foreground leading-relaxed">{lens.body}</p>
+              </li>
+            ))}
+          </ul>
 
-            <div className="bg-card border border-border rounded-2xl p-7 md:p-8">
-              <p className="font-display text-2xl text-foreground leading-snug">
-                AI reasons. Rules determine. Systems transact. Humans judge.
-              </p>
-              <dl className="mt-7 grid grid-cols-2 gap-x-6 gap-y-5">
-                {[
-                  { v: WORKFLOWS.length, l: "workflows modelled" },
-                  { v: DOMAINS.length, l: "HR domains" },
-                  { v: eliminated, l: "activities eliminated" },
-                  { v: 3, l: "already live as agents" },
-                ].map((s) => (
-                  <div key={s.l} className="border-t border-border pt-3">
-                    <dt className="font-display text-3xl text-foreground leading-none">{s.v}</dt>
-                    <dd className="mt-1.5 text-[11px] font-mono uppercase tracking-[0.14em] text-muted-foreground">
-                      {s.l}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-              <p className="mt-7 text-xs text-slate-4 leading-relaxed">
-                Counts are calculated from the modelled activities in each workflow, not from
-                industry benchmarks.
-              </p>
-            </div>
+          <div className="mt-12 flex flex-col md:flex-row md:items-center md:justify-between gap-6 border-t border-border pt-8">
+            <p className="font-display text-xl md:text-2xl text-foreground leading-snug max-w-xl">
+              AI reasons. Rules determine. Systems transact. Humans judge.
+            </p>
+            <button
+              onClick={() => setPage("workflows")}
+              className="inline-flex items-center gap-2 bg-slate text-white px-6 py-3.5 rounded-xl text-sm font-semibold hover:bg-slate-2 transition shrink-0 self-start md:self-auto"
+            >
+              Explore the Workflow Library
+              <ArrowRight className="h-4 w-4" />
+            </button>
           </div>
         </RevealDiv>
       </div>
