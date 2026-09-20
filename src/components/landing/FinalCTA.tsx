@@ -1,16 +1,22 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { RevealDiv } from "@/components/RevealDiv";
 import { ArrowRight } from "lucide-react";
 import { submitContactRequest } from "@/lib/submitContact";
+import { BOOKING_URL } from "@/lib/booking";
+import type { InquiryPreset } from "@/pages/Index";
 
 interface FinalCTAProps {
   setPage: (p: string) => void;
   showToast: (msg: string) => void;
+  inquiry?: InquiryPreset | null;
 }
+
+const AGENT_STEP = "Agent Platform / Agent Implementation";
 
 const NEXT_STEPS = [
   "Confidential introduction",
   "Workflow Redesign Sprint",
+  AGENT_STEP,
   "Executive briefing",
   "General question",
 ] as const;
@@ -34,20 +40,35 @@ const emptyForm = {
   notWorking: "",
   outcome: "",
   question: "",
+  agentArea: "",
+  agentWorkflow: "",
+  agentContext: "",
 };
 
 type FormState = typeof emptyForm;
 type FieldErrors = Partial<Record<keyof FormState, string>>;
 
-export default function FinalCTA({ setPage, showToast }: FinalCTAProps) {
+export default function FinalCTA({ setPage, showToast, inquiry }: FinalCTAProps) {
   const [form, setForm] = useState<FormState>(emptyForm);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [formError, setFormError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [lastStep, setLastStep] = useState<"" | NextStep>("");
 
   const isGeneral = form.nextStep === "General question";
-  const showWorkflowFields = form.nextStep !== "" && !isGeneral;
+  const isAgent = form.nextStep === AGENT_STEP;
+  const showWorkflowFields = form.nextStep !== "" && !isGeneral && !isAgent;
+
+  useEffect(() => {
+    if (!inquiry) return;
+    const match = NEXT_STEPS.find((s) => s === inquiry.type);
+    if (!match) return;
+    setSubmitted(false);
+    setForm((prev) => ({ ...prev, nextStep: match }));
+    setErrors({});
+  }, [inquiry]);
+
 
   const set = (key: keyof FormState, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -60,9 +81,13 @@ export default function FinalCTA({ setPage, showToast }: FinalCTAProps) {
     setErrors((prev) => ({
       ...prev,
       nextStep: undefined,
-      ...(value === "General question"
-        ? { workflow: undefined, notWorking: undefined, outcome: undefined }
-        : { question: undefined }),
+      workflow: undefined,
+      notWorking: undefined,
+      outcome: undefined,
+      question: undefined,
+      agentArea: undefined,
+      agentWorkflow: undefined,
+      agentContext: undefined,
     }));
   };
 
@@ -75,12 +100,17 @@ export default function FinalCTA({ setPage, showToast }: FinalCTAProps) {
     if (!form.role.trim()) next.role = "Please enter your role.";
     if (!form.nextStep) next.nextStep = "Please choose a preferred next step.";
 
-    if (form.nextStep && form.nextStep !== "General question") {
+    if (showWorkflowFields) {
       if (!form.workflow.trim()) next.workflow = "Please name the workflow or process.";
       if (!form.notWorking.trim()) next.notWorking = "Please describe what is not working.";
       if (!form.outcome.trim()) next.outcome = "Please describe the outcome you need.";
     }
-    if (form.nextStep === "General question" && !form.question.trim()) {
+    if (isAgent) {
+      if (!form.agentArea.trim()) next.agentArea = "Please describe the agent capability of interest.";
+      if (!form.agentWorkflow.trim()) next.agentWorkflow = "Please name the workflow it would support.";
+      if (!form.agentContext.trim()) next.agentContext = "Please describe your current systems and context.";
+    }
+    if (isGeneral && !form.question.trim()) {
       next.question = "Please enter your question.";
     }
     return next;
@@ -97,6 +127,19 @@ export default function FinalCTA({ setPage, showToast }: FinalCTAProps) {
         form.question.trim(),
       ].join("\n");
     }
+    if (isAgent) {
+      return [
+        role,
+        "Agent capability of interest:",
+        form.agentArea.trim(),
+        "Workflow it would support:",
+        form.agentWorkflow.trim(),
+        "Current systems and context:",
+        form.agentContext.trim(),
+        "Preferred next step:",
+        AGENT_STEP,
+      ].join("\n");
+    }
     return [
       role,
       "HR workflow or process:",
@@ -109,6 +152,7 @@ export default function FinalCTA({ setPage, showToast }: FinalCTAProps) {
       form.nextStep,
     ].join("\n");
   }
+
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -134,6 +178,7 @@ export default function FinalCTA({ setPage, showToast }: FinalCTAProps) {
     });
 
     if (result === "saved") {
+      setLastStep(form.nextStep);
       setSubmitted(true);
       setForm(emptyForm);
       setErrors({});
@@ -194,6 +239,16 @@ export default function FinalCTA({ setPage, showToast }: FinalCTAProps) {
                   Request received. We will review the information and respond within two business
                   days.
                 </p>
+                {lastStep === "Workflow Redesign Sprint" && (
+                  <a
+                    href={BOOKING_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-5 inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white text-slate font-semibold text-sm hover:bg-blue-50 transition-colors"
+                  >
+                    Book a Discovery Call
+                  </a>
+                )}
               </div>
             ) : (
               <form id="request" onSubmit={handleSubmit} noValidate className="space-y-4 text-left max-w-md mx-auto">
@@ -310,6 +365,55 @@ export default function FinalCTA({ setPage, showToast }: FinalCTAProps) {
                     </div>
                   </>
                 )}
+
+                {isAgent && (
+                  <>
+                    <div>
+                      <label className={labelClass} htmlFor="cta-agent-area">
+                        Which agent capability is of interest
+                      </label>
+                      <input
+                        id="cta-agent-area"
+                        value={form.agentArea}
+                        onChange={(e) => set("agentArea", e.target.value)}
+                        placeholder="For example: leave control, lifecycle readiness"
+                        className={inputClass}
+                        {...a11y("agentArea")}
+                      />
+                      {fieldError("agentArea")}
+                    </div>
+
+                    <div>
+                      <label className={labelClass} htmlFor="cta-agent-workflow">
+                        Which HR workflow it would support
+                      </label>
+                      <input
+                        id="cta-agent-workflow"
+                        value={form.agentWorkflow}
+                        onChange={(e) => set("agentWorkflow", e.target.value)}
+                        className={inputClass}
+                        {...a11y("agentWorkflow")}
+                      />
+                      {fieldError("agentWorkflow")}
+                    </div>
+
+                    <div>
+                      <label className={labelClass} htmlFor="cta-agent-context">
+                        Current systems and context
+                      </label>
+                      <textarea
+                        id="cta-agent-context"
+                        rows={3}
+                        value={form.agentContext}
+                        onChange={(e) => set("agentContext", e.target.value)}
+                        className={`${inputClass} resize-none`}
+                        {...a11y("agentContext")}
+                      />
+                      {fieldError("agentContext")}
+                    </div>
+                  </>
+                )}
+
 
                 {isGeneral && (
                   <div>

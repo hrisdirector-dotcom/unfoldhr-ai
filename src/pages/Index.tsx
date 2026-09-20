@@ -24,8 +24,11 @@ import CompensationChangeAgentPage from "@/pages/CompensationChangeAgentPage";
 import AgentsPage from "@/pages/AgentsPage";
 import WorkflowsPage from "@/pages/WorkflowsPage";
 import AgentDetailPage from "@/pages/AgentDetailPage";
+import ServicesPage from "@/pages/ServicesPage";
 import OnboardingWalkthrough from "@/components/OnboardingWalkthrough";
 import type { SavedRun } from "@/hooks/useSavedRuns";
+
+export type InquiryPreset = { type: string; n: number };
 
 const Index = () => {
   const [page, setPage] = useState(() => {
@@ -38,6 +41,7 @@ const Index = () => {
   });
   const [workflowId, setWorkflowId] = useState<string | undefined>(undefined);
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [inquiry, setInquiry] = useState<InquiryPreset | null>(null);
   const [deckState, setDeckState] = useState<{ run: SavedRun; branding: { logoUrl: string | null; primaryColor: string; accentColor: string } } | null>(null);
   const { user, isAdmin, loading, signOut } = useAuth();
 
@@ -83,6 +87,17 @@ const Index = () => {
     setPage("workflows");
     window.history.pushState({ page: "workflows" }, "");
     window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
+  }, []);
+
+  const goToInquiry = useCallback((type: string) => {
+    setInquiry((prev) => ({ type, n: (prev?.n ?? 0) + 1 }));
+    setPage("home");
+    setWorkflowId(undefined);
+    window.history.pushState({ page: "home" }, "");
+    setTimeout(
+      () => document.getElementById("final-cta")?.scrollIntoView({ behavior: "smooth", block: "start" }),
+      180,
+    );
   }, []);
 
   const navigateToAgent = useCallback((id: string) => {
@@ -157,14 +172,33 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {page !== "admin" && <UnfoldNav page={page} setPage={navigateTo} currentUser={currentUser} />}
+      {page !== "admin" && (
+        <UnfoldNav page={page} setPage={navigateTo} currentUser={currentUser} onDiscussWorkflow={() => goToInquiry("Workflow Redesign Sprint")} />
+      )}
 
-      {page === "home" && <HomePage setPage={navigateTo} onOpenWorkflow={navigateToWorkflow} />}
+      {page === "home" && (
+        <HomePage
+          setPage={navigateTo}
+          onOpenWorkflow={navigateToWorkflow}
+          inquiry={inquiry}
+          onDiscussWorkflow={() => goToInquiry("Workflow Redesign Sprint")}
+        />
+      )}
+      {page === "services" && (
+        <ServicesPage setPage={navigateTo} onDiscussWorkflow={() => goToInquiry("Workflow Redesign Sprint")} />
+      )}
       {page === "try-listening-agent" && <TryListeningAgentPage setPage={navigateTo} />}
       {page === "try-performance-agent" && <TryPerformanceAgentPage setPage={navigateTo} />}
       {page === "try-us-workforce-agent" && <TryUSWorkforceAgentPage setPage={navigateTo} />}
       {page === "try-agent" && <TryAgentPage setPage={navigateTo} />}
-      {page === "agents" && <AgentsPage onSelectAgent={navigateToAgent} onBuildAgent={handleBuildAgent} setPage={navigateTo} />}
+      {page === "agents" && (
+        <AgentsPage
+          onSelectAgent={navigateToAgent}
+          onBuildAgent={handleBuildAgent}
+          setPage={navigateTo}
+          onDiscussAgentImplementation={() => goToInquiry("Agent Platform / Agent Implementation")}
+        />
+      )}
       {page === "workflows" && <WorkflowsPage setPage={navigateTo} initialWorkflowId={workflowId} />}
       {page === "agent-detail" && agentId && <AgentDetailPage agentId={agentId} setPage={navigateTo} />}
       {page === "global-lifecycle-agent" && <GlobalLifecycleAgentPage setPage={navigateTo} />}

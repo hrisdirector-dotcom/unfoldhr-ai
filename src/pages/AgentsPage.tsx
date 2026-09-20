@@ -8,9 +8,33 @@ interface AgentsPageProps {
   onSelectAgent: (agentId: string) => void;
   onBuildAgent: (agentId: string) => void;
   setPage: (p: string) => void;
+  onDiscussAgentImplementation?: () => void;
 }
 
-export default function AgentsPage({ onSelectAgent, onBuildAgent, setPage }: AgentsPageProps) {
+const ARCHITECTURE_LAYERS: { name: string; desc: string }[] = [
+  { name: "Experience layer", desc: "How employees, managers, and HR interact with the redesigned work." },
+  { name: "Agent layer", desc: "Where AI interprets context, synthesises information, and recommends action." },
+  { name: "Policy and rules layer", desc: "Where eligibility, entitlement, and policy outcomes are determined consistently." },
+  { name: "Data layer", desc: "The employee, case, and system-of-record information the work depends on." },
+  { name: "Integration layer", desc: "Potential connection points to HCM, payroll, case, and vendor systems." },
+  { name: "Governance layer", desc: "Permissions, human approval boundaries, audit trail, and measurement." },
+];
+
+const CONNECTION_POINTS = [
+  "Core HCM and employee records",
+  "Payroll and time systems",
+  "Case and service management",
+  "Leave and absence vendors",
+  "Identity and access management",
+  "Document and e-signature systems",
+];
+
+export default function AgentsPage({
+  onSelectAgent,
+  onBuildAgent,
+  setPage,
+  onDiscussAgentImplementation,
+}: AgentsPageProps) {
   return (
     <div className="bg-background">
       {/* ───────────── Hero — matches PlatformHero language ───────────── */}
@@ -33,7 +57,7 @@ export default function AgentsPage({ onSelectAgent, onBuildAgent, setPage }: Age
             className="flex items-center gap-2 text-[11px] uppercase tracking-[0.22em] text-blue-200/90 flex-wrap font-mono"
           >
             <span className="h-1.5 w-1.5 rounded-full bg-blue-300 animate-pulse" />
-            <span>The Agent Catalog</span>
+            <span>UnfoldHR Agent Platform</span>
             <span className="opacity-50">·</span>
             <span className="opacity-70">Control &amp; Readiness · Decision Intelligence</span>
           </motion.div>
@@ -44,10 +68,10 @@ export default function AgentsPage({ onSelectAgent, onBuildAgent, setPage }: Age
             transition={{ duration: 0.6, delay: 0.05 }}
             className="mt-7 font-display text-4xl sm:text-5xl md:text-6xl lg:text-[4.25rem] leading-[1.02] tracking-tight max-w-4xl"
           >
-            Two families of agents for
+            Purpose-built intelligence for
             <br />
             <span className="font-serif-alt italic text-blue-200">
-              modern HR operations.
+              redesigned HR work.
             </span>
           </motion.h1>
 
@@ -58,9 +82,58 @@ export default function AgentsPage({ onSelectAgent, onBuildAgent, setPage }: Age
             className="mt-7 text-base md:text-lg text-slate-200/80 leading-relaxed max-w-2xl"
           >
             <span className="text-white font-medium">Control &amp; Readiness Agents</span>{" "}
-            govern what can move forward.{" "}
+            support what can move forward.{" "}
             <span className="text-white font-medium">Decision Agents</span>{" "}
-            turn workforce data into recommended action.
+            turn workforce information into recommended action. The platform is one possible way to
+            enable a redesigned workflow — never a substitute for the redesign itself.
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.18 }}
+            className="mt-8 rounded-2xl border border-white/15 bg-white/[0.06] p-5 max-w-2xl"
+          >
+            <p className="text-xs font-bold uppercase tracking-[2px] text-blue-200 mb-2">
+              Demonstration
+            </p>
+            <p className="text-sm text-slate-200/80 leading-relaxed">
+              Every interactive agent on this site is a demonstration running on prepared scenario
+              data. Demonstrations do not connect to live customer systems, do not execute
+              transactions, and do not represent a deployed production service.
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.22 }}
+            className="mt-8 flex flex-wrap gap-3"
+          >
+            <button
+              onClick={() =>
+                onDiscussAgentImplementation ? onDiscussAgentImplementation() : setPage("home")
+              }
+              className="group inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-white text-slate font-semibold text-sm hover:bg-blue-50 transition-all"
+            >
+              Discuss Agent Implementation
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+            </button>
+            <button
+              onClick={() => setPage("global-lifecycle-agent")}
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl border border-white/20 bg-white/5 text-white font-semibold text-sm hover:border-white/40 transition-all"
+            >
+              Explore Agent Demos
+            </button>
+          </motion.div>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.28 }}
+            className="mt-4 text-xs text-slate-200/60 max-w-xl"
+          >
+            "Discuss Agent Implementation" starts a qualified conversation about fit and
+            feasibility. It is not a deployment order or a purchase.
           </motion.p>
         </div>
       </section>
@@ -342,6 +415,85 @@ export default function AgentsPage({ onSelectAgent, onBuildAgent, setPage }: Age
                 />
               </RevealDiv>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ───────────── Conceptual architecture ───────────── */}
+      <section className="py-20 md:py-28 bg-muted/30 border-t border-border">
+        <div className="max-w-5xl mx-auto px-6 lg:px-10">
+          <RevealDiv>
+            <span className="inline-block text-xs font-bold uppercase tracking-[3px] text-primary mb-4">
+              Conceptual model
+            </span>
+            <h2 className="font-display text-2xl md:text-3xl text-foreground mb-3">
+              A six-layer view of how redesigned HR work is enabled
+            </h2>
+            <p className="text-sm text-muted-foreground leading-relaxed max-w-2xl mb-8">
+              This is a conceptual architecture used to structure design decisions during a workflow
+              redesign. It describes how the layers relate — it does not describe a deployed
+              production system or completed integrations.
+            </p>
+          </RevealDiv>
+          <ol className="space-y-3">
+            {ARCHITECTURE_LAYERS.map((layer, i) => (
+              <RevealDiv key={layer.name} delay={i * 0.05}>
+                <li className="flex gap-4 rounded-2xl border border-border bg-card p-5">
+                  <span className="font-mono text-xs text-primary pt-1">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <div>
+                    <p className="font-semibold text-sm text-foreground">{layer.name}</p>
+                    <p className="text-sm text-muted-foreground leading-relaxed mt-1">{layer.desc}</p>
+                  </div>
+                </li>
+              </RevealDiv>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      {/* ───────────── Connection points ───────────── */}
+      <section className="py-20 md:py-28 bg-background border-t border-border">
+        <div className="max-w-5xl mx-auto px-6 lg:px-10">
+          <RevealDiv>
+            <span className="inline-block text-xs font-bold uppercase tracking-[3px] text-primary mb-4">
+              Connection points
+            </span>
+            <h2 className="font-display text-2xl md:text-3xl text-foreground mb-3">
+              Where a redesigned workflow typically connects
+            </h2>
+            <p className="text-sm text-muted-foreground leading-relaxed max-w-2xl mb-8">
+              These are potential connection points identified during redesign, not live customer
+              integrations. Specific integration work is scoped separately.
+            </p>
+          </RevealDiv>
+          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {CONNECTION_POINTS.map((c) => (
+              <li
+                key={c}
+                className="rounded-xl border border-border bg-card p-4 text-sm text-muted-foreground"
+              >
+                {c}
+              </li>
+            ))}
+          </ul>
+          <div className="mt-10 flex flex-wrap gap-3">
+            <button
+              onClick={() =>
+                onDiscussAgentImplementation ? onDiscussAgentImplementation() : setPage("home")
+              }
+              className="group inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition-all"
+            >
+              Discuss Agent Implementation
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+            </button>
+            <button
+              onClick={() => setPage("services")}
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl border border-border bg-card text-foreground font-semibold text-sm hover:border-primary/40 transition-all"
+            >
+              Start with Workflow Redesign
+            </button>
           </div>
         </div>
       </section>

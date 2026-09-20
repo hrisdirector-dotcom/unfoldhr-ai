@@ -8,17 +8,18 @@ interface NavProps {
   page: string;
   setPage: (p: string) => void;
   currentUser: { email: string; role: string } | null;
+  onDiscussWorkflow?: () => void;
 }
 
 const NAV_LINKS: [string, string, boolean][] = [
-  ["how-it-works", "How It Works", false],
-  ["agents", "Agents", false],
-  ["workflows", "Workflows", false],
-  ["integrations", "Integrations", false],
+  ["services", "Services", false],
+  ["agents", "Agent Platform", false],
+  ["workflows", "Workflow Library", false],
+  ["our-method", "Our Method", false],
   ["about", "About", false],
 ];
 
-export function UnfoldNav({ page, setPage, currentUser }: NavProps) {
+export function UnfoldNav({ page, setPage, currentUser, onDiscussWorkflow }: NavProps) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const overDark = !scrolled && !mobileOpen && DARK_HERO_PAGES.has(page);
@@ -43,15 +44,22 @@ export function UnfoldNav({ page, setPage, currentUser }: NavProps) {
       setTimeout(() => document.getElementById("agent-gallery")?.scrollIntoView({ behavior: "smooth" }), 150);
       return;
     }
-    if (p === "how-it-works") {
+    if (p === "our-method") {
       setPage("home");
       setMobileOpen(false);
-      setTimeout(() => document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" }), 150);
+      setTimeout(() => document.getElementById("our-method")?.scrollIntoView({ behavior: "smooth" }), 150);
       return;
     }
     setPage(p);
     setMobileOpen(false);
   };
+
+  const discuss = () => {
+    setMobileOpen(false);
+    if (onDiscussWorkflow) onDiscussWorkflow();
+    else setPage("services");
+  };
+
 
   return (
     <>
@@ -92,27 +100,26 @@ export function UnfoldNav({ page, setPage, currentUser }: NavProps) {
         </div>
 
         <div className="hidden md:flex items-center gap-3">
-          {/* Primary CTA - Try the Flagship Agent */}
+          {/* Primary CTA - Discuss a Workflow */}
           <button
-            onClick={() => navigate("try-agents")}
+            onClick={discuss}
             className="px-5 py-2.5 text-sm font-semibold rounded-lg cursor-pointer bg-primary text-primary-foreground border-none hover:bg-primary/90 transition-colors"
           >
-            Try the Flagship Agent
+            Discuss a Workflow →
           </button>
 
-          {/* Secondary CTA - Book a Demo */}
-          <a
-            href="https://calendly.com/eric-weaver-unfoldhrai/unfold-hr-ai-demo"
-            target="_blank"
-            rel="noopener noreferrer"
+          {/* Secondary CTA - Explore Agent Demos */}
+          <button
+            onClick={() => navigate("agents")}
             className={`px-5 py-2.5 text-sm font-semibold rounded-lg cursor-pointer border-none transition-colors inline-flex items-center ${
               overDark
                 ? "bg-white text-slate hover:bg-blue-50"
                 : "bg-foreground text-background hover:bg-foreground/90"
             }`}
           >
-            Book a Demo
-          </a>
+            Explore Agent Demos
+          </button>
+
 
           {/* Tertiary - Dashboard (if logged in) */}
           {currentUser && (
@@ -161,23 +168,22 @@ export function UnfoldNav({ page, setPage, currentUser }: NavProps) {
 
             <div className="h-px bg-border my-3" />
 
-            {/* Primary CTA - Try the Flagship Agent */}
+            {/* Primary CTA - Discuss a Workflow */}
             <button
-              onClick={() => navigate("try-agents")}
+              onClick={discuss}
               className="w-full px-4 py-3.5 text-base font-semibold rounded-lg cursor-pointer bg-primary text-primary-foreground border-none transition-colors"
             >
-              Try the Flagship Agent
+              Discuss a Workflow →
             </button>
 
-            {/* Secondary CTA - Book a Demo */}
-            <a
-              href="https://calendly.com/eric-weaver-unfoldhrai/unfold-hr-ai-demo"
-              target="_blank"
-              rel="noopener noreferrer"
+            {/* Secondary CTA - Explore Agent Demos */}
+            <button
+              onClick={() => navigate("agents")}
               className="w-full px-4 py-3.5 text-base font-semibold rounded-lg cursor-pointer bg-foreground text-background border-none transition-colors text-center"
             >
-              Book a Demo
-            </a>
+              Explore Agent Demos
+            </button>
+
 
             {/* Tertiary - Dashboard (if logged in) */}
             {currentUser && (
