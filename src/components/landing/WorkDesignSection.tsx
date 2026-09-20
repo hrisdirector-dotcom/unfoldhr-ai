@@ -31,7 +31,7 @@ export default function WorkDesignSection({ setPage }: Props) {
   const uid = useId();
 
   return (
-    <section className="bg-paper-2 border-y border-border">
+    <section id="our-method" className="bg-paper-2 border-y border-border scroll-mt-24">
       <div className="max-w-7xl mx-auto px-6 lg:px-10 py-20 lg:py-28">
         <RevealDiv>
           <p className="text-[11px] font-mono uppercase tracking-[0.22em] text-primary mb-4">
