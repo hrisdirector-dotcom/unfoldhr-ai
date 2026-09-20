@@ -1,6 +1,7 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, CalendarCheck2 } from "lucide-react";
 import { RevealDiv } from "@/components/RevealDiv";
 import { FLAGSHIP_WORKFLOW_ID } from "@/data/workflows";
+import { BOOKING_URL } from "@/lib/booking";
 
 export const DELIVERABLES = [
   "Current-state workflow and friction analysis",
@@ -50,12 +51,21 @@ export default function SprintOfferSection({ onOpenWorkflow, onDiscussWorkflow }
 
               <div className="mt-8 flex flex-wrap items-center gap-3">
                 <button
-                  onClick={() => scrollTo("final-cta")}
+                  onClick={() => (onDiscussWorkflow ? onDiscussWorkflow() : scrollTo("final-cta"))}
                   className="group inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                 >
-                  Book a Confidential Introduction
+                  Discuss Your Workflow
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                 </button>
+                <a
+                  href={BOOKING_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl border border-border bg-card text-foreground font-semibold text-sm hover:border-primary/40 transition-all"
+                >
+                  <CalendarCheck2 className="h-4 w-4 text-primary" aria-hidden="true" />
+                  Book a Discovery Call
+                </a>
                 {onOpenWorkflow && (
                   <button
                     onClick={() => onOpenWorkflow(FLAGSHIP_WORKFLOW_ID)}
