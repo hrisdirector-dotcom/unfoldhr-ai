@@ -8,13 +8,14 @@ interface NavProps {
   page: string;
   setPage: (p: string) => void;
   currentUser: { email: string; role: string } | null;
+  onDiscussWorkflow?: () => void;
 }
 
 const NAV_LINKS: [string, string, boolean][] = [
-  ["how-it-works", "How It Works", false],
-  ["agents", "Agents", false],
-  ["workflows", "Workflows", false],
-  ["integrations", "Integrations", false],
+  ["services", "Services", false],
+  ["agents", "Agent Platform", false],
+  ["workflows", "Workflow Library", false],
+  ["our-method", "Our Method", false],
   ["about", "About", false],
 ];
 
