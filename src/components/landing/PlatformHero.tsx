@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, ShieldCheck } from "lucide-react";
+import { FLAGSHIP_WORKFLOW_ID } from "@/data/workflows";
 
 interface PlatformHeroProps {
   setPage: (p: string) => void;
+  onOpenWorkflow?: (id: string) => void;
+  onDiscussWorkflow?: () => void;
 }
 
-export default function PlatformHero({ setPage }: PlatformHeroProps) {
+export default function PlatformHero({ setPage, onOpenWorkflow, onDiscussWorkflow }: PlatformHeroProps) {
   const [scrollY, setScrollY] = useState(0);
 
   useEffect(() => {
