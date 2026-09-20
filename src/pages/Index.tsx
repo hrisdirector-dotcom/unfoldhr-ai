@@ -24,8 +24,11 @@ import CompensationChangeAgentPage from "@/pages/CompensationChangeAgentPage";
 import AgentsPage from "@/pages/AgentsPage";
 import WorkflowsPage from "@/pages/WorkflowsPage";
 import AgentDetailPage from "@/pages/AgentDetailPage";
+import ServicesPage from "@/pages/ServicesPage";
 import OnboardingWalkthrough from "@/components/OnboardingWalkthrough";
 import type { SavedRun } from "@/hooks/useSavedRuns";
+
+export type InquiryPreset = { type: string; n: number };
 
 const Index = () => {
   const [page, setPage] = useState(() => {
@@ -83,6 +86,17 @@ const Index = () => {
     setPage("workflows");
     window.history.pushState({ page: "workflows" }, "");
     window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
+  }, []);
+
+  const goToInquiry = useCallback((type: string) => {
+    setInquiry((prev) => ({ type, n: (prev?.n ?? 0) + 1 }));
+    setPage("home");
+    setWorkflowId(undefined);
+    window.history.pushState({ page: "home" }, "");
+    setTimeout(
+      () => document.getElementById("final-cta")?.scrollIntoView({ behavior: "smooth", block: "start" }),
+      180,
+    );
   }, []);
 
   const navigateToAgent = useCallback((id: string) => {
