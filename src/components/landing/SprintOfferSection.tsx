@@ -16,9 +16,10 @@ export const DELIVERABLES = [
 
 interface SprintOfferSectionProps {
   onOpenWorkflow?: (id: string) => void;
+  onDiscussWorkflow?: () => void;
 }
 
-export default function SprintOfferSection({ onOpenWorkflow }: SprintOfferSectionProps) {
+export default function SprintOfferSection({ onOpenWorkflow, onDiscussWorkflow }: SprintOfferSectionProps) {
   const scrollTo = (id: string) =>
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
 
