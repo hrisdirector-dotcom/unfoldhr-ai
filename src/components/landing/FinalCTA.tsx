@@ -366,6 +366,55 @@ export default function FinalCTA({ setPage, showToast, inquiry }: FinalCTAProps)
                   </>
                 )}
 
+                {isAgent && (
+                  <>
+                    <div>
+                      <label className={labelClass} htmlFor="cta-agent-area">
+                        Which agent capability is of interest
+                      </label>
+                      <input
+                        id="cta-agent-area"
+                        value={form.agentArea}
+                        onChange={(e) => set("agentArea", e.target.value)}
+                        placeholder="For example: leave control, lifecycle readiness"
+                        className={inputClass}
+                        {...a11y("agentArea")}
+                      />
+                      {fieldError("agentArea")}
+                    </div>
+
+                    <div>
+                      <label className={labelClass} htmlFor="cta-agent-workflow">
+                        Which HR workflow it would support
+                      </label>
+                      <input
+                        id="cta-agent-workflow"
+                        value={form.agentWorkflow}
+                        onChange={(e) => set("agentWorkflow", e.target.value)}
+                        className={inputClass}
+                        {...a11y("agentWorkflow")}
+                      />
+                      {fieldError("agentWorkflow")}
+                    </div>
+
+                    <div>
+                      <label className={labelClass} htmlFor="cta-agent-context">
+                        Current systems and context
+                      </label>
+                      <textarea
+                        id="cta-agent-context"
+                        rows={3}
+                        value={form.agentContext}
+                        onChange={(e) => set("agentContext", e.target.value)}
+                        className={`${inputClass} resize-none`}
+                        {...a11y("agentContext")}
+                      />
+                      {fieldError("agentContext")}
+                    </div>
+                  </>
+                )}
+
+
                 {isGeneral && (
                   <div>
                     <label className={labelClass} htmlFor="cta-question">Your question</label>
