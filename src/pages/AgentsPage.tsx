@@ -8,9 +8,33 @@ interface AgentsPageProps {
   onSelectAgent: (agentId: string) => void;
   onBuildAgent: (agentId: string) => void;
   setPage: (p: string) => void;
+  onDiscussAgentImplementation?: () => void;
 }
 
-export default function AgentsPage({ onSelectAgent, onBuildAgent, setPage }: AgentsPageProps) {
+const ARCHITECTURE_LAYERS: { name: string; desc: string }[] = [
+  { name: "Experience layer", desc: "How employees, managers, and HR interact with the redesigned work." },
+  { name: "Agent layer", desc: "Where AI interprets context, synthesises information, and recommends action." },
+  { name: "Policy and rules layer", desc: "Where eligibility, entitlement, and policy outcomes are determined consistently." },
+  { name: "Data layer", desc: "The employee, case, and system-of-record information the work depends on." },
+  { name: "Integration layer", desc: "Potential connection points to HCM, payroll, case, and vendor systems." },
+  { name: "Governance layer", desc: "Permissions, human approval boundaries, audit trail, and measurement." },
+];
+
+const CONNECTION_POINTS = [
+  "Core HCM and employee records",
+  "Payroll and time systems",
+  "Case and service management",
+  "Leave and absence vendors",
+  "Identity and access management",
+  "Document and e-signature systems",
+];
+
+export default function AgentsPage({
+  onSelectAgent,
+  onBuildAgent,
+  setPage,
+  onDiscussAgentImplementation,
+}: AgentsPageProps) {
   return (
     <div className="bg-background">
       {/* ───────────── Hero — matches PlatformHero language ───────────── */}
