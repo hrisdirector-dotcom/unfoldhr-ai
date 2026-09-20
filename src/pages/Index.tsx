@@ -172,14 +172,33 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {page !== "admin" && <UnfoldNav page={page} setPage={navigateTo} currentUser={currentUser} />}
+      {page !== "admin" && (
+        <UnfoldNav page={page} setPage={navigateTo} currentUser={currentUser} onDiscussWorkflow={() => goToInquiry("Workflow Redesign Sprint")} />
+      )}
 
-      {page === "home" && <HomePage setPage={navigateTo} onOpenWorkflow={navigateToWorkflow} />}
+      {page === "home" && (
+        <HomePage
+          setPage={navigateTo}
+          onOpenWorkflow={navigateToWorkflow}
+          inquiry={inquiry}
+          onDiscussWorkflow={() => goToInquiry("Workflow Redesign Sprint")}
+        />
+      )}
+      {page === "services" && (
+        <ServicesPage setPage={navigateTo} onDiscussWorkflow={() => goToInquiry("Workflow Redesign Sprint")} />
+      )}
       {page === "try-listening-agent" && <TryListeningAgentPage setPage={navigateTo} />}
       {page === "try-performance-agent" && <TryPerformanceAgentPage setPage={navigateTo} />}
       {page === "try-us-workforce-agent" && <TryUSWorkforceAgentPage setPage={navigateTo} />}
       {page === "try-agent" && <TryAgentPage setPage={navigateTo} />}
-      {page === "agents" && <AgentsPage onSelectAgent={navigateToAgent} onBuildAgent={handleBuildAgent} setPage={navigateTo} />}
+      {page === "agents" && (
+        <AgentsPage
+          onSelectAgent={navigateToAgent}
+          onBuildAgent={handleBuildAgent}
+          setPage={navigateTo}
+          onDiscussAgentImplementation={() => goToInquiry("Agent Platform / Agent Implementation")}
+        />
+      )}
       {page === "workflows" && <WorkflowsPage setPage={navigateTo} initialWorkflowId={workflowId} />}
       {page === "agent-detail" && agentId && <AgentDetailPage agentId={agentId} setPage={navigateTo} />}
       {page === "global-lifecycle-agent" && <GlobalLifecycleAgentPage setPage={navigateTo} />}
