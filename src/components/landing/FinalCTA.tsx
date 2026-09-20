@@ -178,6 +178,7 @@ export default function FinalCTA({ setPage, showToast, inquiry }: FinalCTAProps)
     });
 
     if (result === "saved") {
+      setLastStep(form.nextStep);
       setSubmitted(true);
       setForm(emptyForm);
       setErrors({});
