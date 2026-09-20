@@ -418,6 +418,85 @@ export default function AgentsPage({
           </div>
         </div>
       </section>
+
+      {/* ───────────── Conceptual architecture ───────────── */}
+      <section className="py-20 md:py-28 bg-muted/30 border-t border-border">
+        <div className="max-w-5xl mx-auto px-6 lg:px-10">
+          <RevealDiv>
+            <span className="inline-block text-xs font-bold uppercase tracking-[3px] text-primary mb-4">
+              Conceptual model
+            </span>
+            <h2 className="font-display text-2xl md:text-3xl text-foreground mb-3">
+              A six-layer view of how redesigned HR work is enabled
+            </h2>
+            <p className="text-sm text-muted-foreground leading-relaxed max-w-2xl mb-8">
+              This is a conceptual architecture used to structure design decisions during a workflow
+              redesign. It describes how the layers relate — it does not describe a deployed
+              production system or completed integrations.
+            </p>
+          </RevealDiv>
+          <ol className="space-y-3">
+            {ARCHITECTURE_LAYERS.map((layer, i) => (
+              <RevealDiv key={layer.name} delay={i * 0.05}>
+                <li className="flex gap-4 rounded-2xl border border-border bg-card p-5">
+                  <span className="font-mono text-xs text-primary pt-1">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <div>
+                    <p className="font-semibold text-sm text-foreground">{layer.name}</p>
+                    <p className="text-sm text-muted-foreground leading-relaxed mt-1">{layer.desc}</p>
+                  </div>
+                </li>
+              </RevealDiv>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      {/* ───────────── Connection points ───────────── */}
+      <section className="py-20 md:py-28 bg-background border-t border-border">
+        <div className="max-w-5xl mx-auto px-6 lg:px-10">
+          <RevealDiv>
+            <span className="inline-block text-xs font-bold uppercase tracking-[3px] text-primary mb-4">
+              Connection points
+            </span>
+            <h2 className="font-display text-2xl md:text-3xl text-foreground mb-3">
+              Where a redesigned workflow typically connects
+            </h2>
+            <p className="text-sm text-muted-foreground leading-relaxed max-w-2xl mb-8">
+              These are potential connection points identified during redesign, not live customer
+              integrations. Specific integration work is scoped separately.
+            </p>
+          </RevealDiv>
+          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {CONNECTION_POINTS.map((c) => (
+              <li
+                key={c}
+                className="rounded-xl border border-border bg-card p-4 text-sm text-muted-foreground"
+              >
+                {c}
+              </li>
+            ))}
+          </ul>
+          <div className="mt-10 flex flex-wrap gap-3">
+            <button
+              onClick={() =>
+                onDiscussAgentImplementation ? onDiscussAgentImplementation() : setPage("home")
+              }
+              className="group inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition-all"
+            >
+              Discuss Agent Implementation
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+            </button>
+            <button
+              onClick={() => setPage("services")}
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl border border-border bg-card text-foreground font-semibold text-sm hover:border-primary/40 transition-all"
+            >
+              Start with Workflow Redesign
+            </button>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
