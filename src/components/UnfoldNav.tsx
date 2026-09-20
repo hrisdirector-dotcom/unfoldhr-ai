@@ -19,7 +19,7 @@ const NAV_LINKS: [string, string, boolean][] = [
   ["about", "About", false],
 ];
 
-export function UnfoldNav({ page, setPage, currentUser }: NavProps) {
+export function UnfoldNav({ page, setPage, currentUser, onDiscussWorkflow }: NavProps) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const overDark = !scrolled && !mobileOpen && DARK_HERO_PAGES.has(page);
@@ -44,15 +44,22 @@ export function UnfoldNav({ page, setPage, currentUser }: NavProps) {
       setTimeout(() => document.getElementById("agent-gallery")?.scrollIntoView({ behavior: "smooth" }), 150);
       return;
     }
-    if (p === "how-it-works") {
+    if (p === "our-method") {
       setPage("home");
       setMobileOpen(false);
-      setTimeout(() => document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" }), 150);
+      setTimeout(() => document.getElementById("our-method")?.scrollIntoView({ behavior: "smooth" }), 150);
       return;
     }
     setPage(p);
     setMobileOpen(false);
   };
+
+  const discuss = () => {
+    setMobileOpen(false);
+    if (onDiscussWorkflow) onDiscussWorkflow();
+    else setPage("services");
+  };
+
 
   return (
     <>
