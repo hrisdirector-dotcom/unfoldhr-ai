@@ -81,9 +81,13 @@ export default function FinalCTA({ setPage, showToast, inquiry }: FinalCTAProps)
     setErrors((prev) => ({
       ...prev,
       nextStep: undefined,
-      ...(value === "General question"
-        ? { workflow: undefined, notWorking: undefined, outcome: undefined }
-        : { question: undefined }),
+      workflow: undefined,
+      notWorking: undefined,
+      outcome: undefined,
+      question: undefined,
+      agentArea: undefined,
+      agentWorkflow: undefined,
+      agentContext: undefined,
     }));
   };
 
@@ -96,12 +100,17 @@ export default function FinalCTA({ setPage, showToast, inquiry }: FinalCTAProps)
     if (!form.role.trim()) next.role = "Please enter your role.";
     if (!form.nextStep) next.nextStep = "Please choose a preferred next step.";
 
-    if (form.nextStep && form.nextStep !== "General question") {
+    if (showWorkflowFields) {
       if (!form.workflow.trim()) next.workflow = "Please name the workflow or process.";
       if (!form.notWorking.trim()) next.notWorking = "Please describe what is not working.";
       if (!form.outcome.trim()) next.outcome = "Please describe the outcome you need.";
     }
-    if (form.nextStep === "General question" && !form.question.trim()) {
+    if (isAgent) {
+      if (!form.agentArea.trim()) next.agentArea = "Please describe the agent capability of interest.";
+      if (!form.agentWorkflow.trim()) next.agentWorkflow = "Please name the workflow it would support.";
+      if (!form.agentContext.trim()) next.agentContext = "Please describe your current systems and context.";
+    }
+    if (isGeneral && !form.question.trim()) {
       next.question = "Please enter your question.";
     }
     return next;
@@ -118,6 +127,19 @@ export default function FinalCTA({ setPage, showToast, inquiry }: FinalCTAProps)
         form.question.trim(),
       ].join("\n");
     }
+    if (isAgent) {
+      return [
+        role,
+        "Agent capability of interest:",
+        form.agentArea.trim(),
+        "Workflow it would support:",
+        form.agentWorkflow.trim(),
+        "Current systems and context:",
+        form.agentContext.trim(),
+        "Preferred next step:",
+        AGENT_STEP,
+      ].join("\n");
+    }
     return [
       role,
       "HR workflow or process:",
@@ -130,6 +152,7 @@ export default function FinalCTA({ setPage, showToast, inquiry }: FinalCTAProps)
       form.nextStep,
     ].join("\n");
   }
+
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
