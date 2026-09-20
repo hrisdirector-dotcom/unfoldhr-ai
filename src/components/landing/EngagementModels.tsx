@@ -32,7 +32,7 @@ export default function EngagementModels({ setPage, onDiscussWorkflow }: Engagem
       icon: PencilRuler,
       title: "Agentic HR Workflow Redesign Sprint",
       desc: "Redesign one high-value HR workflow and receive an implementation-ready operating model, controls framework, architecture requirements, measurement baseline, and 90-day pilot roadmap.",
-      cta: "Book a Confidential Introduction",
+      cta: "Discuss Your Workflow",
       action: scrollToForm,
       variant: "default" as const,
       primary: true,
