@@ -4,10 +4,15 @@ import { Compass, PencilRuler, ShieldCheck } from "lucide-react";
 
 interface EngagementModelsProps {
   setPage: (p: string) => void;
+  onDiscussWorkflow?: () => void;
 }
 
-export default function EngagementModels({ setPage }: EngagementModelsProps) {
+export default function EngagementModels({ setPage, onDiscussWorkflow }: EngagementModelsProps) {
   const scrollToForm = () => {
+    if (onDiscussWorkflow) {
+      onDiscussWorkflow();
+      return;
+    }
     document.getElementById("final-cta")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
