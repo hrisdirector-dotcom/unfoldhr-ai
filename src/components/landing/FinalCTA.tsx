@@ -1,16 +1,22 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { RevealDiv } from "@/components/RevealDiv";
 import { ArrowRight } from "lucide-react";
 import { submitContactRequest } from "@/lib/submitContact";
+import { BOOKING_URL } from "@/lib/booking";
+import type { InquiryPreset } from "@/pages/Index";
 
 interface FinalCTAProps {
   setPage: (p: string) => void;
   showToast: (msg: string) => void;
+  inquiry?: InquiryPreset | null;
 }
+
+const AGENT_STEP = "Agent Platform / Agent Implementation";
 
 const NEXT_STEPS = [
   "Confidential introduction",
   "Workflow Redesign Sprint",
+  AGENT_STEP,
   "Executive briefing",
   "General question",
 ] as const;
@@ -34,20 +40,35 @@ const emptyForm = {
   notWorking: "",
   outcome: "",
   question: "",
+  agentArea: "",
+  agentWorkflow: "",
+  agentContext: "",
 };
 
 type FormState = typeof emptyForm;
 type FieldErrors = Partial<Record<keyof FormState, string>>;
 
-export default function FinalCTA({ setPage, showToast }: FinalCTAProps) {
+export default function FinalCTA({ setPage, showToast, inquiry }: FinalCTAProps) {
   const [form, setForm] = useState<FormState>(emptyForm);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [formError, setFormError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [lastStep, setLastStep] = useState<"" | NextStep>("");
 
   const isGeneral = form.nextStep === "General question";
-  const showWorkflowFields = form.nextStep !== "" && !isGeneral;
+  const isAgent = form.nextStep === AGENT_STEP;
+  const showWorkflowFields = form.nextStep !== "" && !isGeneral && !isAgent;
+
+  useEffect(() => {
+    if (!inquiry) return;
+    const match = NEXT_STEPS.find((s) => s === inquiry.type);
+    if (!match) return;
+    setSubmitted(false);
+    setForm((prev) => ({ ...prev, nextStep: match }));
+    setErrors({});
+  }, [inquiry]);
+
 
   const set = (key: keyof FormState, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
