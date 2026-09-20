@@ -239,6 +239,16 @@ export default function FinalCTA({ setPage, showToast, inquiry }: FinalCTAProps)
                   Request received. We will review the information and respond within two business
                   days.
                 </p>
+                {lastStep === "Workflow Redesign Sprint" && (
+                  <a
+                    href={BOOKING_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-5 inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white text-slate font-semibold text-sm hover:bg-blue-50 transition-colors"
+                  >
+                    Book a Discovery Call
+                  </a>
+                )}
               </div>
             ) : (
               <form id="request" onSubmit={handleSubmit} noValidate className="space-y-4 text-left max-w-md mx-auto">
