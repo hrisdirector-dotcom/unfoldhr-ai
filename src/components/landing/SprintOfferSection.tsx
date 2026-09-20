@@ -2,7 +2,7 @@ import { ArrowRight } from "lucide-react";
 import { RevealDiv } from "@/components/RevealDiv";
 import { FLAGSHIP_WORKFLOW_ID } from "@/data/workflows";
 
-const DELIVERABLES = [
+export const DELIVERABLES = [
   "Current-state workflow and friction analysis",
   "Eliminate, AI, deterministic, and human work allocation",
   "Human judgment and escalation boundaries",
