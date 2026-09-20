@@ -100,27 +100,26 @@ export function UnfoldNav({ page, setPage, currentUser, onDiscussWorkflow }: Nav
         </div>
 
         <div className="hidden md:flex items-center gap-3">
-          {/* Primary CTA - Try the Flagship Agent */}
+          {/* Primary CTA - Discuss a Workflow */}
           <button
-            onClick={() => navigate("try-agents")}
+            onClick={discuss}
             className="px-5 py-2.5 text-sm font-semibold rounded-lg cursor-pointer bg-primary text-primary-foreground border-none hover:bg-primary/90 transition-colors"
           >
-            Try the Flagship Agent
+            Discuss a Workflow →
           </button>
 
-          {/* Secondary CTA - Book a Demo */}
-          <a
-            href="https://calendly.com/eric-weaver-unfoldhrai/unfold-hr-ai-demo"
-            target="_blank"
-            rel="noopener noreferrer"
+          {/* Secondary CTA - Explore Agent Demos */}
+          <button
+            onClick={() => navigate("agents")}
             className={`px-5 py-2.5 text-sm font-semibold rounded-lg cursor-pointer border-none transition-colors inline-flex items-center ${
               overDark
                 ? "bg-white text-slate hover:bg-blue-50"
                 : "bg-foreground text-background hover:bg-foreground/90"
             }`}
           >
-            Book a Demo
-          </a>
+            Explore Agent Demos
+          </button>
+
 
           {/* Tertiary - Dashboard (if logged in) */}
           {currentUser && (
