@@ -68,9 +68,9 @@ export default function PlatformHero({ setPage, onOpenWorkflow, onDiscussWorkflo
           transition={{ duration: 0.6, delay: 0.12 }}
           className="mt-7 text-base md:text-lg text-slate-200/80 leading-relaxed max-w-2xl"
         >
-          UnfoldHR.ai helps HR leaders determine what work should be eliminated, where AI
-          should reason, where rules should determine, where systems should transact, and
-          where humans must retain judgment.
+          UnfoldHR works with HR leaders to redesign how critical HR work operates — determining
+          what should be eliminated, where AI should support judgment, where rules should decide,
+          and where people must remain accountable.
         </motion.p>
 
         <motion.p
@@ -79,8 +79,8 @@ export default function PlatformHero({ setPage, onOpenWorkflow, onDiscussWorkflo
           transition={{ duration: 0.6, delay: 0.16 }}
           className="mt-4 text-base md:text-lg text-slate-200/70 leading-relaxed max-w-2xl"
         >
-          Move from scattered AI experiments to a governed, implementation-ready HR
-          operating model.
+          We then help you decide what to enable with technology — including, where appropriate,
+          the UnfoldHR Agent Platform.
         </motion.p>
 
         <motion.div
@@ -90,20 +90,31 @@ export default function PlatformHero({ setPage, onOpenWorkflow, onDiscussWorkflo
           className="mt-9 flex flex-wrap items-center gap-3"
         >
           <button
-            onClick={() => setPage("workflows")}
+            onClick={() => (onDiscussWorkflow ? onDiscussWorkflow() : scrollTo("final-cta"))}
             className="group inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-white text-slate font-semibold text-sm shadow-[0_18px_50px_-12px_rgba(43,92,230,0.55)] hover:bg-blue-50 transition-all"
           >
             <ShieldCheck className="h-4 w-4 text-primary" />
-            Explore HR Work Reimagined
+            Discuss Your Workflow
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
           </button>
           <button
-            onClick={() => scrollTo("final-cta")}
+            onClick={() =>
+              onOpenWorkflow ? onOpenWorkflow(FLAGSHIP_WORKFLOW_ID) : setPage("workflows")
+            }
             className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl border border-white/20 bg-white/5 backdrop-blur-sm text-white font-semibold text-sm hover:border-white/40 hover:bg-white/10 transition-all"
           >
-            Book a Workflow Redesign Sprint
+            See a Sample Redesign
           </button>
         </motion.div>
+
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.26 }}
+          className="mt-5 text-sm text-slate-200/60"
+        >
+          One workflow. Ten business days. A defined future-state operating model.
+        </motion.p>
 
       </div>
     </section>
