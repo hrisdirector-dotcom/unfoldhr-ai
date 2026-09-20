@@ -41,6 +41,7 @@ const Index = () => {
   });
   const [workflowId, setWorkflowId] = useState<string | undefined>(undefined);
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [inquiry, setInquiry] = useState<InquiryPreset | null>(null);
   const [deckState, setDeckState] = useState<{ run: SavedRun; branding: { logoUrl: string | null; primaryColor: string; accentColor: string } } | null>(null);
   const { user, isAdmin, loading, signOut } = useAuth();
 
