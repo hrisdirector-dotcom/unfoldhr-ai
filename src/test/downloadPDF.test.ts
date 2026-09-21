@@ -39,7 +39,7 @@ vi.mock("jspdf", async () => {
           body: new TextDecoder("latin1").decode(bytes),
         };
         return this;
-      };
+      }) as typeof this.save;
     }
   }
   return { ...actual, default: TestPDF };
