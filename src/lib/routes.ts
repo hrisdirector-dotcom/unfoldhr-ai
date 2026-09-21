@@ -1,3 +1,4 @@
+import type { MouseEvent } from "react";
 import { getAgentById } from "@/data/agents";
 import { getWorkflow } from "@/data/workflows";
 
@@ -86,6 +87,34 @@ export function pathForPage(page: string, opts: PathOptions = {}): string {
   return STATIC_PAGE_PATHS[p] ?? "/";
 }
 
+/**
+ * Props for a real anchor that still navigates without a reload on an
+ * ordinary click, while ctrl/cmd/middle click open a new tab normally.
+ */
+export function navLinkProps(
+  page: string,
+  go: (p: string) => void,
+  opts: PathOptions = {},
+) {
+  return {
+    href: pathForPage(page, opts),
+    onClick: (e: MouseEvent<HTMLAnchorElement>) => {
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+      e.preventDefault();
+      go(page);
+    },
+  };
+}
+
+/** Percent-decoding that never throws on a malformed address. */
+function safeDecode(value: string): string | null {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return null;
+  }
+}
+
 export interface ResolvedRoute {
   page: string;
   agentId?: string;
@@ -105,7 +134,8 @@ export function resolvePath(pathname: string): ResolvedRoute {
 
   const agentMatch = /^\/agents\/([^/]+)$/.exec(clean);
   if (agentMatch) {
-    const slug = decodeURIComponent(agentMatch[1]);
+    const slug = safeDecode(agentMatch[1]);
+    if (slug === null) return { page: "not-found", notFound: true };
     if (DEMO_SLUG_PAGES[slug]) return { page: DEMO_SLUG_PAGES[slug] };
     if (FREE_AGENT_PAGES[slug]) return { page: FREE_AGENT_PAGES[slug] };
     if (getAgentById(slug)) return { page: "agent-detail", agentId: slug };
@@ -114,8 +144,8 @@ export function resolvePath(pathname: string): ResolvedRoute {
 
   const workflowMatch = /^\/workflows\/([^/]+)$/.exec(clean);
   if (workflowMatch) {
-    const slug = decodeURIComponent(workflowMatch[1]);
-    if (getWorkflow(slug)) return { page: "workflows", workflowId: slug };
+    const slug = safeDecode(workflowMatch[1]);
+    if (slug !== null && getWorkflow(slug)) return { page: "workflows", workflowId: slug };
     return { page: "not-found", notFound: true };
   }
 

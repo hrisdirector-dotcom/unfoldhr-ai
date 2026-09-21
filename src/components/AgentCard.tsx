@@ -51,21 +51,33 @@ export function AgentCard({ agent, onSelect, onBuild }: AgentCardProps) {
       )}
 
       <div className="mt-auto pt-3 flex items-center gap-2">
-        {isFree ? (
-          <span className="text-xs font-semibold text-primary">Run Agent →</span>
-        ) : (
-          <>
-            <span className="text-xs font-semibold text-foreground">View Agent →</span>
-            <span
-              className="text-xs text-muted-foreground ml-auto hover:text-primary transition-colors"
-              onClick={(e) => {
-                e.stopPropagation();
-                onBuild?.();
-              }}
-            >
-              Build this agent
-            </span>
-          </>
+        <a
+          href={`/agents/${agent.id}`}
+          onClick={(e) => {
+            if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+            e.preventDefault();
+            e.stopPropagation();
+            onSelect();
+          }}
+          className={`text-xs font-semibold no-underline hover:underline ${
+            isFree ? "text-primary" : "text-foreground"
+          }`}
+          aria-label={isFree ? `Run the ${agent.name} agent` : `View the ${agent.name} agent`}
+        >
+          {isFree ? "Run Agent →" : "View Agent →"}
+        </a>
+        {!isFree && (
+          <button
+            type="button"
+            className="text-xs text-muted-foreground ml-auto hover:text-primary transition-colors bg-transparent border-none cursor-pointer p-0"
+            aria-label={`Discuss building the ${agent.name} agent`}
+            onClick={(e) => {
+              e.stopPropagation();
+              onBuild?.();
+            }}
+          >
+            Build this agent
+          </button>
         )}
       </div>
     </div>
