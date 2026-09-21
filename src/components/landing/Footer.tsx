@@ -1,9 +1,21 @@
+import { pathForPage } from "@/lib/routes";
+
 interface FooterProps {
   setPage?: (p: string) => void;
 }
 
 export default function Footer({ setPage }: FooterProps) {
   const year = new Date().getFullYear();
+
+  const linkProps = (p: string) => ({
+    href: pathForPage(p),
+    onClick: (e: React.MouseEvent<HTMLAnchorElement>) => {
+      if (!setPage) return;
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+      e.preventDefault();
+      setPage(p);
+    },
+  });
 
   return (
     <footer className="border-t border-border py-12 px-6 md:px-14">
@@ -14,24 +26,21 @@ export default function Footer({ setPage }: FooterProps) {
         <div className="flex items-center gap-6 text-sm text-muted-foreground">
           {setPage && (
             <>
-              <button
-                onClick={() => setPage("services")}
-                className="hover:text-foreground transition-colors"
-              >
+              <a {...linkProps("services")} className="hover:text-foreground transition-colors">
                 Services
-              </button>
-              <button
-                onClick={() => setPage("agents")}
-                className="hover:text-foreground transition-colors"
-              >
+              </a>
+              <a {...linkProps("agents")} className="hover:text-foreground transition-colors">
                 Agent Platform
-              </button>
-              <button
-                onClick={() => setPage("snapshot")}
-                className="hover:text-foreground transition-colors"
-              >
+              </a>
+              <a {...linkProps("workflows")} className="hover:text-foreground transition-colors">
+                Workflow Library
+              </a>
+              <a {...linkProps("contact")} className="hover:text-foreground transition-colors">
+                Contact
+              </a>
+              <a {...linkProps("snapshot")} className="hover:text-foreground transition-colors">
                 Executive Snapshot
-              </button>
+              </a>
             </>
           )}
           <a href="/privacy" className="hover:text-foreground transition-colors">Privacy</a>

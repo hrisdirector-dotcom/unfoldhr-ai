@@ -15,9 +15,14 @@ export default function WorkflowCard({ workflow, onOpen }: Props) {
   ] as const;
 
   return (
-    <button
-      onClick={() => onOpen(workflow.id)}
-      className="group text-left w-full h-full bg-card border border-border rounded-2xl p-6 transition hover:border-primary/40 hover:shadow-[var(--shadow-card-hover)] focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+    <a
+      href={`/workflows/${workflow.id}`}
+      onClick={(e) => {
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+        e.preventDefault();
+        onOpen(workflow.id);
+      }}
+      className="group text-left w-full h-full block no-underline bg-card border border-border rounded-2xl p-6 transition hover:border-primary/40 hover:shadow-[var(--shadow-card-hover)] focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
     >
       <div className="flex items-center gap-3 mb-3">
         <span className="font-mono text-[11px] text-primary">
@@ -48,6 +53,6 @@ export default function WorkflowCard({ workflow, onOpen }: Props) {
         Open the analysis
         <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
       </span>
-    </button>
+    </a>
   );
 }
