@@ -7,6 +7,18 @@ import AgentPageNav from "@/components/AgentPageNav";
 
 type Step = "start" | "input" | "result";
 
+/** Shape of a single line item returned by the run-agent response. */
+interface AgentItem {
+  label: string;
+  detail: string;
+}
+
+/** Shape of a section returned by the run-agent response. */
+interface AgentSection {
+  title: string;
+  items: AgentItem[];
+}
+
 const SIZES = ["Under 50", "50–200", "200–500", "500+"];
 const TRENDS = ["Improving", "Flat", "Declining"];
 const CONCERNS = ["Attrition", "Manager effectiveness", "Culture"];
