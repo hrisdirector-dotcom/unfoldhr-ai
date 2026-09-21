@@ -29,7 +29,7 @@ import AgentDetailPage from "@/pages/AgentDetailPage";
 import ServicesPage from "@/pages/ServicesPage";
 import NotFound from "@/pages/NotFound";
 import OnboardingWalkthrough from "@/components/OnboardingWalkthrough";
-import { canonicalPathFor, metaForRoute, pathForPage, resolveAlias, resolvePath } from "@/lib/routes";
+import { accessRedirect, canonicalPathFor, metaForRoute, pathForPage, resolveAlias, resolvePath } from "@/lib/routes";
 import type { SavedRun } from "@/hooks/useSavedRuns";
 
 export type InquiryPreset = { type: string; n: number };
