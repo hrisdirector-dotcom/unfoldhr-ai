@@ -297,10 +297,10 @@ export function downloadPDF(agentName: string, result: object, inputs: unknown =
     y += 34;
   }
 
-  (safe.sections || []).forEach((sec: any) => {
-    y = sectionHeading(doc, sec.title, y);
+  (safe.sections || []).forEach((sec) => {
+    y = sectionHeading(doc, String(sec.title), y);
 
-    (sec.items || []).forEach((item: any) => {
+    (sec.items || []).forEach((item) => {
       y = checkPage(doc, y, 16);
 
       if (item.tag) {
@@ -324,7 +324,7 @@ export function downloadPDF(agentName: string, result: object, inputs: unknown =
       doc.setFont("helvetica", "normal");
       doc.setFontSize(9.5);
       doc.setTextColor(...TEXT_SECONDARY);
-      const detailLines = doc.splitTextToSize(item.detail, CONTENT_W - 12);
+      const detailLines = doc.splitTextToSize(String(item.detail), CONTENT_W - 12);
       detailLines.forEach((line: string) => {
         y = checkPage(doc, y, 5);
         doc.text(line, M_LEFT + 8, y);
@@ -350,7 +350,7 @@ export function downloadPDF(agentName: string, result: object, inputs: unknown =
     y += 8;
 
     const equalPct = 100 / safe.timeline.length;
-    safe.timeline.forEach((t: any, i: number) => {
+    safe.timeline.forEach((t, i: number) => {
       y = checkPage(doc, y, 10);
       if (i % 2 === 0) {
         doc.setFillColor(248, 248, 252);
