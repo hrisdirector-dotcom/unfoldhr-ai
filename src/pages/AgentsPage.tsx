@@ -54,6 +54,18 @@ export default function AgentsPage({
   setPage,
   onDiscussAgentImplementation,
 }: AgentsPageProps) {
+  // Anchor inside a clickable card: keep the card from handling the same click.
+  const cardLink = (page: string) => {
+    const props = navLinkProps(page, setPage);
+    return {
+      href: props.href,
+      onClick: (e: React.MouseEvent<HTMLAnchorElement>) => {
+        e.stopPropagation();
+        props.onClick(e);
+      },
+    };
+  };
+
   return (
     <div className="bg-background">
       {/* ───────────── Hero — matches PlatformHero language ───────────── */}
@@ -213,8 +225,7 @@ export default function AgentsPage({
                     with the operating trail.
                   </p>
                   <a
-                    {...navLinkProps("global-lifecycle-agent", setPage)}
-                    onClickCapture={(e) => e.stopPropagation()}
+                    {...cardLink("global-lifecycle-agent")}
                     className="inline-flex items-center gap-2.5 px-7 py-4 rounded-xl bg-slate text-white font-semibold text-sm hover:bg-primary transition-all group-hover:gap-3.5 shadow-[0_18px_50px_-18px_rgba(43,92,230,0.6)] no-underline"
                   >
                     Try the Flagship Agent <ArrowRight className="w-4 h-4" />
@@ -280,8 +291,7 @@ export default function AgentsPage({
                     control review, with payroll and benefits coordination prepared.
                   </p>
                   <a
-                    {...navLinkProps("leave-control-agent", setPage)}
-                    onClickCapture={(e) => e.stopPropagation()}
+                    {...cardLink("leave-control-agent")}
                     className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-slate text-white font-semibold text-sm hover:bg-primary transition-all group-hover:gap-3.5 shadow-[0_14px_40px_-14px_rgba(43,92,230,0.55)] no-underline"
                   >
                     Try the Leave Control Agent <ArrowRight className="w-4 h-4" />
