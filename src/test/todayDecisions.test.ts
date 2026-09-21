@@ -2,16 +2,20 @@ import { describe, it, expect } from "vitest";
 import { buildFromRuns } from "@/lib/todayDecisions";
 import type { SavedRun } from "@/hooks/useSavedRuns";
 
-const run = (result: unknown, agent_name = "Leave Control"): SavedRun =>
-  ({
-    id: "1",
-    agent_type: "demo",
-    agent_name,
-    title: "t",
-    inputs: {},
-    result,
-    created_at: "2026-01-01",
-  }) as unknown as SavedRun;
+const run = (result: SavedRun["result"], agent_name = "Leave Control"): SavedRun => ({
+  id: "1",
+  agent_type: "demo",
+  agent_name,
+  title: "t",
+  inputs: {},
+  result,
+  created_at: "2026-01-01",
+});
+
+// Test-only boundary injection: the database can return a non-object jsonb
+// value, which the SavedRun type cannot express. Isolated to malformed cases.
+const runWithRawResult = (result: unknown): SavedRun =>
+  ({ ...run({}), result }) as SavedRun;
 
 describe("buildFromRuns", () => {
   it("builds a card from a valid run and uses the surfaced risk", () => {
