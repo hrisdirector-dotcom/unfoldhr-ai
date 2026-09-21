@@ -33,6 +33,20 @@ describe("buildFromRuns", () => {
     expect(buildFromRuns([run({ summary: "s", insights: [{ text: "I" }] })])[0].risk).toBe("I");
   });
 
+  it("treats an empty-string risk as absent and keeps falling through", () => {
+    const cards = buildFromRuns([
+      run({ summary: "s", risks: [{ text: "" }], execution_risks: [{ text: "Active risk" }] }),
+    ]);
+    expect(cards[0].risk).toBe("Active risk");
+  });
+
+  it("falls through empty execution_risks to insights", () => {
+    const cards = buildFromRuns([
+      run({ summary: "s", execution_risks: [{ text: "" }], insights: [{ text: "Insight risk" }] }),
+    ]);
+    expect(cards[0].risk).toBe("Insight risk");
+  });
+
   it("uses the default risk line when none is present", () => {
     expect(buildFromRuns([run({ summary: "s" })])[0].risk).toMatch(/Momentum is lost/);
   });
