@@ -138,15 +138,6 @@ export function VerdictPill({ status }: { status: ControlVerdict }) {
   );
 }
 
-export function initialsOf(name: string) {
-  return name
-    .split(" ")
-    .map((w) => w[0])
-    .filter(Boolean)
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
-}
 
 /* ============================================================
  * Queue card
