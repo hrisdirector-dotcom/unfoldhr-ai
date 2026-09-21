@@ -18,9 +18,6 @@
  */
 import { motion } from "framer-motion";
 import {
-  CheckCircle2,
-  AlertTriangle,
-  ShieldAlert,
   ShieldCheck,
   Lock,
   ArrowRight,
@@ -31,11 +28,17 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import {
+  CONTROL_VERDICT_STYLES,
+  initialsOf,
+  type ControlVerdict,
+} from "./controlAgentVerdicts";
 
 /* ============================================================
  * Canonical types
  * ============================================================ */
-export type ControlVerdict = "Ready" | "Approval Required" | "Held";
+export type { ControlVerdict };
+export { CONTROL_VERDICT_STYLES, initialsOf };
 
 export interface ControlEmployee {
   name: string;
