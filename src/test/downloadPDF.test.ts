@@ -27,15 +27,19 @@ vi.mock("jspdf", async () => {
   const actual = await vi.importActual<typeof import("jspdf")>("jspdf");
   const Real = actual.default;
   class TestPDF extends Real {
-    save(filename?: string) {
-      const bytes = new Uint8Array(this.output("arraybuffer"));
-      capture = {
-        filename: filename ?? "",
-        pages: this.getNumberOfPages(),
-        bytes,
-        body: new TextDecoder("latin1").decode(bytes),
+    constructor(...args: ConstructorParameters<typeof Real>) {
+      super(...args);
+      // jsPDF attaches its methods per instance, so patch after construction.
+      this.save = (filename?: string) => {
+        const bytes = new Uint8Array(this.output("arraybuffer"));
+        capture = {
+          filename: filename ?? "",
+          pages: this.getNumberOfPages(),
+          bytes,
+          body: new TextDecoder("latin1").decode(bytes),
+        };
+        return this;
       };
-      return this;
     }
   }
   return { ...actual, default: TestPDF };
