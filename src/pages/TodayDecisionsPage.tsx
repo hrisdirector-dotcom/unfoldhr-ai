@@ -44,36 +44,6 @@ const FALLBACK_SCENARIOS: DecisionCard[] = [
   },
 ];
 
-// Build decision cards from prior agent outputs when available
-function buildFromRuns(runs: any[]): DecisionCard[] {
-  const cards: DecisionCard[] = [];
-
-  for (const run of runs.slice(0, 3)) {
-    const res = run.result || {};
-    const agent = run.agent_name || "Workforce";
-    const summary: string | undefined = res.summary;
-
-    if (!summary) continue;
-
-    // Pull a risk if the agent surfaced one
-    const risk: string | undefined =
-      res.risks?.[0]?.text ||
-      res.execution_risks?.[0]?.text ||
-      res.insights?.[0]?.text;
-
-    cards.push({
-      title: `Follow-through on ${agent}`,
-      context: summary.length > 180 ? summary.slice(0, 177) + "…" : summary,
-      decision:
-        "Confirm the recommended next step with the accountable leader and lock owner + date.",
-      risk:
-        risk ||
-        "Momentum is lost if the recommendation sits unresolved past this week.",
-    });
-  }
-
-  return cards;
-}
 
 export default function TodayDecisionsPage({ setPage }: TodayDecisionsPageProps) {
   const { runs } = useSavedRuns();
