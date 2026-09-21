@@ -11,14 +11,28 @@ import {
 
 /* ─── Types ─── */
 
-interface SnapshotResult {
+type SnapshotResult = {
   contextLine: string;
   summary: string;
   sections: { title: string; items: { label: string; detail: string; tag?: string }[] }[];
   timeline?: { phase: string; pct: number; focus: string }[];
   risks: string[];
   confidence: { level: string; score: number; reason: string };
-}
+};
+
+/** All possible fields submitted by the inline demo forms (each form uses a subset). */
+type DemoFormFields = {
+  employees?: number; growth?: number; budgetType?: string; quarters?: number;
+  role?: string; positions?: number; skills?: string; budgetPerHire?: number;
+  hireRole?: string; startDate?: string; department?: string; priorities?: string;
+  empRole?: string; period?: string; achievements?: string; concerns?: string; context?: string;
+  area?: string; affected?: number; regulation?: string;
+  decision?: string; stateFootprint?: string; workforceStructure?: string;
+  payrollOwnershipModel?: string; taxComplexity?: string; benefitsComplexity?: string;
+  operationalChallenges?: string[]; additionalContext?: string;
+  timePeriod?: string; participationRate?: string; topics?: string;
+  notes?: string;
+};
 
 type RefineState = "idle" | "refining" | "done";
 
