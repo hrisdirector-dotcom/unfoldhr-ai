@@ -58,6 +58,13 @@ function captured(): Capture {
   return capture;
 }
 
+/** The strings actually drawn into the page content streams. */
+function drawnText(c: Capture): string {
+  return (c.body.match(/\((?:\\.|[^\\)])*\)\s*Tj/g) || [])
+    .map((m) => m.slice(1, m.lastIndexOf(")")))
+    .join("\n");
+}
+
 function expectValidPdf(c: Capture) {
   expect(c.bytes.length).toBeGreaterThan(1000);
   expect(c.body.startsWith("%PDF-")).toBe(true);
@@ -95,20 +102,20 @@ describe("downloadPDF — real jsPDF output", () => {
     const c = captured();
     expectValidPdf(c);
     expect(c.pages).toBeGreaterThanOrEqual(2); // cover + content
-    expect(c.body).toContain("Decision Intelligence Report");
-    expect(c.body).toContain("EXECUTIVE SUMMARY");
-    expect(c.body).toContain("FINDINGS");
-    expect(c.body).toContain("RECOMMENDATIONS");
-    expect(c.body).toContain("IMPLEMENTATION PHASES");
-    expect(c.body).toContain("RISKS & OBSERVATIONS");
-    expect(c.body).toContain("•  Sales coverage gap");
-    expect(c.body).toContain("Phase 1");
-    expect(c.body).toContain("Budget approval slips");
+    expect(drawnText(c)).toContain("Decision Intelligence Report");
+    expect(drawnText(c)).toContain("EXECUTIVE SUMMARY");
+    expect(drawnText(c)).toContain("FINDINGS");
+    expect(drawnText(c)).toContain("RECOMMENDATIONS");
+    expect(drawnText(c)).toContain("IMPLEMENTATION PHASES");
+    expect(drawnText(c)).toContain("RISKS & OBSERVATIONS");
+    expect(drawnText(c)).toContain("Sales coverage gap");
+    expect(drawnText(c)).toContain("Phase 1");
+    expect(drawnText(c)).toContain("Budget approval slips");
   });
 
   it("surfaces confidence qualitatively, never as a numeric score", () => {
     downloadPDF("Workforce Planning", FULL_RESULT);
-    const joined = captured().body;
+    const joined = drawnText(captured());
     expect(joined).toContain("High Confidence");
     expect(joined).not.toContain("80");
     expect(joined).not.toContain("80%");
@@ -159,7 +166,7 @@ describe("downloadPDF — real jsPDF output", () => {
     expectValidPdf(c);
     expect(c.pages).toBeGreaterThan(4);
     // Footer numbering covers every content page (cover excluded).
-    expect(c.body).toContain(`Page ${c.pages - 1} of ${c.pages - 1}`);
+    expect(drawnText(c)).toContain(`Page ${c.pages - 1} of ${c.pages - 1}`);
   });
 
   it("handles quotes, ampersands and accented characters", () => {
@@ -172,7 +179,7 @@ describe("downloadPDF — real jsPDF output", () => {
     ).not.toThrow();
     const c = captured();
     expectValidPdf(c);
-    expect(c.body).toContain("Résumé review");
+    expect(drawnText(c)).toContain("Résumé review");
   });
 
   it("derives the filename from the agent name", () => {
