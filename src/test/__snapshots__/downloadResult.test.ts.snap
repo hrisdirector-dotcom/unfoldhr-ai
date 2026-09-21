@@ -1,0 +1,25 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`downloadCSV > drops non-string risks, as the sanitizer already did 1`] = `
+""Section","Label","Detail","Tag"
+"Risks","Risk 1","Real risk","""
+`;
+
+exports[`downloadCSV > handles an empty result 1`] = `""Section","Label","Detail","Tag""`;
+
+exports[`downloadCSV > handles missing nested fields 1`] = `
+""Section","Label","Detail","Tag"
+"Findings","Only a label","undefined",""
+"Timeline","Phase 1","undefined",""
+"Confidence","Medium","","""
+`;
+
+exports[`downloadCSV > renders a full, well-formed result 1`] = `
+""Section","Label","Detail","Tag"
+"Summary","Hiring is concentrated in sales.","",""
+"Findings","Sales gap","Two ""open"" roles","High"
+"Findings","Attrition","Stable",""
+"Timeline","Phase 1","Align owners",""
+"Risks","Risk 1","Budget approval slips",""
+"Confidence","High","Clear inputs","""
+`;
