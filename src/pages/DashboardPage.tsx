@@ -29,6 +29,13 @@ const AGENTS_QUICK = [
 // Paid users and admins can generate decks.
 const isPaidUser = (role: string) => role === "admin";
 
+/** Saved-run results are free-form JSON, so narrow them before rendering. */
+const isRecord = (v: unknown): v is Record<string, unknown> =>
+  typeof v === "object" && v !== null && !Array.isArray(v);
+
+const asText = (v: unknown): string | null =>
+  typeof v === "string" || typeof v === "number" || typeof v === "boolean" ? String(v) : null;
+
 export default function DashboardPage({ currentUser, onLogout, setPage, onGenerateDeck }: DashboardPageProps) {
   const { runs, loading, deleteRun } = useSavedRuns();
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -59,7 +66,10 @@ export default function DashboardPage({ currentUser, onLogout, setPage, onGenera
   };
 
   if (selectedRun) {
-    const res = (selectedRun.result as any) || {};
+    const res: Record<string, unknown> = isRecord(selectedRun.result) ? selectedRun.result : {};
+    const summaryText = asText(res.summary);
+    const confidence = isRecord(res.confidence) ? res.confidence : null;
+    const confidenceScore = typeof confidence?.score === "number" ? confidence.score : 0;
     const RECOMMENDED_ACTIONS = [
       { title: "Open Sales Roles", description: "Create and prioritize new roles based on hiring gaps", button: "Generate Job Requisition" },
       { title: "Adjust Hiring Plan", description: "Refine hiring timelines and sequencing", button: "Create Hiring Plan" },
@@ -68,11 +78,11 @@ export default function DashboardPage({ currentUser, onLogout, setPage, onGenera
     const formatLabel = (k: string) =>
       k.replace(/[_-]/g, " ").replace(/([a-z])([A-Z])/g, "$1 $2").replace(/\b\w/g, (c) => c.toUpperCase());
 
-    const renderPrimitive = (v: any) => (
+    const renderPrimitive = (v: string | number | boolean) => (
       <span className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">{String(v)}</span>
     );
 
-    const renderItem = (item: any, i: number) => {
+    const renderItem = (item: unknown, i: number) => {
       if (item == null) return null;
       if (typeof item === "string" || typeof item === "number" || typeof item === "boolean") {
         return (
@@ -88,6 +98,7 @@ export default function DashboardPage({ currentUser, onLogout, setPage, onGenera
           </li>
         );
       }
+      if (!isRecord(item)) return null;
       // object item — pull common fields
       const label = item.label ?? item.title ?? item.name ?? item.heading;
       const detail = item.detail ?? item.description ?? item.text ?? item.summary ?? item.value;
@@ -152,7 +163,7 @@ export default function DashboardPage({ currentUser, onLogout, setPage, onGenera
       );
     };
 
-    const renderValue = (value: any): JSX.Element | null => {
+    const renderValue = (value: unknown): JSX.Element | null => {
       if (value == null) return null;
       if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
         return renderPrimitive(value);
@@ -161,14 +172,16 @@ export default function DashboardPage({ currentUser, onLogout, setPage, onGenera
         if (value.length === 0) return null;
         return <ul className="space-y-2">{value.map((item, i) => renderItem(item, i))}</ul>;
       }
+      if (!isRecord(value)) return null;
       // object — if it looks like a section { title, items }
-      if (Array.isArray((value as any).items)) {
+      const sectionItems = value.items;
+      if (Array.isArray(sectionItems)) {
         return (
           <div className="space-y-3">
-            {(value as any).title && (
-              <p className="text-sm font-semibold text-foreground">{String((value as any).title)}</p>
-            )}
-            <ul className="space-y-2">{(value as any).items.map((item: any, i: number) => renderItem(item, i))}</ul>
+            {value.title ? (
+              <p className="text-sm font-semibold text-foreground">{String(value.title)}</p>
+            ) : null}
+            <ul className="space-y-2">{sectionItems.map((item, i) => renderItem(item, i))}</ul>
           </div>
         );
       }
