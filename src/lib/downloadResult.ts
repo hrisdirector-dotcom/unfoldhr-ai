@@ -359,7 +359,9 @@ export function downloadPDF(agentName: string, result: object, inputs: unknown =
       doc.setFont("helvetica", "bold");
       doc.setFontSize(9);
       doc.setTextColor(...TEXT_PRIMARY);
-      doc.text(t.phase, M_LEFT + 4, y);
+      // A timeline entry without a phase label previously threw inside jsPDF
+      // ("Invalid arguments passed to jsPDF.text") and produced no PDF at all.
+      doc.text(t.phase || "", M_LEFT + 4, y);
 
       doc.setFont("helvetica", "normal");
       doc.setTextColor(...TEXT_SECONDARY);
