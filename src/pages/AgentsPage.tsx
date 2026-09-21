@@ -3,6 +3,7 @@ import { AgentCard } from "@/components/AgentCard";
 import { RevealDiv } from "@/components/RevealDiv";
 import { motion } from "framer-motion";
 import { ArrowRight, ShieldCheck, CheckCircle2, AlertTriangle, Clock, Lock, GitBranch, FileCheck2, CalendarClock } from "lucide-react";
+import { navLinkProps } from "@/lib/routes";
 
 interface AgentsPageProps {
   onSelectAgent: (agentId: string) => void;
@@ -137,12 +138,12 @@ export default function AgentsPage({
               Discuss Agent Implementation
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
             </button>
-            <button
-              onClick={() => setPage("global-lifecycle-agent")}
-              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl border border-white/20 bg-white/5 text-white font-semibold text-sm hover:border-white/40 transition-all"
+            <a
+              {...navLinkProps("global-lifecycle-agent", setPage)}
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl border border-white/20 bg-white/5 text-white font-semibold text-sm hover:border-white/40 transition-all no-underline"
             >
               Explore Agent Demos
-            </button>
+            </a>
           </motion.div>
           <motion.p
             initial={{ opacity: 0 }}
@@ -211,12 +212,13 @@ export default function AgentsPage({
                     and returns a release verdict for each: ready, hold, or approval required,
                     with the operating trail.
                   </p>
-                  <button
-                    onClick={(e) => { e.stopPropagation(); setPage("global-lifecycle-agent"); }}
-                    className="inline-flex items-center gap-2.5 px-7 py-4 rounded-xl bg-slate text-white font-semibold text-sm hover:bg-primary transition-all group-hover:gap-3.5 shadow-[0_18px_50px_-18px_rgba(43,92,230,0.6)]"
+                  <a
+                    {...navLinkProps("global-lifecycle-agent", setPage)}
+                    onClickCapture={(e) => e.stopPropagation()}
+                    className="inline-flex items-center gap-2.5 px-7 py-4 rounded-xl bg-slate text-white font-semibold text-sm hover:bg-primary transition-all group-hover:gap-3.5 shadow-[0_18px_50px_-18px_rgba(43,92,230,0.6)] no-underline"
                   >
                     Try the Flagship Agent <ArrowRight className="w-4 h-4" />
-                  </button>
+                  </a>
                 </div>
 
                 <div className="lg:col-span-2 relative bg-paper border-t lg:border-t-0 lg:border-l border-border p-8 md:p-10">
@@ -277,12 +279,13 @@ export default function AgentsPage({
                     a readiness verdict: ready to progress, documentation hold, or held for
                     control review, with payroll and benefits coordination prepared.
                   </p>
-                  <button
-                    onClick={(e) => { e.stopPropagation(); setPage("leave-control-agent"); }}
-                    className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-slate text-white font-semibold text-sm hover:bg-primary transition-all group-hover:gap-3.5 shadow-[0_14px_40px_-14px_rgba(43,92,230,0.55)]"
+                  <a
+                    {...navLinkProps("leave-control-agent", setPage)}
+                    onClickCapture={(e) => e.stopPropagation()}
+                    className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-slate text-white font-semibold text-sm hover:bg-primary transition-all group-hover:gap-3.5 shadow-[0_14px_40px_-14px_rgba(43,92,230,0.55)] no-underline"
                   >
                     Try the Leave Control Agent <ArrowRight className="w-4 h-4" />
-                  </button>
+                  </a>
                 </div>
 
                 <div className="lg:col-span-2 relative bg-paper border-t lg:border-t-0 lg:border-l border-border p-8 md:p-10">
@@ -485,14 +488,14 @@ export default function AgentsPage({
               These are potential connection points identified during redesign, not live customer
               integrations. Specific integration work is scoped separately.
             </p>
-            <button
-              onClick={() => setPage("integrations")}
-              className="mb-8 inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline bg-transparent border-none cursor-pointer p-0"
+            <a
+              {...navLinkProps("integrations", setPage)}
+              className="mb-8 inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline no-underline"
             >
               View the integrations catalog — potential integration options, not completed or
               deployed customer connections
               <ArrowRight className="h-4 w-4" />
-            </button>
+            </a>
           </RevealDiv>
           <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {CONNECTION_POINTS.map((c) => (
@@ -514,12 +517,12 @@ export default function AgentsPage({
               Discuss Agent Implementation
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
             </button>
-            <button
-              onClick={() => setPage("services")}
-              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl border border-border bg-card text-foreground font-semibold text-sm hover:border-primary/40 transition-all"
+            <a
+              {...navLinkProps("services", setPage)}
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl border border-border bg-card text-foreground font-semibold text-sm hover:border-primary/40 transition-all no-underline"
             >
               Start with Workflow Redesign
-            </button>
+            </a>
           </div>
         </div>
       </section>
