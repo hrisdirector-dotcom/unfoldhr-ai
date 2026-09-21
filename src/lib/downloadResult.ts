@@ -1,23 +1,120 @@
 import jsPDF from "jspdf";
 import { sanitizeResult, qualitativeConfidence } from "@/lib/sanitizeAgentOutput";
 
+/* ─── Result shape ───
+ * Agent results arrive as free-form JSON, so they are narrowed once, up front,
+ * into the shape the CSV and PDF renderers actually read.
+ */
+
+interface ResultItem {
+  label?: string;
+  detail?: string;
+  tag?: string;
+}
+
+interface ResultSection {
+  title?: string;
+  items?: ResultItem[];
+}
+
+interface ResultPhase {
+  phase?: string;
+  focus?: string;
+  pct?: number;
+}
+
+interface ResultConfidence {
+  level?: string;
+  score?: number;
+  reason?: string;
+}
+
+interface NormalizedResult {
+  contextLine?: string;
+  summary?: string;
+  sections?: ResultSection[];
+  timeline?: ResultPhase[];
+  risks?: string[];
+  confidence?: ResultConfidence;
+  [key: string]: unknown;
+}
+
+const isRecord = (v: unknown): v is Record<string, unknown> =>
+  typeof v === "object" && v !== null && !Array.isArray(v);
+
+const asString = (v: unknown): string | undefined =>
+  typeof v === "string" ? v : typeof v === "number" || typeof v === "boolean" ? String(v) : undefined;
+
+const asNumber = (v: unknown): number | undefined => (typeof v === "number" ? v : undefined);
+
+function normalizeResult(result: Record<string, unknown>): NormalizedResult {
+  const out: NormalizedResult = { ...result };
+
+  out.contextLine = asString(result.contextLine);
+  out.summary = asString(result.summary);
+
+  if (Array.isArray(result.sections)) {
+    out.sections = result.sections.map((sec) => {
+      const s = isRecord(sec) ? sec : {};
+      return {
+        title: asString(s.title),
+        items: Array.isArray(s.items)
+          ? s.items.map((item) => {
+              const it = isRecord(item) ? item : {};
+              return { label: asString(it.label), detail: asString(it.detail), tag: asString(it.tag) };
+            })
+          : [],
+      };
+    });
+  } else {
+    out.sections = [];
+  }
+
+  if (Array.isArray(result.timeline)) {
+    out.timeline = result.timeline.map((entry) => {
+      const t = isRecord(entry) ? entry : {};
+      return { phase: asString(t.phase), focus: asString(t.focus), pct: asNumber(t.pct) };
+    });
+  } else {
+    out.timeline = [];
+  }
+
+  // Non-string risks were already discarded downstream; keep that behavior.
+  out.risks = Array.isArray(result.risks)
+    ? result.risks.filter((r): r is string => typeof r === "string")
+    : [];
+
+  if (result.confidence) {
+    const c = isRecord(result.confidence) ? result.confidence : {};
+    out.confidence = { level: asString(c.level), score: asNumber(c.score), reason: asString(c.reason) };
+  } else {
+    out.confidence = undefined;
+  }
+
+  return out;
+}
+
 /* ─── CSV Export ─── */
-export function downloadCSV(agentName: string, result: Record<string, any>, inputs: Record<string, any> = {}) {
-  const safe = sanitizeResult(result, inputs);
+export function downloadCSV(
+  agentName: string,
+  result: Record<string, unknown>,
+  inputs: unknown = {},
+) {
+  const safe = sanitizeResult(normalizeResult(result), inputs);
   const rows: string[][] = [["Section", "Label", "Detail", "Tag"]];
 
   if (safe.summary) {
     rows.push(["Summary", safe.summary, "", ""]);
   }
 
-  (safe.sections || []).forEach((sec: any) => {
-    (sec.items || []).forEach((item: any) => {
-      rows.push([sec.title, item.label, item.detail, item.tag || ""]);
+  (safe.sections || []).forEach((sec) => {
+    (sec.items || []).forEach((item) => {
+      rows.push([String(sec.title), String(item.label), String(item.detail), item.tag || ""]);
     });
   });
 
-  (safe.timeline || []).forEach((t: any) => {
-    rows.push(["Timeline", t.phase, t.focus, ""]);
+  (safe.timeline || []).forEach((t) => {
+    rows.push(["Timeline", String(t.phase), String(t.focus), ""]);
   });
 
   (safe.risks || []).forEach((r: string, i: number) => {
