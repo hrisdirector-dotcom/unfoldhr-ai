@@ -46,9 +46,8 @@ export function UnfoldNav({ page, setPage, currentUser, onDiscussWorkflow }: Nav
       return;
     }
     if (p === "our-method") {
-      setPage("home");
       setMobileOpen(false);
-      setTimeout(() => document.getElementById("our-method")?.scrollIntoView({ behavior: "smooth" }), 150);
+      setPage("our-method");
       return;
     }
     setPage(p);
