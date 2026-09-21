@@ -29,7 +29,7 @@ import AgentDetailPage from "@/pages/AgentDetailPage";
 import ServicesPage from "@/pages/ServicesPage";
 import NotFound from "@/pages/NotFound";
 import OnboardingWalkthrough from "@/components/OnboardingWalkthrough";
-import { canonicalPathFor, metaForRoute, pathForPage, resolveAlias, resolvePath } from "@/lib/routes";
+import { accessRedirect, canonicalPathFor, metaForRoute, pathForPage, resolveAlias, resolvePath } from "@/lib/routes";
 import type { SavedRun } from "@/hooks/useSavedRuns";
 
 export type InquiryPreset = { type: string; n: number };
@@ -149,19 +149,19 @@ const Index = () => {
     }
   }, [location.pathname, location.hash, location.key]);
 
-  // Protected screens keep their existing access behaviour.
+  // Protected screens keep their existing access behaviour, decided by one
+  // pure policy: signed-out visitors go to sign-in, a signed-in account without
+  // the admin role never lands on a blank admin screen, and the executive deck
+  // (which depends on data handed over in memory) never renders empty.
   useEffect(() => {
-    if (!loading && !user && (page === "dashboard" || page === "admin" || page === "today-decisions")) {
-      navigate("/login", { replace: true });
-    }
-  }, [user, loading, page, navigate]);
-
-  // The executive deck depends on data handed over in memory; never show a blank screen.
-  useEffect(() => {
-    if (!loading && page === "executive-deck" && !deckState) {
-      navigate(user ? "/dashboard" : "/login", { replace: true });
-    }
-  }, [loading, page, deckState, user, navigate]);
+    const target = accessRedirect(page, {
+      loading,
+      signedIn: !!user,
+      isAdmin,
+      hasDeckState: !!deckState,
+    });
+    if (target) navigate(target, { replace: true });
+  }, [page, loading, user, isAdmin, deckState, navigate]);
 
   if (loading) {
     return (

@@ -286,6 +286,27 @@ export function metaForRoute(route: ResolvedRoute): RouteMeta {
   return PAGE_META[route.page] ?? PAGE_META.home;
 }
 
+export interface AccessState {
+  loading: boolean;
+  signedIn: boolean;
+  isAdmin: boolean;
+  hasDeckState: boolean;
+}
+
+const SIGNED_IN_ONLY = new Set(["dashboard", "admin", "today-decisions"]);
+
+/**
+ * Where a visitor must be sent instead of the requested screen, or null when
+ * the screen may render. Pure so the policy can be tested without a session.
+ */
+export function accessRedirect(page: string, state: AccessState): string | null {
+  if (state.loading) return null;
+  if (SIGNED_IN_ONLY.has(page) && !state.signedIn) return "/login";
+  if (page === "admin" && state.signedIn && !state.isAdmin) return "/dashboard";
+  if (page === "executive-deck" && !state.hasDeckState) return state.signedIn ? "/dashboard" : "/login";
+  return null;
+}
+
 /** The canonical address for a resolved screen (no query, no fragment). */
 export function canonicalPathFor(route: ResolvedRoute): string {
   if (route.page === "agent-detail" && route.agentId) return `/agents/${route.agentId}`;
