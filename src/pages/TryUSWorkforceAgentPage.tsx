@@ -10,6 +10,17 @@ import { Bookmark, Download, RotateCcw, Presentation } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import ExecutionStatus, { type ExecutionAction } from "@/components/ExecutionStatus";
 import AgentPageNav from "@/components/AgentPageNav";
+import type { JsonObject } from "@/hooks/useSavedRuns";
+
+interface AgentItem {
+  label: string;
+  detail: string;
+}
+
+interface AgentSection {
+  title: string;
+  items: AgentItem[];
+}
 
 type Step = "start" | "decision" | "guided" | "result";
 
@@ -118,7 +129,7 @@ export default function TryUSWorkforceAgentPage({ setPage }: TryUSWorkforceAgent
   const [context, setContext] = useState("");
 
   const [brief, setBrief] = useState<DecisionBriefProps | null>(null);
-  const [rawResult, setRawResult] = useState<Record<string, any> | null>(null);
+  const [rawResult, setRawResult] = useState<JsonObject | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
