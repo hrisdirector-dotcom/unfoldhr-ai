@@ -1,13 +1,17 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/lib/cloudClient";
+import type { Json } from "@/integrations/supabase/types";
+
+/** Shape of the `inputs` / `result` jsonb columns as used by the app: a JSON object. */
+export type JsonObject = { [key: string]: Json | undefined };
 
 export interface SavedRun {
   id: string;
   agent_type: string;
   agent_name: string;
   title: string;
-  inputs: Record<string, any>;
-  result: Record<string, any>;
+  inputs: JsonObject;
+  result: JsonObject;
   created_at: string;
 }
 
