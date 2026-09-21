@@ -38,7 +38,6 @@ import {
  * Canonical types
  * ============================================================ */
 export type { ControlVerdict };
-export { CONTROL_VERDICT_STYLES, initialsOf };
 
 export interface ControlEmployee {
   name: string;
