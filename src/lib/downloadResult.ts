@@ -201,8 +201,8 @@ function riskColor(tag: string): RGB {
   return RISK_LOW;
 }
 
-export function downloadPDF(agentName: string, result: Record<string, any>, inputs: Record<string, any> = {}) {
-  const safe = sanitizeResult(result, inputs);
+export function downloadPDF(agentName: string, result: object, inputs: unknown = {}) {
+  const safe = sanitizeResult(normalizeResult(result), inputs);
   const doc = new jsPDF({ unit: "mm", format: "a4" });
   const dateStr = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 
