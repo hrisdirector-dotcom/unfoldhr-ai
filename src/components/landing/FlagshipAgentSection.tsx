@@ -47,7 +47,7 @@ export default function FlagshipAgentSection({ setPage }: Props) {
                 </h3>
 
                 <p className="text-slate-3 leading-relaxed text-base md:text-lg mb-8 max-w-2xl">
-                  When BambooHR records a new hire or termination, the Global Lifecycle Agent evaluates whether the event is ready to progress, what exceptions or approvals apply, and which actions should remain held or be prepared next.
+                  In a prepared demonstration modeled on a BambooHR-style new hire or termination event, the Global Lifecycle Agent evaluates whether the event is ready to progress, what exceptions or approvals apply, and which actions should remain held or be prepared next. It uses prepared scenario data and does not connect to a live customer system.
                 </p>
 
                 <button
@@ -63,7 +63,7 @@ export default function FlagshipAgentSection({ setPage }: Props) {
                 <div className="absolute inset-0 dot-grid opacity-[0.04] pointer-events-none" />
                 <p className="relative text-[11px] font-mono uppercase tracking-[0.22em] text-slate-4 mb-5 flex items-center gap-2">
                   <span className="h-1 w-1 rounded-full bg-primary" />
-                  Live event evaluation
+                  Scenario event evaluation
                 </p>
                 <div className="relative space-y-3">
                   <div className="bg-white border border-border rounded-xl p-4 flex items-start gap-3">

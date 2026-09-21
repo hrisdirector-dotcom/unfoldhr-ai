@@ -105,9 +105,9 @@ export default function GlobalLifecycleAgentPage({ setPage }: Props) {
                 What lifecycle event requires action?
               </h1>
               <p className="mt-5 text-base md:text-lg text-slate-200/85 max-w-2xl leading-relaxed">
-                Workforce events ingested from BambooHR are queued here for
-                control &amp; readiness evaluation. Open an event to review and
-                run the agent.
+                Prepared demonstration scenarios, modeled on a BambooHR-style
+                workforce event workflow, are queued here for control &amp;
+                readiness evaluation. Open an event to review and run the agent.
               </p>
             </>
           )}
@@ -132,6 +132,15 @@ export default function GlobalLifecycleAgentPage({ setPage }: Props) {
           )}
         </div>
       </section>
+
+      {/* Demonstration notice */}
+      <div className="bg-muted border-b border-border">
+        <div className="max-w-7xl mx-auto px-6 lg:px-10 py-3 text-sm text-muted-foreground leading-relaxed">
+          <span className="font-semibold text-foreground">Demonstration:</span>{" "}
+          This experience uses prepared scenario data. It does not connect to a
+          live customer system or execute production transactions.
+        </div>
+      </div>
 
       {/* Stage content */}
       <section className="py-12 lg:py-16">
