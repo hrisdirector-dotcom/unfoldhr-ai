@@ -2,19 +2,13 @@ import { useState, useEffect } from "react";
 import { ArrowLeft, Sparkles, AlertTriangle, Lightbulb, Loader2, Lock, Calendar, Mail, Check } from "lucide-react";
 import { useSavedRuns } from "@/hooks/useSavedRuns";
 import { useAuth } from "@/hooks/useAuth";
+import { buildFromRuns, type DecisionCard } from "@/lib/todayDecisions";
 
 interface TodayDecisionsPageProps {
   setPage: (p: string) => void;
 }
 
 const DAILY_BRIEF_USED_KEY = "unfold_daily_brief_used";
-
-interface DecisionCard {
-  title: string;
-  context: string;
-  decision: string;
-  risk: string;
-}
 
 // Fallback general workforce scenarios — directional, no fake metrics
 const FALLBACK_SCENARIOS: DecisionCard[] = [
