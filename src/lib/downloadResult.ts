@@ -47,7 +47,10 @@ const asString = (v: unknown): string | undefined =>
 
 const asNumber = (v: unknown): number | undefined => (typeof v === "number" ? v : undefined);
 
-function normalizeResult(result: Record<string, unknown>): NormalizedResult {
+function normalizeResult(source: object): NormalizedResult {
+  // Copy into an index-accessible record without assertions, so typed callers
+  // (interfaces without index signatures) work too.
+  const result: Record<string, unknown> = Object.fromEntries(Object.entries(source));
   const out: NormalizedResult = { ...result };
 
   out.contextLine = asString(result.contextLine);
@@ -97,7 +100,7 @@ function normalizeResult(result: Record<string, unknown>): NormalizedResult {
 /* ─── CSV Export ─── */
 export function downloadCSV(
   agentName: string,
-  result: Record<string, unknown>,
+  result: object,
   inputs: unknown = {},
 ) {
   const safe = sanitizeResult(normalizeResult(result), inputs);
