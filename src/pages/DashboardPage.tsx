@@ -29,6 +29,13 @@ const AGENTS_QUICK = [
 // Paid users and admins can generate decks.
 const isPaidUser = (role: string) => role === "admin";
 
+/** Saved-run results are free-form JSON, so narrow them before rendering. */
+const isRecord = (v: unknown): v is Record<string, unknown> =>
+  typeof v === "object" && v !== null && !Array.isArray(v);
+
+const asText = (v: unknown): string | null =>
+  typeof v === "string" || typeof v === "number" || typeof v === "boolean" ? String(v) : null;
+
 export default function DashboardPage({ currentUser, onLogout, setPage, onGenerateDeck }: DashboardPageProps) {
   const { runs, loading, deleteRun } = useSavedRuns();
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -59,7 +66,10 @@ export default function DashboardPage({ currentUser, onLogout, setPage, onGenera
   };
 
   if (selectedRun) {
-    const res = (selectedRun.result as any) || {};
+    const res: Record<string, unknown> = isRecord(selectedRun.result) ? selectedRun.result : {};
+    const summaryText = asText(res.summary);
+    const confidence = isRecord(res.confidence) ? res.confidence : null;
+    const confidenceScore = typeof confidence?.score === "number" ? confidence.score : 0;
     const RECOMMENDED_ACTIONS = [
       { title: "Open Sales Roles", description: "Create and prioritize new roles based on hiring gaps", button: "Generate Job Requisition" },
       { title: "Adjust Hiring Plan", description: "Refine hiring timelines and sequencing", button: "Create Hiring Plan" },
@@ -68,11 +78,11 @@ export default function DashboardPage({ currentUser, onLogout, setPage, onGenera
     const formatLabel = (k: string) =>
       k.replace(/[_-]/g, " ").replace(/([a-z])([A-Z])/g, "$1 $2").replace(/\b\w/g, (c) => c.toUpperCase());
 
-    const renderPrimitive = (v: any) => (
+    const renderPrimitive = (v: string | number | boolean) => (
       <span className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">{String(v)}</span>
     );
 
-    const renderItem = (item: any, i: number) => {
+    const renderItem = (item: unknown, i: number) => {
       if (item == null) return null;
       if (typeof item === "string" || typeof item === "number" || typeof item === "boolean") {
         return (
@@ -88,6 +98,7 @@ export default function DashboardPage({ currentUser, onLogout, setPage, onGenera
           </li>
         );
       }
+      if (!isRecord(item)) return null;
       // object item — pull common fields
       const label = item.label ?? item.title ?? item.name ?? item.heading;
       const detail = item.detail ?? item.description ?? item.text ?? item.summary ?? item.value;
@@ -152,7 +163,7 @@ export default function DashboardPage({ currentUser, onLogout, setPage, onGenera
       );
     };
 
-    const renderValue = (value: any): JSX.Element | null => {
+    const renderValue = (value: unknown): JSX.Element | null => {
       if (value == null) return null;
       if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
         return renderPrimitive(value);
@@ -161,14 +172,16 @@ export default function DashboardPage({ currentUser, onLogout, setPage, onGenera
         if (value.length === 0) return null;
         return <ul className="space-y-2">{value.map((item, i) => renderItem(item, i))}</ul>;
       }
+      if (!isRecord(value)) return null;
       // object — if it looks like a section { title, items }
-      if (Array.isArray((value as any).items)) {
+      const sectionItems = value.items;
+      if (Array.isArray(sectionItems)) {
         return (
           <div className="space-y-3">
-            {(value as any).title && (
-              <p className="text-sm font-semibold text-foreground">{String((value as any).title)}</p>
-            )}
-            <ul className="space-y-2">{(value as any).items.map((item: any, i: number) => renderItem(item, i))}</ul>
+            {value.title ? (
+              <p className="text-sm font-semibold text-foreground">{String(value.title)}</p>
+            ) : null}
+            <ul className="space-y-2">{sectionItems.map((item, i) => renderItem(item, i))}</ul>
           </div>
         );
       }
@@ -211,10 +224,10 @@ export default function DashboardPage({ currentUser, onLogout, setPage, onGenera
             {selectedRun.title || selectedRun.agent_name}
           </h1>
 
-          {res?.summary && (
+          {summaryText && (
             <div className="bg-card border border-border rounded-2xl p-6 mb-6">
               <p className="text-xs font-bold uppercase tracking-[2px] text-muted-foreground mb-3">Summary</p>
-              <p className="text-sm text-foreground leading-relaxed">{res.summary}</p>
+              <p className="text-sm text-foreground leading-relaxed">{summaryText}</p>
             </div>
           )}
 
@@ -222,15 +235,15 @@ export default function DashboardPage({ currentUser, onLogout, setPage, onGenera
             <div className="space-y-4 mb-6">
               {sectionEntries.map(([key, value]) => {
                 // Section shape: { title, items }
-                const isSectionShape =
-                  value && typeof value === "object" && !Array.isArray(value) && Array.isArray((value as any).items);
-                if (isSectionShape && (value as any).items.length === 0) return null;
+                const record = isRecord(value) ? value : null;
+                const sectionItems = record && Array.isArray(record.items) ? record.items : null;
+                if (sectionItems && sectionItems.length === 0) return null;
 
                 const headerLabel = formatLabel(key);
-                const sectionTitle = isSectionShape ? (value as any).title : null;
-                const body = isSectionShape ? (
+                const sectionTitle = sectionItems && record ? record.title : null;
+                const body = sectionItems ? (
                   <ul className="space-y-2">
-                    {(value as any).items.map((item: any, i: number) => renderItem(item, i))}
+                    {sectionItems.map((item, i) => renderItem(item, i))}
                   </ul>
                 ) : (
                   renderValue(value)
@@ -268,11 +281,11 @@ export default function DashboardPage({ currentUser, onLogout, setPage, onGenera
             </div>
           )}
 
-          {res?.confidence && (
+          {confidence && (
             <div className="bg-card border border-border rounded-2xl p-6 mb-6 flex items-center gap-3">
-              <span className={`w-2.5 h-2.5 rounded-full ${res.confidence.score >= 75 ? "bg-green-500" : res.confidence.score >= 60 ? "bg-yellow-500" : "bg-red-500"}`} />
+              <span className={`w-2.5 h-2.5 rounded-full ${confidenceScore >= 75 ? "bg-green-500" : confidenceScore >= 60 ? "bg-yellow-500" : "bg-red-500"}`} />
               <span className="text-sm font-medium text-foreground">
-                {res.confidence.level} confidence ({res.confidence.score}%)
+                {asText(confidence.level)} confidence ({asText(confidence.score)}%)
               </span>
             </div>
           )}
@@ -399,7 +412,12 @@ export default function DashboardPage({ currentUser, onLogout, setPage, onGenera
             <div className="space-y-3">
               {runs.map(run => {
                 const isExpanded = expandedId === run.id;
-                const res = run.result as any;
+                const res = isRecord(run.result) ? run.result : null;
+                const runSummary = asText(res?.summary);
+                const runConfidenceRaw = res?.confidence;
+                const runConfidence = isRecord(runConfidenceRaw) ? runConfidenceRaw : null;
+                const runConfidenceScore =
+                  typeof runConfidence?.score === "number" ? runConfidence.score : 0;
                 return (
                   <div key={run.id} className="bg-card border border-border rounded-xl overflow-hidden">
                     <button
@@ -424,28 +442,28 @@ export default function DashboardPage({ currentUser, onLogout, setPage, onGenera
 
                     {isExpanded && (
                       <div className="border-t border-border p-4 space-y-4 animate-in fade-in-0 slide-in-from-top-2 duration-200">
-                        {res?.summary && (
-                          <p className="text-sm text-foreground leading-relaxed border-l-2 border-primary pl-3">{res.summary}</p>
+                        {runSummary && (
+                          <p className="text-sm text-foreground leading-relaxed border-l-2 border-primary pl-3">{runSummary}</p>
                         )}
 
-                        {res?.confidence && (
+                        {runConfidence && (
                           <div className="flex items-center gap-2">
-                            <span className={`w-2 h-2 rounded-full ${res.confidence.score >= 75 ? "bg-green-500" : res.confidence.score >= 60 ? "bg-yellow-500" : "bg-red-500"}`} />
+                            <span className={`w-2 h-2 rounded-full ${runConfidenceScore >= 75 ? "bg-green-500" : runConfidenceScore >= 60 ? "bg-yellow-500" : "bg-red-500"}`} />
                             <span className="text-xs font-medium text-foreground">
-                              {res.confidence.level} confidence ({res.confidence.score}%)
+                              {asText(runConfidence.level)} confidence ({asText(runConfidence.score)}%)
                             </span>
                           </div>
                         )}
 
                         <div className="flex flex-wrap gap-2 pt-2 border-t border-border">
                           <button
-                            onClick={() => downloadCSV(run.agent_name, res)}
+                            onClick={() => downloadCSV(run.agent_name, run.result)}
                             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-background text-xs font-medium text-foreground hover:bg-muted transition-colors cursor-pointer"
                           >
                             <Download className="w-3 h-3" /> CSV
                           </button>
                           <button
-                            onClick={() => downloadPDF(run.agent_name, res)}
+                            onClick={() => downloadPDF(run.agent_name, run.result)}
                             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-background text-xs font-medium text-foreground hover:bg-muted transition-colors cursor-pointer"
                           >
                             <Download className="w-3 h-3" /> PDF
