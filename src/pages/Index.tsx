@@ -118,9 +118,13 @@ const Index = () => {
     [navigate],
   );
 
-  const handleBuildAgent = useCallback(() => {
-    navigate("/contact");
-  }, [navigate]);
+  const handleBuildAgent = useCallback(
+    (agentId?: string) => {
+      // Agent context travels in router state only — never in the address.
+      navigate("/contact", agentId ? { state: { agentId } } : undefined);
+    },
+    [navigate],
+  );
 
   const handleLogin = () => navigateTo("dashboard");
 
