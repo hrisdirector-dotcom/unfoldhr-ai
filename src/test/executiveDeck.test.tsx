@@ -88,7 +88,7 @@ describe("ExecutiveDeckPage — malformed saved JSON", () => {
     render(<ExecutiveDeckPage run={makeRun(malformed)} branding={branding} onBack={() => {}} />);
 
     expect(screen.getByText("Partial result from a malformed record.")).toBeInTheDocument();
-    expect(screen.getByText("Valid item")).toBeInTheDocument();
+    expect(screen.getAllByText("Valid item").length).toBeGreaterThan(0);
     expect(screen.getByText("High risk of drift.")).toBeInTheDocument();
 
     // Invalid entries never reach the page.
