@@ -217,8 +217,9 @@ export default function IntegrationsPage() {
             systems through secure, customer-controlled access.
           </p>
           <p className="text-muted-foreground text-sm max-w-3xl">
-            Public APIs are linked for direct developer access. Enterprise HCM connections depend on your existing
-            customer permissions, tenant configuration, and security model.
+            This catalog lists potential integration options only. It does not represent completed or deployed
+            customer connections. Public APIs are linked for direct developer access. Enterprise HCM connections
+            depend on your existing customer permissions, tenant configuration, and security model.
           </p>
         </RevealDiv>
 

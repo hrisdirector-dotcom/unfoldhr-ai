@@ -84,15 +84,24 @@ export default function DesignToExecutionSection({ setPage, onOpenWorkflow }: Pr
               </button>
             </div>
           </div>
-          {onOpenWorkflow && (
+          <div className="mt-5 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-8">
+            {onOpenWorkflow && (
+              <button
+                onClick={() => onOpenWorkflow(FLAGSHIP_WORKFLOW_ID)}
+                className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline bg-transparent border-none cursor-pointer p-0"
+              >
+                See the Leave of Absence workflow redesign
+                <ArrowRight className="h-4 w-4" />
+              </button>
+            )}
             <button
-              onClick={() => onOpenWorkflow(FLAGSHIP_WORKFLOW_ID)}
-              className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline bg-transparent border-none cursor-pointer p-0"
+              onClick={() => setPage("leave-control-agent")}
+              className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline bg-transparent border-none cursor-pointer p-0"
             >
-              See the Leave of Absence workflow redesign
+              Open the Leave Control Agent demonstration
               <ArrowRight className="h-4 w-4" />
             </button>
-          )}
+          </div>
         </RevealDiv>
       </div>
     </section>

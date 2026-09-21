@@ -199,7 +199,7 @@ export function ControlQueueCard({
           </div>
         </div>
         <span className="shrink-0 rounded-full border border-border/70 bg-paper/60 px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider text-slate-4">
-          via BambooHR
+          BambooHR-style scenario
         </span>
       </div>
 

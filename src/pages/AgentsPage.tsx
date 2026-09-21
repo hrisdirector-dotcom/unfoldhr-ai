@@ -12,12 +12,30 @@ interface AgentsPageProps {
 }
 
 const ARCHITECTURE_LAYERS: { name: string; desc: string }[] = [
-  { name: "Experience layer", desc: "How employees, managers, and HR interact with the redesigned work." },
-  { name: "Agent layer", desc: "Where AI interprets context, synthesises information, and recommends action." },
-  { name: "Policy and rules layer", desc: "Where eligibility, entitlement, and policy outcomes are determined consistently." },
-  { name: "Data layer", desc: "The employee, case, and system-of-record information the work depends on." },
-  { name: "Integration layer", desc: "Potential connection points to HCM, payroll, case, and vendor systems." },
-  { name: "Governance layer", desc: "Permissions, human approval boundaries, audit trail, and measurement." },
+  {
+    name: "HR systems and source data",
+    desc: "Employee, job, pay, case, and absence records held in the HCM, payroll, and adjacent systems of record that the work depends on.",
+  },
+  {
+    name: "Workflow orchestration",
+    desc: "Sequencing of activities, handoffs, timing, and state across the redesigned end-to-end process.",
+  },
+  {
+    name: "Deterministic rules",
+    desc: "Eligibility, entitlement, policy, and threshold logic that must produce the same outcome every time and is not left to a model.",
+  },
+  {
+    name: "AI agents and decision support",
+    desc: "Interpretation of context, synthesis of scattered information, readiness assessment, and recommended next actions.",
+  },
+  {
+    name: "Human judgment and approvals",
+    desc: "The decision points that remain with people, with the agent preparing the case rather than deciding it.",
+  },
+  {
+    name: "Governance, security, and audit",
+    desc: "Permissions, data boundaries, human approval limits, traceability of each recommendation, and measurement.",
+  },
 ];
 
 const CONNECTION_POINTS = [
@@ -463,10 +481,18 @@ export default function AgentsPage({
             <h2 className="font-display text-2xl md:text-3xl text-foreground mb-3">
               Where a redesigned workflow typically connects
             </h2>
-            <p className="text-sm text-muted-foreground leading-relaxed max-w-2xl mb-8">
+            <p className="text-sm text-muted-foreground leading-relaxed max-w-2xl mb-6">
               These are potential connection points identified during redesign, not live customer
               integrations. Specific integration work is scoped separately.
             </p>
+            <button
+              onClick={() => setPage("integrations")}
+              className="mb-8 inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline bg-transparent border-none cursor-pointer p-0"
+            >
+              View the integrations catalog — potential integration options, not completed or
+              deployed customer connections
+              <ArrowRight className="h-4 w-4" />
+            </button>
           </RevealDiv>
           <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {CONNECTION_POINTS.map((c) => (
