@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type React from "react";
 import type { Agent } from "@/data/agents";
 
 interface AgentCardProps {
@@ -11,9 +12,18 @@ export function AgentCard({ agent, onSelect, onBuild }: AgentCardProps) {
   const [hov, setHov] = useState(false);
   const isFree = agent.access === "public" && agent.runnable;
 
+  // The card is a convenience affordance only: real navigation lives on the
+  // anchor below. Modified / auxiliary clicks and clicks that land on a nested
+  // control are left alone so the current page never moves unexpectedly.
+  const handleCardClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+    if ((e.target as HTMLElement).closest("a,button")) return;
+    onSelect();
+  };
+
   return (
     <div
-      onClick={onSelect}
+      onClick={handleCardClick}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
       className={`bg-card border rounded-xl p-6 cursor-pointer relative overflow-hidden transition-all duration-300 flex flex-col ${
@@ -54,11 +64,13 @@ export function AgentCard({ agent, onSelect, onBuild }: AgentCardProps) {
         <a
           href={`/agents/${agent.id}`}
           onClick={(e) => {
+            // Stop first: the card must never act on a click the anchor owns.
+            e.stopPropagation();
             if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
             e.preventDefault();
-            e.stopPropagation();
             onSelect();
           }}
+          onAuxClick={(e) => e.stopPropagation()}
           className={`text-xs font-semibold no-underline hover:underline ${
             isFree ? "text-primary" : "text-foreground"
           }`}
