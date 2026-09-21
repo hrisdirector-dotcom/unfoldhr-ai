@@ -30,9 +30,10 @@ export function buildFromRuns(runs: SavedRun[]): DecisionCard[] {
 
     if (!summary) continue;
 
-    // Pull a risk if the agent surfaced one
+    // Pull a risk if the agent surfaced one (truthy fallthrough, matching the
+    // original page logic: an empty string must not shadow a populated source)
     const risk =
-      firstText(res.risks) ?? firstText(res.execution_risks) ?? firstText(res.insights);
+      firstText(res.risks) || firstText(res.execution_risks) || firstText(res.insights);
 
     cards.push({
       title: `Follow-through on ${agent}`,
