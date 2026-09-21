@@ -49,13 +49,24 @@ Backward compatibility: the four internal aliases stay. Every in-app call that n
 5. Anchor navigation becomes `/#our-method` and `/#final-cta`, handled on mount and on hash change instead of the current timer. Inquiry preselection moves to router state held in memory, so nothing personal appears in an address and the preselection survives navigating from Services or Agent Platform.
 6. Sign-in, role checks and redirects keep their exact current logic; only the address changes. The dashboard is never turned into a landing page.
 
-## Titles, descriptions and canonicals
+## Titles, descriptions, canonicals and social tags — exactly one of each
 
-Per-route head tags via `react-helmet-async` (one small dependency, added only with your approval), giving each route exactly one title, one description, one canonical and its own social tags, with `noindex` on the pages listed above.
+Per-route head tags via `react-helmet-async` (one small dependency, added only with your approval). The governing rule: after the first load **and** after every in-app navigation, the page's head must contain exactly one element per metadata name or property — one `title`, one `description`, one canonical, one `og:title`, one `og:url`, one `og:description`, one `og:image`, one `twitter:*`, and a robots tag only where it belongs.
 
-Following Google's JavaScript SEO guidance, the hardcoded homepage canonical is **removed** from `index.html` so a crawler never sees `/` and then a different canonical swapped in afterwards; every route, the homepage included, injects exactly one correct self-referencing canonical. The sitewide social tags stay in `index.html` as the fallback. I will audit the rendered head after navigation to confirm no duplicate or stale tags carry over between routes.
+How that is achieved:
 
-Lovable announced platform-level prerendering for verified crawlers on existing Vite apps, so per-route metadata may well be served to search and social crawlers without any migration. I am not migrating anything. What I cannot do is prove it from here: an ordinary request (curl) receives the plain app HTML because it is not a verified crawler, so the only honest evidence comes from a real crawler or a link-preview debugger after publishing. I will therefore report per-route metadata as correct in the rendered page, and social previews and indexing as **untested until you run a live crawler or debugger check**. No promise of per-page social cards in this release.
+- `react-helmet-async` replaces `meta` by `name`/`property` automatically, so the homepage social tags left in `index.html` are overwritten rather than duplicated. It does **not** de-duplicate `link` elements, so the hardcoded canonical is **removed** from `index.html` entirely and every route, homepage included, injects exactly one self-referencing canonical. This also follows Google's JavaScript SEO guidance against showing a `/` canonical first and swapping it later.
+- The homepage OG block stays in `index.html` as the fallback for non-JavaScript requests, since it is safely overwritten on every route.
+- Every route declares the full set, so nothing carries over: a public route always emits an index-permitting robots value, clearing any `noindex` left by a private route. No route may rely on inheriting another route's tags.
+- If the head library turns out to leave any duplicate or stale element, I drop it and set the tags with a small direct head-management effect instead, and report exactly what changed and why.
+
+Transitions explicitly tested: home → services → agents → home, a `noindex` page → an indexable page, and an indexable page → a `noindex` page, asserting the count of each tag is exactly one and its value belongs to the current route.
+
+Lovable announced platform-level prerendering for verified crawlers on existing Vite apps, so per-route metadata may well be served to search and social crawlers without any migration. I am not migrating anything. What I cannot prove from here: an ordinary request receives the plain app HTML because it is not a verified crawler, so the only real evidence comes from a live crawler or a link-preview debugger after publishing. Per-page social previews and indexing are reported as **untested**, not delivered.
+
+## Workflow and agent detail addresses
+
+`/workflows/:workflowId` validates the slug against the actual workflow data (`WORKFLOWS` ids such as `leave-of-absence`); an unknown slug renders Not Found with `noindex`, never a blank catalog. A valid slug opens the catalog page with that workflow's detail already selected, so a refresh or a shared deep link restores the same view, while `/workflows` with no slug opens the plain catalog with filters and search intact. Closing a detail returns to `/workflows` through normal history, so Back and Forward behave. `/agents/:agentId` validates the same way against the agent catalog, with the three named demonstration addresses matched first.
 
 ## Sitemap and robots
 
@@ -65,9 +76,10 @@ Sitemap contains only the core landing pages listed above. Removed: `/explainers
 
 Baseline first, then after the change: TypeScript check, lint, the full test suite (88 today, count may rise), production build. Three separate layers of evidence, reported separately:
 
-- **Browser:** direct load and refresh of every address, Back and Forward across them, workflow and agent detail by direct link, unknown ids landing on Not Found, homepage anchors, inquiry preselection from both Services and Agent Platform, mobile navigation, and signed-out visits to dashboard/admin still redirecting.
-- **Raw HTTP:** the actual bytes and status headers returned for deep addresses, stated as what they are (SPA fallback HTML, status 200).
-- **Verified crawler:** noted as not accessible from here; left explicitly unverified.
+- **Browser:** direct load and refresh of every address, Back and Forward across them, workflow and agent detail by direct link, invalid ids landing on Not Found, homepage anchors, inquiry preselection from both Services and Agent Platform, mobile navigation, signed-out visits to dashboard/admin still redirecting, and the head-tag counts on every transition listed above.
+- **Raw HTTP:** actual recorded status codes and headers for each class of address — core landing page, detail page, invalid id, private page — reported as measured rather than assumed. Where the host returns 200 for an unknown path (SPA fallback), that is a soft 404 and I will say so; those pages carry `noindex` precisely because the status cannot be corrected from app code.
+- **Verified crawler:** not accessible from here; left explicitly unverified.
+
 
 No form submissions, no database reads or writes, no publishing, and no change to the staging-versus-published distinction.
 
