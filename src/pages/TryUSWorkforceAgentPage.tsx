@@ -10,6 +10,17 @@ import { Bookmark, Download, RotateCcw, Presentation } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import ExecutionStatus, { type ExecutionAction } from "@/components/ExecutionStatus";
 import AgentPageNav from "@/components/AgentPageNav";
+import type { JsonObject } from "@/hooks/useSavedRuns";
+
+interface AgentItem {
+  label: string;
+  detail: string;
+}
+
+interface AgentSection {
+  title: string;
+  items: AgentItem[];
+}
 
 type Step = "start" | "decision" | "guided" | "result";
 
@@ -118,7 +129,7 @@ export default function TryUSWorkforceAgentPage({ setPage }: TryUSWorkforceAgent
   const [context, setContext] = useState("");
 
   const [brief, setBrief] = useState<DecisionBriefProps | null>(null);
-  const [rawResult, setRawResult] = useState<Record<string, any> | null>(null);
+  const [rawResult, setRawResult] = useState<JsonObject | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -156,8 +167,8 @@ export default function TryUSWorkforceAgentPage({ setPage }: TryUSWorkforceAgent
       agent_type: agentId,
       agent_name: agentName,
       title,
-      inputs: buildInputs() as any,
-      result: rawResult as any,
+      inputs: buildInputs(),
+      result: rawResult,
     });
     setSaving(false);
     if (saveErr) {
@@ -199,14 +210,14 @@ export default function TryUSWorkforceAgentPage({ setPage }: TryUSWorkforceAgent
 
       setRawResult(data);
 
-      const sections = data.sections || [];
-      const framing = sections.find((s: any) => s.title === "Decision Framing") || sections[0] || { title: "Decision Framing", items: [] };
-      const recommendation = sections.find((s: any) => s.title === "Recommendation") || sections[1] || { title: "Recommendation", items: [] };
-      const tradeoffs = sections.find((s: any) => s.title === "Tradeoffs") || sections[2] || { title: "Tradeoffs", items: [] };
-      const implications = sections.find((s: any) => s.title === "What This Means for You") || sections[3] || { title: "What This Means for You", items: [] };
+      const sections: AgentSection[] = data.sections || [];
+      const framing = sections.find((s) => s.title === "Decision Framing") || sections[0] || { title: "Decision Framing", items: [] };
+      const recommendation = sections.find((s) => s.title === "Recommendation") || sections[1] || { title: "Recommendation", items: [] };
+      const tradeoffs = sections.find((s) => s.title === "Tradeoffs") || sections[2] || { title: "Tradeoffs", items: [] };
+      const implications = sections.find((s) => s.title === "What This Means for You") || sections[3] || { title: "What This Means for You", items: [] };
 
-      const mapItems = (items: any[] = []) =>
-        items.map((i: any) => ({ label: i.label, value: i.detail }));
+      const mapItems = (items: AgentItem[] = []) =>
+        items.map((i) => ({ label: i.label, value: i.detail }));
 
       // Combine Recommendation + Decision Framing into primary, Tradeoffs into secondary,
       // Implications into tertiary so the existing DecisionBriefCard renders cleanly.
@@ -223,8 +234,8 @@ export default function TryUSWorkforceAgentPage({ setPage }: TryUSWorkforceAgent
         observations: (data.risks || []).map((r: string) => ({ text: r })),
         confidence: data.confidence ? { level: data.confidence.level, reason: data.confidence.reason } : undefined,
       });
-    } catch (e: any) {
-      setError(e.message || "Something went wrong — please try again.");
+    } catch (e) {
+      setError(e instanceof Error && e.message ? e.message : "Something went wrong — please try again.");
     } finally {
       setLoading(false);
     }
