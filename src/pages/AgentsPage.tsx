@@ -211,7 +211,7 @@ export default function AgentsPage({
           {/* Flagship card */}
           <RevealDiv delay={0.1}>
             <div
-              onClick={() => setPage("global-lifecycle-agent")}
+              onClick={cardClick("global-lifecycle-agent")}
               className="group cursor-pointer relative mt-20 bg-white border border-white/10 rounded-3xl overflow-hidden hover:border-primary/40 transition-all duration-300 shadow-[0_40px_120px_-30px_rgba(0,0,0,0.6)] hover:shadow-[0_50px_140px_-25px_rgba(43,92,230,0.55)]"
             >
               <div className="relative bg-gradient-to-r from-slate via-slate to-slate-2 text-white px-8 md:px-12 py-4 flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] font-mono">
@@ -277,7 +277,7 @@ export default function AgentsPage({
           {/* Second flagship — Leave / LOA Control Agent */}
           <RevealDiv delay={0.14}>
             <div
-              onClick={() => setPage("leave-control-agent")}
+              onClick={cardClick("leave-control-agent")}
               className="group cursor-pointer relative mt-10 bg-white border border-white/10 rounded-3xl overflow-hidden hover:border-primary/40 transition-all duration-300 shadow-[0_30px_90px_-30px_rgba(0,0,0,0.55)] hover:shadow-[0_40px_120px_-25px_rgba(43,92,230,0.45)]"
             >
               <div className="relative bg-gradient-to-r from-slate via-slate to-slate-2 text-white px-8 md:px-12 py-4 flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] font-mono">

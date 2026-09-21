@@ -156,6 +156,13 @@ const Index = () => {
     }
   }, [user, loading, page, navigate]);
 
+  // A signed-in account without the admin role never lands on a blank admin screen.
+  useEffect(() => {
+    if (!loading && user && page === "admin" && !isAdmin) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [loading, user, isAdmin, page, navigate]);
+
   // The executive deck depends on data handed over in memory; never show a blank screen.
   useEffect(() => {
     if (!loading && page === "executive-deck" && !deckState) {
