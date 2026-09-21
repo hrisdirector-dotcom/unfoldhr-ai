@@ -77,7 +77,7 @@ const PRIORITY_COLORS: Record<string, string> = {
 
 /* ─── Simulation functions ─── */
 
-function simulateWorkforce(f: Record<string, any>): SnapshotResult {
+function simulateWorkforce(f: DemoFormFields): SnapshotResult {
   const { employees = 120, growth = 25, budgetType = "Fixed budget", quarters = 3 } = f;
   const total = Math.round(employees * (growth / 100));
   const isFixed = budgetType === "Fixed budget";
@@ -113,7 +113,7 @@ function simulateWorkforce(f: Record<string, any>): SnapshotResult {
   };
 }
 
-function simulateRecruiting(f: Record<string, any>): SnapshotResult {
+function simulateRecruiting(f: DemoFormFields): SnapshotResult {
   const { role = "Software Engineer", positions = 3, skills = "", budgetPerHire = 0 } = f;
   const hasBudget = budgetPerHire > 0;
   const totalBudget = hasBudget ? positions * budgetPerHire : positions * 8500;
@@ -159,7 +159,7 @@ function simulateRecruiting(f: Record<string, any>): SnapshotResult {
   };
 }
 
-function simulateOnboarding(f: Record<string, any>): SnapshotResult {
+function simulateOnboarding(f: DemoFormFields): SnapshotResult {
   const { hireRole = "New Hire", startDate = "", department = "Engineering", priorities = "" } = f;
   const deptPlans: Record<string, { week1: string; week2: string; month1: string }> = {
     Engineering: { week1: "Dev environment setup, codebase walkthrough, first PR", week2: "Pair programming, architecture deep-dive", month1: "First feature shipped, code review participation" },
@@ -202,7 +202,7 @@ function simulateOnboarding(f: Record<string, any>): SnapshotResult {
   };
 }
 
-function simulatePerformance(f: Record<string, any>): SnapshotResult {
+function simulatePerformance(f: DemoFormFields): SnapshotResult {
   const { empRole = "Team Member", period = "Quarterly", achievements = "", concerns = "" } = f;
   const hasAchievements = achievements.trim().length > 0;
   const hasConcerns = concerns.trim().length > 0;
@@ -244,7 +244,7 @@ function simulatePerformance(f: Record<string, any>): SnapshotResult {
   };
 }
 
-function simulateCompliance(f: Record<string, any>): SnapshotResult {
+function simulateCompliance(f: DemoFormFields): SnapshotResult {
   const { area = "Data privacy", affected = 50, regulation = "" } = f;
   const areaData: Record<string, { risks: string[]; actions: string[]; urgency: string }> = {
     "Data privacy": {
@@ -315,7 +315,7 @@ function simulateCompliance(f: Record<string, any>): SnapshotResult {
 
 /* ─── Per-agent form components ─── */
 
-function WorkforceForm({ onRun, loading }: { onRun: (f: Record<string, any>) => void; loading: boolean }) {
+function WorkforceForm({ onRun, loading }: { onRun: (f: DemoFormFields) => void; loading: boolean }) {
   const [employees, setEmployees] = useState(120);
   const [growth, setGrowth] = useState(25);
   const [budgetType, setBudgetType] = useState("Fixed budget");
@@ -339,7 +339,7 @@ function WorkforceForm({ onRun, loading }: { onRun: (f: Record<string, any>) => 
   );
 }
 
-function RecruitingForm({ onRun, loading }: { onRun: (f: Record<string, any>) => void; loading: boolean }) {
+function RecruitingForm({ onRun, loading }: { onRun: (f: DemoFormFields) => void; loading: boolean }) {
   const [role, setRole] = useState("Software Engineer");
   const [positions, setPositions] = useState(3);
   const [skills, setSkills] = useState("");
@@ -361,7 +361,7 @@ function RecruitingForm({ onRun, loading }: { onRun: (f: Record<string, any>) =>
   );
 }
 
-function OnboardingForm({ onRun, loading }: { onRun: (f: Record<string, any>) => void; loading: boolean }) {
+function OnboardingForm({ onRun, loading }: { onRun: (f: DemoFormFields) => void; loading: boolean }) {
   const [hireRole, setHireRole] = useState("Senior Engineer");
   const [startDate, setStartDate] = useState("");
   const [department, setDepartment] = useState("Engineering");
@@ -385,7 +385,7 @@ function OnboardingForm({ onRun, loading }: { onRun: (f: Record<string, any>) =>
   );
 }
 
-function PerformanceForm({ onRun, loading }: { onRun: (f: Record<string, any>) => void; loading: boolean }) {
+function PerformanceForm({ onRun, loading }: { onRun: (f: DemoFormFields) => void; loading: boolean }) {
   const [empRole, setEmpRole] = useState("Product Manager");
   const [period, setPeriod] = useState("Quarterly");
   const [achievements, setAchievements] = useState("");
@@ -409,7 +409,7 @@ function PerformanceForm({ onRun, loading }: { onRun: (f: Record<string, any>) =
   );
 }
 
-function ComplianceForm({ onRun, loading }: { onRun: (f: Record<string, any>) => void; loading: boolean }) {
+function ComplianceForm({ onRun, loading }: { onRun: (f: DemoFormFields) => void; loading: boolean }) {
   const [area, setArea] = useState("Data privacy");
   const [affected, setAffected] = useState(50);
   const [regulation, setRegulation] = useState("");
@@ -445,7 +445,7 @@ const US_DECISIONS = [
   "Prepare for scale or acquisition",
 ];
 
-function USWorkforceForm({ onRun, loading }: { onRun: (f: Record<string, any>) => void; loading: boolean }) {
+function USWorkforceForm({ onRun, loading }: { onRun: (f: DemoFormFields) => void; loading: boolean }) {
   const [decision, setDecision] = useState(US_DECISIONS[0]);
   const [stateFootprint, setStateFootprint] = useState(US_FOOTPRINTS[1]);
   const [workforceStructure, setWorkforceStructure] = useState(US_STRUCTURES[0]);
@@ -512,7 +512,7 @@ function RunButton({ loading, onClick, label }: { loading: boolean; onClick: () 
 /* ─── Result card ─── */
 
 function ResultCard({ result, agentName, agentId, inputs, onTryAnother, onScrollToEngagement, onRefine }: {
-  result: SnapshotResult; agentName: string; agentId: string; inputs: Record<string, any>;
+  result: SnapshotResult; agentName: string; agentId: string; inputs: DemoFormFields;
   onTryAnother: () => void; onScrollToEngagement: () => void; onRefine: () => void;
 }) {
   const { user } = useAuth();
@@ -648,7 +648,7 @@ function ResultCard({ result, agentName, agentId, inputs, onTryAnother, onScroll
   );
 }
 
-function ListeningForm({ onRun, loading }: { onRun: (f: Record<string, any>) => void; loading: boolean }) {
+function ListeningForm({ onRun, loading }: { onRun: (f: DemoFormFields) => void; loading: boolean }) {
   const [department, setDepartment] = useState("Engineering");
   const [customDepartment, setCustomDepartment] = useState("");
   const [timePeriod, setTimePeriod] = useState("Last quarter");
@@ -703,7 +703,7 @@ function ListeningForm({ onRun, loading }: { onRun: (f: Record<string, any>) => 
   );
 }
 
-function simulateListening(f: Record<string, any>): SnapshotResult {
+function simulateListening(f: DemoFormFields): SnapshotResult {
   const { department = "Engineering", timePeriod = "Last quarter", topics = "", notes = "" } = f;
   const topicList = topics ? topics.split(",").map((t: string) => t.trim()).filter(Boolean).slice(0, 4) : ["Work-life balance", "Manager effectiveness", "Career growth"];
   const isCompanyWide = department === "Company-wide";
@@ -750,7 +750,7 @@ function simulateListening(f: Record<string, any>): SnapshotResult {
 
 
 
-const SIMULATORS: Partial<Record<AgentId, (f: Record<string, any>) => SnapshotResult>> = {
+const SIMULATORS: Partial<Record<AgentId, (f: DemoFormFields) => SnapshotResult>> = {
   workforce: simulateWorkforce,
   recruiting: simulateRecruiting,
   onboarding: simulateOnboarding,
@@ -777,9 +777,9 @@ export default function InteractiveAgentSection({ setPage }: InteractiveAgentSec
   const [activeAgent, setActiveAgent] = useState<AgentId>("workforce");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<SnapshotResult | null>(null);
-  const [lastInputs, setLastInputs] = useState<Record<string, any>>({});
+  const [lastInputs, setLastInputs] = useState<DemoFormFields>({});
   const [error, setError] = useState<string | null>(null);
-  const handleRun = async (agentId: AgentId, fields: Record<string, any>) => {
+  const handleRun = async (agentId: AgentId, fields: DemoFormFields) => {
     setLoading(true);
     setResult(null);
     setError(null);
