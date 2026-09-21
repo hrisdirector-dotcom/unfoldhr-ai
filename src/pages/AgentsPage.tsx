@@ -63,7 +63,15 @@ export default function AgentsPage({
         e.stopPropagation();
         props.onClick(e);
       },
+      onAuxClick: (e: React.MouseEvent<HTMLAnchorElement>) => e.stopPropagation(),
     };
+  };
+
+  // Card body click: plain primary clicks only, and never over a nested control.
+  const cardClick = (page: string) => (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+    if ((e.target as HTMLElement).closest("a,button")) return;
+    setPage(page);
   };
 
   return (
