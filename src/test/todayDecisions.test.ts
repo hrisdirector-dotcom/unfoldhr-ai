@@ -59,7 +59,9 @@ describe("buildFromRuns", () => {
   });
 
   it("skips runs without a usable string summary", () => {
-    expect(buildFromRuns([run({}), run({ summary: 42 }), run(null), run("nope")])).toHaveLength(0);
+    expect(
+      buildFromRuns([run({}), run({ summary: 42 }), runWithRawResult(null), runWithRawResult("nope")]),
+    ).toHaveLength(0);
   });
 
   it("ignores malformed risk shapes without throwing", () => {
