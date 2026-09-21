@@ -463,7 +463,7 @@ export default function DashboardPage({ currentUser, onLogout, setPage, onGenera
                             <Download className="w-3 h-3" /> CSV
                           </button>
                           <button
-                            onClick={() => downloadPDF(run.agent_name, res)}
+                            onClick={() => downloadPDF(run.agent_name, run.result)}
                             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-background text-xs font-medium text-foreground hover:bg-muted transition-colors cursor-pointer"
                           >
                             <Download className="w-3 h-3" /> PDF
