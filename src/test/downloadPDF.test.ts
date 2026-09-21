@@ -30,7 +30,7 @@ vi.mock("jspdf", async () => {
     constructor(...args: ConstructorParameters<typeof Real>) {
       super(...args);
       // jsPDF attaches its methods per instance, so patch after construction.
-      this.save = (filename?: string) => {
+      this.save = ((filename?: string) => {
         const bytes = new Uint8Array(this.output("arraybuffer"));
         capture = {
           filename: filename ?? "",
