@@ -224,10 +224,10 @@ export default function DashboardPage({ currentUser, onLogout, setPage, onGenera
             {selectedRun.title || selectedRun.agent_name}
           </h1>
 
-          {res?.summary && (
+          {summaryText && (
             <div className="bg-card border border-border rounded-2xl p-6 mb-6">
               <p className="text-xs font-bold uppercase tracking-[2px] text-muted-foreground mb-3">Summary</p>
-              <p className="text-sm text-foreground leading-relaxed">{res.summary}</p>
+              <p className="text-sm text-foreground leading-relaxed">{summaryText}</p>
             </div>
           )}
 
@@ -235,15 +235,15 @@ export default function DashboardPage({ currentUser, onLogout, setPage, onGenera
             <div className="space-y-4 mb-6">
               {sectionEntries.map(([key, value]) => {
                 // Section shape: { title, items }
-                const isSectionShape =
-                  value && typeof value === "object" && !Array.isArray(value) && Array.isArray((value as any).items);
-                if (isSectionShape && (value as any).items.length === 0) return null;
+                const record = isRecord(value) ? value : null;
+                const sectionItems = record && Array.isArray(record.items) ? record.items : null;
+                if (sectionItems && sectionItems.length === 0) return null;
 
                 const headerLabel = formatLabel(key);
-                const sectionTitle = isSectionShape ? (value as any).title : null;
-                const body = isSectionShape ? (
+                const sectionTitle = sectionItems && record ? record.title : null;
+                const body = sectionItems ? (
                   <ul className="space-y-2">
-                    {(value as any).items.map((item: any, i: number) => renderItem(item, i))}
+                    {sectionItems.map((item, i) => renderItem(item, i))}
                   </ul>
                 ) : (
                   renderValue(value)
@@ -281,11 +281,11 @@ export default function DashboardPage({ currentUser, onLogout, setPage, onGenera
             </div>
           )}
 
-          {res?.confidence && (
+          {confidence && (
             <div className="bg-card border border-border rounded-2xl p-6 mb-6 flex items-center gap-3">
-              <span className={`w-2.5 h-2.5 rounded-full ${res.confidence.score >= 75 ? "bg-green-500" : res.confidence.score >= 60 ? "bg-yellow-500" : "bg-red-500"}`} />
+              <span className={`w-2.5 h-2.5 rounded-full ${confidenceScore >= 75 ? "bg-green-500" : confidenceScore >= 60 ? "bg-yellow-500" : "bg-red-500"}`} />
               <span className="text-sm font-medium text-foreground">
-                {res.confidence.level} confidence ({res.confidence.score}%)
+                {asText(confidence.level)} confidence ({asText(confidence.score)}%)
               </span>
             </div>
           )}
@@ -412,7 +412,12 @@ export default function DashboardPage({ currentUser, onLogout, setPage, onGenera
             <div className="space-y-3">
               {runs.map(run => {
                 const isExpanded = expandedId === run.id;
-                const res = run.result as any;
+                const res = isRecord(run.result) ? run.result : null;
+                const runSummary = asText(res?.summary);
+                const runConfidenceRaw = res?.confidence;
+                const runConfidence = isRecord(runConfidenceRaw) ? runConfidenceRaw : null;
+                const runConfidenceScore =
+                  typeof runConfidence?.score === "number" ? runConfidence.score : 0;
                 return (
                   <div key={run.id} className="bg-card border border-border rounded-xl overflow-hidden">
                     <button
@@ -437,22 +442,22 @@ export default function DashboardPage({ currentUser, onLogout, setPage, onGenera
 
                     {isExpanded && (
                       <div className="border-t border-border p-4 space-y-4 animate-in fade-in-0 slide-in-from-top-2 duration-200">
-                        {res?.summary && (
-                          <p className="text-sm text-foreground leading-relaxed border-l-2 border-primary pl-3">{res.summary}</p>
+                        {runSummary && (
+                          <p className="text-sm text-foreground leading-relaxed border-l-2 border-primary pl-3">{runSummary}</p>
                         )}
 
-                        {res?.confidence && (
+                        {runConfidence && (
                           <div className="flex items-center gap-2">
-                            <span className={`w-2 h-2 rounded-full ${res.confidence.score >= 75 ? "bg-green-500" : res.confidence.score >= 60 ? "bg-yellow-500" : "bg-red-500"}`} />
+                            <span className={`w-2 h-2 rounded-full ${runConfidenceScore >= 75 ? "bg-green-500" : runConfidenceScore >= 60 ? "bg-yellow-500" : "bg-red-500"}`} />
                             <span className="text-xs font-medium text-foreground">
-                              {res.confidence.level} confidence ({res.confidence.score}%)
+                              {asText(runConfidence.level)} confidence ({asText(runConfidence.score)}%)
                             </span>
                           </div>
                         )}
 
                         <div className="flex flex-wrap gap-2 pt-2 border-t border-border">
                           <button
-                            onClick={() => downloadCSV(run.agent_name, res)}
+                            onClick={() => downloadCSV(run.agent_name, run.result)}
                             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-background text-xs font-medium text-foreground hover:bg-muted transition-colors cursor-pointer"
                           >
                             <Download className="w-3 h-3" /> CSV
