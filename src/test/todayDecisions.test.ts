@@ -2,16 +2,20 @@ import { describe, it, expect } from "vitest";
 import { buildFromRuns } from "@/lib/todayDecisions";
 import type { SavedRun } from "@/hooks/useSavedRuns";
 
-const run = (result: unknown, agent_name = "Leave Control"): SavedRun =>
-  ({
-    id: "1",
-    agent_type: "demo",
-    agent_name,
-    title: "t",
-    inputs: {},
-    result,
-    created_at: "2026-01-01",
-  }) as unknown as SavedRun;
+const run = (result: SavedRun["result"], agent_name = "Leave Control"): SavedRun => ({
+  id: "1",
+  agent_type: "demo",
+  agent_name,
+  title: "t",
+  inputs: {},
+  result,
+  created_at: "2026-01-01",
+});
+
+// Test-only boundary injection: the database can return a non-object jsonb
+// value, which the SavedRun type cannot express. Isolated to malformed cases.
+const runWithRawResult = (result: unknown): SavedRun =>
+  ({ ...run({}), result }) as SavedRun;
 
 describe("buildFromRuns", () => {
   it("builds a card from a valid run and uses the surfaced risk", () => {
@@ -29,6 +33,20 @@ describe("buildFromRuns", () => {
     expect(buildFromRuns([run({ summary: "s", insights: [{ text: "I" }] })])[0].risk).toBe("I");
   });
 
+  it("treats an empty-string risk as absent and keeps falling through", () => {
+    const cards = buildFromRuns([
+      run({ summary: "s", risks: [{ text: "" }], execution_risks: [{ text: "Active risk" }] }),
+    ]);
+    expect(cards[0].risk).toBe("Active risk");
+  });
+
+  it("falls through empty execution_risks to insights", () => {
+    const cards = buildFromRuns([
+      run({ summary: "s", execution_risks: [{ text: "" }], insights: [{ text: "Insight risk" }] }),
+    ]);
+    expect(cards[0].risk).toBe("Insight risk");
+  });
+
   it("uses the default risk line when none is present", () => {
     expect(buildFromRuns([run({ summary: "s" })])[0].risk).toMatch(/Momentum is lost/);
   });
@@ -41,7 +59,9 @@ describe("buildFromRuns", () => {
   });
 
   it("skips runs without a usable string summary", () => {
-    expect(buildFromRuns([run({}), run({ summary: 42 }), run(null), run("nope")])).toHaveLength(0);
+    expect(
+      buildFromRuns([run({}), run({ summary: 42 }), runWithRawResult(null), runWithRawResult("nope")]),
+    ).toHaveLength(0);
   });
 
   it("ignores malformed risk shapes without throwing", () => {
