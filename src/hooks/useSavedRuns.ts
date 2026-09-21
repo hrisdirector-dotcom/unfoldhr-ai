@@ -35,8 +35,8 @@ export function useSavedRuns() {
     agent_type: string;
     agent_name: string;
     title: string;
-    inputs: Record<string, any>;
-    result: Record<string, any>;
+    inputs: JsonObject;
+    result: JsonObject;
   }) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return { error: new Error("Not authenticated") };
@@ -48,8 +48,8 @@ export function useSavedRuns() {
         agent_type: run.agent_type,
         agent_name: run.agent_name,
         title: run.title,
-        inputs: run.inputs as any,
-        result: run.result as any,
+        inputs: run.inputs,
+        result: run.result,
       });
     if (!error) await fetchRuns();
     return { error };
