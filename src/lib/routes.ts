@@ -134,7 +134,8 @@ export function resolvePath(pathname: string): ResolvedRoute {
 
   const agentMatch = /^\/agents\/([^/]+)$/.exec(clean);
   if (agentMatch) {
-    const slug = decodeURIComponent(agentMatch[1]);
+    const slug = safeDecode(agentMatch[1]);
+    if (slug === null) return { page: "not-found", notFound: true };
     if (DEMO_SLUG_PAGES[slug]) return { page: DEMO_SLUG_PAGES[slug] };
     if (FREE_AGENT_PAGES[slug]) return { page: FREE_AGENT_PAGES[slug] };
     if (getAgentById(slug)) return { page: "agent-detail", agentId: slug };
@@ -143,8 +144,8 @@ export function resolvePath(pathname: string): ResolvedRoute {
 
   const workflowMatch = /^\/workflows\/([^/]+)$/.exec(clean);
   if (workflowMatch) {
-    const slug = decodeURIComponent(workflowMatch[1]);
-    if (getWorkflow(slug)) return { page: "workflows", workflowId: slug };
+    const slug = safeDecode(workflowMatch[1]);
+    if (slug !== null && getWorkflow(slug)) return { page: "workflows", workflowId: slug };
     return { page: "not-found", notFound: true };
   }
 
