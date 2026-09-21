@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { UnfoldMark } from "./UnfoldMark";
 import { Menu, X } from "lucide-react";
+import { pathForPage } from "@/lib/routes";
 
 const DARK_HERO_PAGES = new Set(["home", "global-lifecycle-agent", "agents", "workflows"]);
 
@@ -45,9 +46,8 @@ export function UnfoldNav({ page, setPage, currentUser, onDiscussWorkflow }: Nav
       return;
     }
     if (p === "our-method") {
-      setPage("home");
       setMobileOpen(false);
-      setTimeout(() => document.getElementById("our-method")?.scrollIntoView({ behavior: "smooth" }), 150);
+      setPage("our-method");
       return;
     }
     setPage(p);
@@ -60,6 +60,15 @@ export function UnfoldNav({ page, setPage, currentUser, onDiscussWorkflow }: Nav
     else setPage("services");
   };
 
+  const linkProps = (p: string, scrollToGallery = false) => ({
+    href: pathForPage(p),
+    onClick: (e: React.MouseEvent<HTMLAnchorElement>) => {
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+      e.preventDefault();
+      navigate(p, scrollToGallery);
+    },
+  });
+
 
   return (
     <>
@@ -68,9 +77,9 @@ export function UnfoldNav({ page, setPage, currentUser, onDiscussWorkflow }: Nav
           scrolled || mobileOpen ? "bg-card/95 backdrop-blur-md shadow-sm border-b border-border" : "bg-transparent"
         }`}
       >
-        <button
-          onClick={() => navigate("home")}
-          className={`flex items-center gap-2.5 bg-transparent border-none cursor-pointer p-0 ${overDark ? "text-white" : "text-foreground"}`}
+        <a
+          {...linkProps("home")}
+          className={`flex items-center gap-2.5 bg-transparent border-none cursor-pointer p-0 no-underline ${overDark ? "text-white" : "text-foreground"}`}
         >
           <UnfoldMark size={30} />
           <div className="flex flex-col items-start">
@@ -81,23 +90,24 @@ export function UnfoldNav({ page, setPage, currentUser, onDiscussWorkflow }: Nav
               Decision Layer for Workforce Intelligence
             </span>
           </div>
-        </button>
+        </a>
 
         <div className="hidden md:flex items-center gap-1">
           {NAV_LINKS.map(([p, label, isScroll]) => (
-            <button
+            <a
               key={p}
-              onClick={() => navigate(p, !!isScroll)}
-              className={`px-4 py-2 text-sm font-medium rounded-lg border-none cursor-pointer transition-colors bg-transparent ${
+              {...linkProps(p, !!isScroll)}
+              className={`px-4 py-2 text-sm font-medium rounded-lg border-none cursor-pointer transition-colors bg-transparent no-underline ${
                 page === p
                   ? (overDark ? "text-white" : "text-foreground")
                   : (overDark ? "text-white/70 hover:text-white" : "text-muted-foreground hover:text-foreground")
               }`}
             >
               {label}
-            </button>
+            </a>
           ))}
         </div>
+
 
         <div className="hidden md:flex items-center gap-3">
           {/* Primary CTA - Discuss a Workflow */}
@@ -109,30 +119,30 @@ export function UnfoldNav({ page, setPage, currentUser, onDiscussWorkflow }: Nav
           </button>
 
           {/* Secondary CTA - Explore Agent Demos */}
-          <button
-            onClick={() => navigate("agents")}
-            className={`px-5 py-2.5 text-sm font-semibold rounded-lg cursor-pointer border-none transition-colors inline-flex items-center ${
+          <a
+            {...linkProps("agents")}
+            className={`px-5 py-2.5 text-sm font-semibold rounded-lg cursor-pointer border-none transition-colors inline-flex items-center no-underline ${
               overDark
                 ? "bg-white text-slate hover:bg-blue-50"
                 : "bg-foreground text-background hover:bg-foreground/90"
             }`}
           >
             Explore Agent Demos
-          </button>
+          </a>
 
 
           {/* Tertiary - Dashboard (if logged in) */}
           {currentUser && (
-            <button
-              onClick={() => navigate("dashboard")}
-              className={`px-4 py-2 text-sm font-medium rounded-lg cursor-pointer bg-transparent border transition-colors ${
+            <a
+              {...linkProps("dashboard")}
+              className={`px-4 py-2 text-sm font-medium rounded-lg cursor-pointer bg-transparent border transition-colors no-underline ${
                 overDark
                   ? "text-white/80 border-white/20 hover:text-white hover:border-white/40"
                   : "text-muted-foreground border-border hover:text-foreground hover:border-foreground"
               }`}
             >
               My Dashboard
-            </button>
+            </a>
           )}
         </div>
 
@@ -153,17 +163,17 @@ export function UnfoldNav({ page, setPage, currentUser, onDiscussWorkflow }: Nav
         <div className="fixed inset-0 z-40 pt-[72px] bg-card backdrop-blur-md animate-fade-in">
           <div className="flex flex-col p-6 gap-2">
             {NAV_LINKS.map(([p, label, isScroll]) => (
-              <button
+              <a
                 key={p}
-                onClick={() => navigate(p, !!isScroll)}
-                className={`w-full text-left px-4 py-3.5 text-base font-medium rounded-lg border-none cursor-pointer transition-colors ${
+                {...linkProps(p, !!isScroll)}
+                className={`w-full text-left px-4 py-3.5 text-base font-medium rounded-lg border-none cursor-pointer transition-colors no-underline ${
                   page === p
                     ? "bg-accent text-primary"
                     : "bg-transparent text-foreground hover:bg-muted"
                 }`}
               >
                 {label}
-              </button>
+              </a>
             ))}
 
             <div className="h-px bg-border my-3" />
@@ -177,22 +187,22 @@ export function UnfoldNav({ page, setPage, currentUser, onDiscussWorkflow }: Nav
             </button>
 
             {/* Secondary CTA - Explore Agent Demos */}
-            <button
-              onClick={() => navigate("agents")}
-              className="w-full px-4 py-3.5 text-base font-semibold rounded-lg cursor-pointer bg-foreground text-background border-none transition-colors text-center"
+            <a
+              {...linkProps("agents")}
+              className="w-full px-4 py-3.5 text-base font-semibold rounded-lg cursor-pointer bg-foreground text-background border-none transition-colors text-center no-underline"
             >
               Explore Agent Demos
-            </button>
+            </a>
 
 
             {/* Tertiary - Dashboard (if logged in) */}
             {currentUser && (
-              <button
-                onClick={() => navigate("dashboard")}
-                className="w-full px-4 py-3.5 text-base font-medium rounded-lg cursor-pointer bg-transparent text-muted-foreground border border-border transition-colors"
+              <a
+                {...linkProps("dashboard")}
+                className="w-full px-4 py-3.5 text-base font-medium rounded-lg cursor-pointer bg-transparent text-muted-foreground border border-border transition-colors no-underline"
               >
                 My Dashboard
-              </button>
+              </a>
             )}
           </div>
         </div>

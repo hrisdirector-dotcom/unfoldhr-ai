@@ -1,7 +1,9 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { UnfoldNav } from "@/components/UnfoldNav";
 import { useAuth } from "@/hooks/useAuth";
 import AgentPickerModal from "@/components/AgentPickerModal";
+import Seo from "@/components/Seo";
 import HomePage from "@/pages/HomePage";
 import AboutPage from "@/pages/AboutPage";
 import IntegrationsPage from "@/pages/IntegrationsPage";
@@ -25,142 +27,137 @@ import AgentsPage from "@/pages/AgentsPage";
 import WorkflowsPage from "@/pages/WorkflowsPage";
 import AgentDetailPage from "@/pages/AgentDetailPage";
 import ServicesPage from "@/pages/ServicesPage";
+import NotFound from "@/pages/NotFound";
 import OnboardingWalkthrough from "@/components/OnboardingWalkthrough";
+import { canonicalPathFor, metaForRoute, pathForPage, resolveAlias, resolvePath } from "@/lib/routes";
 import type { SavedRun } from "@/hooks/useSavedRuns";
 
 export type InquiryPreset = { type: string; n: number };
 
+/** Scroll to a fragment target once it exists, without a fixed timer. */
+function scrollToHash(hash: string) {
+  const id = hash.replace(/^#/, "");
+  if (!id) return;
+  let frames = 0;
+  const tick = () => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
+    if (frames++ < 90) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+
 const Index = () => {
-  const [page, setPage] = useState(() => {
-    const state = window.history.state;
-    return state?.page || "home";
-  });
-  const [agentId, setAgentId] = useState<string | undefined>(() => {
-    const state = window.history.state;
-    return state?.agentId;
-  });
-  const [workflowId, setWorkflowId] = useState<string | undefined>(undefined);
+  const location = useLocation();
+  const navigate = useNavigate();
   const [pickerOpen, setPickerOpen] = useState(false);
-  const [inquiry, setInquiry] = useState<InquiryPreset | null>(null);
-  const [deckState, setDeckState] = useState<{ run: SavedRun; branding: { logoUrl: string | null; primaryColor: string; accentColor: string } } | null>(null);
+  const [deckState, setDeckState] = useState<{
+    run: SavedRun;
+    branding: { logoUrl: string | null; primaryColor: string; accentColor: string };
+  } | null>(null);
   const { user, isAdmin, loading, signOut } = useAuth();
+
+  const route = useMemo(() => resolvePath(location.pathname), [location.pathname]);
+  const page = route.page;
+  const agentId = route.agentId;
+  const workflowId = route.workflowId;
+  const meta = useMemo(() => metaForRoute(route), [route]);
+  const canonicalPath = useMemo(() => canonicalPathFor(route), [route]);
+
+  const inquiryState = (location.state as { inquiry?: InquiryPreset } | null)?.inquiry ?? null;
 
   const currentUser = user ? { email: user.email || "", role: isAdmin ? "admin" : "user" } : null;
 
-  const navigateTo = useCallback((p: string, replace = false) => {
-    if (p === "try-picker") {
-      setPickerOpen(true);
-      return;
-    }
+  const navigateTo = useCallback(
+    (p: string, replace = false) => {
+      if (p === "try-picker") {
+        setPickerOpen(true);
+        return;
+      }
+      const resolved = resolveAlias(p);
+      if (resolved === "our-method") {
+        navigate({ pathname: "/", hash: "#our-method" });
+        return;
+      }
+      navigate(pathForPage(resolved), { replace });
+    },
+    [navigate],
+  );
 
-    // "Try the Flagship Agent" routes directly to Global Lifecycle Agent
-    if (p === "try-agents") {
-      p = "global-lifecycle-agent";
-    }
+  const navigateToWorkflow = useCallback(
+    (id: string) => {
+      navigate(`/workflows/${id}`);
+    },
+    [navigate],
+  );
 
-    // Map free agent IDs to their interactive try-pages
-    const freeAgentRoutes: Record<string, string> = {
-      "workforce-planning": "try-agent",
-      "employee-listening": "try-listening-agent",
-      "performance-management": "try-performance-agent",
-      "us-workforce-complexity": "try-us-workforce-agent",
-    };
-    if (freeAgentRoutes[p]) {
-      p = freeAgentRoutes[p];
-    }
+  const setWorkflowSelection = useCallback(
+    (id: string | null) => {
+      navigate(id ? `/workflows/${id}` : "/workflows");
+    },
+    [navigate],
+  );
 
-    setPage(p);
-    setWorkflowId(undefined);
-    if (p !== "agent-detail") setAgentId(undefined);
+  const goToInquiry = useCallback(
+    (type: string) => {
+      navigate(
+        { pathname: "/", hash: "#final-cta" },
+        { state: { inquiry: { type, n: Date.now() } } },
+      );
+    },
+    [navigate],
+  );
 
-    const stateObj = { page: p, agentId: p === "agent-detail" ? agentId : undefined };
-    if (replace) {
-      window.history.replaceState(stateObj, "");
-    } else {
-      window.history.pushState(stateObj, "");
-    }
-    window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
-  }, [agentId]);
+  const navigateToAgent = useCallback(
+    (id: string) => {
+      navigate(`/agents/${id}`);
+    },
+    [navigate],
+  );
 
-  const navigateToWorkflow = useCallback((id: string) => {
-    setWorkflowId(id);
-    setPage("workflows");
-    window.history.pushState({ page: "workflows" }, "");
-    window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
-  }, []);
+  const handleBuildAgent = useCallback(() => {
+    navigate("/contact");
+  }, [navigate]);
 
-  const goToInquiry = useCallback((type: string) => {
-    setInquiry((prev) => ({ type, n: (prev?.n ?? 0) + 1 }));
-    setPage("home");
-    setWorkflowId(undefined);
-    window.history.pushState({ page: "home" }, "");
-    setTimeout(
-      () => document.getElementById("final-cta")?.scrollIntoView({ behavior: "smooth", block: "start" }),
-      180,
-    );
-  }, []);
-
-  const navigateToAgent = useCallback((id: string) => {
-    const freeRoutes: Record<string, string> = {
-      "workforce-planning": "try-agent",
-      "employee-listening": "try-listening-agent",
-      "performance-management": "try-performance-agent",
-      "us-workforce-complexity": "try-us-workforce-agent",
-    };
-
-    const route = freeRoutes[id];
-    if (route) {
-      setPage(route);
-      window.history.pushState({ page: route }, "");
-      window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
-      return;
-    }
-
-    setAgentId(id);
-    setPage("agent-detail");
-    window.history.pushState({ page: "agent-detail", agentId: id }, "");
-    window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
-  }, []);
-
-  const handleBuildAgent = useCallback((id: string) => {
-    setAgentId(id);
-    setPage("contact");
-    window.history.pushState({ page: "contact", agentId: id }, "");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, []);
-
-  const handleLogin = () => {
-    navigateTo("dashboard");
-  };
+  const handleLogin = () => navigateTo("dashboard");
 
   const handleLogout = async () => {
     await signOut();
     navigateTo("home");
   };
 
-  // Handle browser back/forward
+  // Legacy alias: /snapshot keeps working and settles on the canonical address.
   useEffect(() => {
-    const onPopState = (e: PopStateEvent) => {
-      const state = e.state;
-      setPage(state?.page || "home");
-      setAgentId(state?.agentId);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    };
-    window.addEventListener("popstate", onPopState);
-
-    // Set initial state if none exists
-    if (!window.history.state?.page) {
-      window.history.replaceState({ page: "home" }, "");
+    if (route.redirectTo && route.redirectTo !== location.pathname) {
+      navigate(route.redirectTo, { replace: true });
     }
+  }, [route.redirectTo, location.pathname, navigate]);
 
-    return () => window.removeEventListener("popstate", onPopState);
-  }, []);
+  // Scroll handling: fragment targets scroll into view, everything else starts at the top.
+  useEffect(() => {
+    if (location.hash) {
+      scrollToHash(location.hash);
+    } else {
+      window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
+    }
+  }, [location.pathname, location.hash, location.key]);
 
+  // Protected screens keep their existing access behaviour.
   useEffect(() => {
     if (!loading && !user && (page === "dashboard" || page === "admin" || page === "today-decisions")) {
-      setPage("login");
+      navigate("/login", { replace: true });
     }
-  }, [user, loading, page]);
+  }, [user, loading, page, navigate]);
+
+  // The executive deck depends on data handed over in memory; never show a blank screen.
+  useEffect(() => {
+    if (!loading && page === "executive-deck" && !deckState) {
+      navigate(user ? "/dashboard" : "/login", { replace: true });
+    }
+  }, [loading, page, deckState, user, navigate]);
 
   if (loading) {
     return (
@@ -170,8 +167,24 @@ const Index = () => {
     );
   }
 
+  if (route.notFound) {
+    return (
+      <>
+        <Seo title={meta.title} description={meta.description} path={null} noindex />
+        <NotFound />
+      </>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
+      <Seo
+        title={meta.title}
+        description={meta.description}
+        path={canonicalPath}
+        noindex={meta.noindex}
+      />
+
       {page !== "admin" && (
         <UnfoldNav page={page} setPage={navigateTo} currentUser={currentUser} onDiscussWorkflow={() => goToInquiry("Workflow Redesign Sprint")} />
       )}
@@ -180,7 +193,7 @@ const Index = () => {
         <HomePage
           setPage={navigateTo}
           onOpenWorkflow={navigateToWorkflow}
-          inquiry={inquiry}
+          inquiry={inquiryState}
           onDiscussWorkflow={() => goToInquiry("Workflow Redesign Sprint")}
         />
       )}
@@ -199,7 +212,13 @@ const Index = () => {
           onDiscussAgentImplementation={() => goToInquiry("Agent Platform / Agent Implementation")}
         />
       )}
-      {page === "workflows" && <WorkflowsPage setPage={navigateTo} initialWorkflowId={workflowId} />}
+      {page === "workflows" && (
+        <WorkflowsPage
+          setPage={navigateTo}
+          initialWorkflowId={workflowId}
+          onSelectWorkflow={setWorkflowSelection}
+        />
+      )}
       {page === "agent-detail" && agentId && <AgentDetailPage agentId={agentId} setPage={navigateTo} />}
       {page === "global-lifecycle-agent" && <GlobalLifecycleAgentPage setPage={navigateTo} />}
       {page === "leave-control-agent" && <LeaveControlAgentPage setPage={navigateTo} />}
@@ -224,7 +243,7 @@ const Index = () => {
       {page === "executive-deck" && deckState && (
         <ExecutiveDeckPage run={deckState.run} branding={deckState.branding} onBack={() => navigateTo("dashboard")} />
       )}
-      {(page === "executive-snapshot" || page === "snapshot") && <ExecutiveSnapshotPage />}
+      {page === "executive-snapshot" && <ExecutiveSnapshotPage />}
       {page === "today-decisions" && currentUser && <TodayDecisionsPage setPage={navigateTo} />}
       {page === "admin" && isAdmin && <AdminDashboard onBack={() => navigateTo("dashboard")} onLogout={handleLogout} />}
 

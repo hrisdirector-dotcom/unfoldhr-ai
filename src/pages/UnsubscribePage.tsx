@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { cloudPublishableKey, cloudUrl, supabase } from "@/lib/cloudClient";
+import Seo from "@/components/Seo";
 
 type Status = "loading" | "valid" | "already_unsubscribed" | "invalid" | "success" | "error";
 
@@ -60,6 +61,12 @@ export default function UnsubscribePage() {
 
   return (
     <div className="bg-background min-h-screen flex items-center justify-center px-6">
+      <Seo
+        title="Unsubscribe | UnfoldHR"
+        description="Manage your UnfoldHR email preferences."
+        path={null}
+        noindex
+      />
       <div className="bg-card border border-border rounded-2xl p-8 md:p-10 w-full max-w-md text-center">
         {status === "loading" && (
           <>

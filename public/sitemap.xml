@@ -6,38 +6,43 @@
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://www.unfoldhrai.com/about</loc>
-    <priority>0.8</priority>
+    <loc>https://www.unfoldhrai.com/services</loc>
+    <priority>0.9</priority>
     <changefreq>monthly</changefreq>
   </url>
   <url>
     <loc>https://www.unfoldhrai.com/agents</loc>
-    <priority>0.9</priority>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
-    <loc>https://www.unfoldhrai.com/contact</loc>
-    <priority>0.7</priority>
-    <changefreq>monthly</changefreq>
-  </url>
-  <url>
-    <loc>https://www.unfoldhrai.com/pricing</loc>
-    <priority>0.9</priority>
-    <changefreq>weekly</changefreq>
-  </url>
-  <url>
-    <loc>https://www.unfoldhrai.com/integrations</loc>
     <priority>0.8</priority>
     <changefreq>monthly</changefreq>
   </url>
   <url>
-    <loc>https://www.unfoldhrai.com/explainers</loc>
+    <loc>https://www.unfoldhrai.com/workflows</loc>
+    <priority>0.9</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://www.unfoldhrai.com/about</loc>
+    <priority>0.6</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://www.unfoldhrai.com/pricing</loc>
     <priority>0.7</priority>
     <changefreq>monthly</changefreq>
   </url>
   <url>
-    <loc>https://www.unfoldhrai.com/executive-deck</loc>
+    <loc>https://www.unfoldhrai.com/integrations</loc>
     <priority>0.6</priority>
     <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://www.unfoldhrai.com/contact</loc>
+    <priority>0.6</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://www.unfoldhrai.com/privacy</loc>
+    <priority>0.3</priority>
+    <changefreq>yearly</changefreq>
   </url>
 </urlset>

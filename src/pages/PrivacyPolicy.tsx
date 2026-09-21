@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import Seo from "@/components/Seo";
 import { ArrowLeft, Shield, Lock, Eye, FileText, Mail, Globe } from "lucide-react";
 
 const sections = [
@@ -16,6 +17,12 @@ const sections = [
 export default function PrivacyPolicy() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200">
+      <Seo
+        title="Privacy Policy | UnfoldHR"
+        description="How UnfoldHR collects, uses and protects personal information."
+        path="/privacy"
+      />
+
       {/* Header */}
       <header className="sticky top-0 z-40 border-b border-slate-800/50 bg-slate-950/80 backdrop-blur-md">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

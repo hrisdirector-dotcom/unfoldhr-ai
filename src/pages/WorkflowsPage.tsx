@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Search, X } from "lucide-react";
 import Footer from "@/components/landing/Footer";
@@ -28,20 +28,40 @@ import {
 interface Props {
   setPage: (p: string) => void;
   initialWorkflowId?: string;
+  /** When supplied, the open workflow is driven by the address. */
+  onSelectWorkflow?: (id: string | null) => void;
 }
 
 type SortKey = "number" | "ai" | "elimination" | "risk";
 
-export default function WorkflowsPage({ setPage, initialWorkflowId }: Props) {
+export default function WorkflowsPage({ setPage, initialWorkflowId, onSelectWorkflow }: Props) {
   const [selected, setSelected] = useState<string | null>(initialWorkflowId ?? null);
   const [query, setQuery] = useState("");
   const [domain, setDomain] = useState<DomainId | "all">("all");
   const [sort, setSort] = useState<SortKey>("number");
 
+  useEffect(() => {
+    setSelected(initialWorkflowId ?? null);
+  }, [initialWorkflowId]);
+
   const open = (id: string) => {
+    if (onSelectWorkflow) {
+      onSelectWorkflow(id);
+      return;
+    }
     setSelected(id);
     window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
   };
+
+  const close = () => {
+    if (onSelectWorkflow) {
+      onSelectWorkflow(null);
+      return;
+    }
+    setSelected(null);
+    window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
+  };
+
 
   const totals = useMemo(() => {
     return WORKFLOWS.reduce(
@@ -88,10 +108,7 @@ export default function WorkflowsPage({ setPage, initialWorkflowId }: Props) {
     return (
       <WorkflowDetail
         workflow={selectedWorkflow}
-        onBack={() => {
-          setSelected(null);
-          window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
-        }}
+        onBack={close}
         onOpenWorkflow={open}
         setPage={setPage}
         onContact={() => setPage("contact")}
