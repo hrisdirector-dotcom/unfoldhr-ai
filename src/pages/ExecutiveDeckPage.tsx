@@ -84,8 +84,72 @@ function getContrastText(hex: string) {
   return (r * 299 + g * 587 + b * 114) / 1000 > 128 ? "#1a1a2e" : "#ffffff";
 }
 
+/* ─── Local shape of the free-form saved-run result rendered by this deck ─── */
+
+interface DeckItem { label?: string; detail?: string; tag?: string }
+interface DeckSection { title?: string; items?: DeckItem[] }
+interface DeckPhase { phase?: string; focus?: string; pct?: number }
+interface DeckConfidence { level?: string; score?: number; reason?: string }
+interface DeckResult {
+  contextLine?: string;
+  summary?: string;
+  sections?: DeckSection[];
+  timeline?: DeckPhase[];
+  risks?: string[];
+  confidence?: DeckConfidence;
+  [key: string]: unknown;
+}
+
+const isRecord = (v: unknown): v is Record<string, unknown> =>
+  typeof v === "object" && v !== null && !Array.isArray(v);
+const asText = (v: unknown): string | undefined => (typeof v === "string" ? v : undefined);
+
+/** Narrow the stored jsonb result to the shape this page renders, keeping every other key intact. */
+function toDeckResult(value: unknown): DeckResult {
+  if (!isRecord(value)) return {};
+  const out: DeckResult = { ...value };
+
+  out.contextLine = asText(value.contextLine);
+  out.summary = asText(value.summary);
+
+  out.sections = Array.isArray(value.sections)
+    ? value.sections.filter(isRecord).map((sec) => ({
+        title: asText(sec.title),
+        items: Array.isArray(sec.items)
+          ? sec.items.filter(isRecord).map((it) => ({
+              label: asText(it.label),
+              detail: asText(it.detail),
+              tag: asText(it.tag),
+            }))
+          : undefined,
+      }))
+    : undefined;
+
+  out.timeline = Array.isArray(value.timeline)
+    ? value.timeline.filter(isRecord).map((t) => ({
+        phase: asText(t.phase),
+        focus: asText(t.focus),
+        pct: typeof t.pct === "number" ? t.pct : undefined,
+      }))
+    : undefined;
+
+  out.risks = Array.isArray(value.risks)
+    ? value.risks.filter((r): r is string => typeof r === "string")
+    : undefined;
+
+  out.confidence = isRecord(value.confidence)
+    ? {
+        level: asText(value.confidence.level),
+        score: typeof value.confidence.score === "number" ? value.confidence.score : undefined,
+        reason: asText(value.confidence.reason),
+      }
+    : undefined;
+
+  return out;
+}
+
 export default function ExecutiveDeckPage({ run, branding, onBack }: ExecutiveDeckPageProps) {
-  const res = sanitizeResult(run.result as any, run.inputs);
+  const res = sanitizeResult(toDeckResult(run.result), run.inputs);
   const dateStr = new Date(run.created_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
   const pc = branding.primaryColor;
   const ac = branding.accentColor;
@@ -98,7 +162,7 @@ export default function ExecutiveDeckPage({ run, branding, onBack }: ExecutiveDe
   const qConf = confidence ? qualitativeConfidence(confidence.level, confidence.score) : null;
 
   // Extract metric-like items from sections
-  const metricItems = sections.flatMap((s: any) => s.items || []).slice(0, 6);
+  const metricItems = sections.flatMap((s) => s.items || []).slice(0, 6);
 
   const handleShare = async () => {
     try {
@@ -201,7 +265,7 @@ export default function ExecutiveDeckPage({ run, branding, onBack }: ExecutiveDe
             <div className="mt-6 rounded-2xl border border-border bg-card p-6">
               <p className="text-xs font-bold uppercase tracking-[2px] text-muted-foreground mb-4">Inputs Provided</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {Object.entries(run.inputs as Record<string, any>).map(([k, v]) => (
+                {Object.entries(run.inputs).map(([k, v]) => (
                   <div key={k} className="flex flex-col">
                     <span className="text-xs text-muted-foreground capitalize">{k.replace(/([A-Z])/g, " $1").replace(/_/g, " ")}</span>
                     <span className="text-sm font-medium text-foreground">{String(v)}</span>
@@ -215,11 +279,11 @@ export default function ExecutiveDeckPage({ run, branding, onBack }: ExecutiveDe
         {/* ─── SLIDE 5: Our Recommendation ─── */}
         <section className="mb-20">
           <SectionLabel color={pc} number="04" title="Our Recommendation" />
-          {sections.map((sec: any, si: number) => (
+          {sections.map((sec, si) => (
             <div key={si} className="mt-6">
               <h3 className="text-base font-semibold text-foreground mb-3">{sec.title}</h3>
               <div className="space-y-3">
-                {(sec.items || []).map((item: any, ii: number) => (
+                {(sec.items || []).map((item, ii) => (
                   <div key={ii} className="flex gap-3 items-start rounded-xl border border-border bg-card p-4">
                     <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 text-xs font-bold mt-0.5" style={{ backgroundColor: `${pc}15`, color: pc }}>
                       {ii + 1}
@@ -242,7 +306,7 @@ export default function ExecutiveDeckPage({ run, branding, onBack }: ExecutiveDe
             <div className="mt-8">
               <h3 className="text-base font-semibold text-foreground mb-4">Implementation Phases</h3>
               <div className="space-y-3">
-                {timeline.map((t: any, i: number) => {
+                {timeline.map((t, i) => {
                   const equalPct = 100 / timeline.length;
                   return (
                     <div key={i} className="flex items-center gap-4 rounded-xl border border-border bg-card p-4">
