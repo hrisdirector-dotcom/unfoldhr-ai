@@ -7,6 +7,18 @@ import AgentPageNav from "@/components/AgentPageNav";
 
 type Step = "start" | "input" | "result";
 
+/** Shape of a single line item returned by the run-agent response. */
+interface AgentItem {
+  label: string;
+  detail: string;
+}
+
+/** Shape of a section returned by the run-agent response. */
+interface AgentSection {
+  title: string;
+  items: AgentItem[];
+}
+
 const SIZES = ["Under 50", "50–200", "200–500", "500+"];
 const TRENDS = ["Improving", "Flat", "Declining"];
 const CONCERNS = ["Attrition", "Manager effectiveness", "Culture"];
@@ -87,26 +99,26 @@ export default function TryListeningAgentPage({ setPage }: TryListeningAgentPage
       if (data?.error) throw new Error(data.error);
 
       // Map the AI response to DecisionBriefProps
-      const sections = data.sections || [];
-      const primary = sections[0] || { title: "Sentiment Overview", items: [] };
-      const secondary = sections[1] || { title: "Topic Analysis", items: [] };
-      const tertiary = sections[2] || { title: "Recommended Actions", items: [] };
+      const sections: AgentSection[] = data.sections || [];
+      const primary: AgentSection = sections[0] || { title: "Sentiment Overview", items: [] };
+      const secondary: AgentSection = sections[1] || { title: "Topic Analysis", items: [] };
+      const tertiary: AgentSection = sections[2] || { title: "Recommended Actions", items: [] };
 
       setBrief({
         scenario: "Employee Listening Agent",
         contextLine: data.contextLine || "",
         summary: data.summary || "",
         primaryTitle: primary.title,
-        primaryItems: primary.items.map((i: any) => ({ label: i.label, value: i.detail })),
+        primaryItems: primary.items.map((i: AgentItem) => ({ label: i.label, value: i.detail })),
         secondaryTitle: secondary.title,
-        secondaryItems: secondary.items.map((i: any) => ({ label: i.label, value: i.detail })),
+        secondaryItems: secondary.items.map((i: AgentItem) => ({ label: i.label, value: i.detail })),
         tertiaryTitle: tertiary.title,
-        tertiaryItems: tertiary.items.map((i: any) => ({ label: i.label, value: i.detail })),
+        tertiaryItems: tertiary.items.map((i: AgentItem) => ({ label: i.label, value: i.detail })),
         observations: (data.risks || []).map((r: string) => ({ text: r })),
         confidence: data.confidence ? { level: data.confidence.level, reason: data.confidence.reason } : undefined,
       });
-    } catch (e: any) {
-      setError(e.message || "Something went wrong — please try again.");
+    } catch (e) {
+      setError((e instanceof Error && e.message) || "Something went wrong — please try again.");
     } finally {
       setLoading(false);
     }
