@@ -1,3 +1,4 @@
+import type { MouseEvent } from "react";
 import { getAgentById } from "@/data/agents";
 import { getWorkflow } from "@/data/workflows";
 
@@ -84,6 +85,34 @@ export function pathForPage(page: string, opts: PathOptions = {}): string {
   if (PAGE_TO_FREE_SLUG[p]) return `/agents/${PAGE_TO_FREE_SLUG[p]}`;
   if (p === "workflows") return opts.workflowId ? `/workflows/${opts.workflowId}` : "/workflows";
   return STATIC_PAGE_PATHS[p] ?? "/";
+}
+
+/**
+ * Props for a real anchor that still navigates without a reload on an
+ * ordinary click, while ctrl/cmd/middle click open a new tab normally.
+ */
+export function navLinkProps(
+  page: string,
+  go: (p: string) => void,
+  opts: PathOptions = {},
+) {
+  return {
+    href: pathForPage(page, opts),
+    onClick: (e: MouseEvent<HTMLAnchorElement>) => {
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+      e.preventDefault();
+      go(page);
+    },
+  };
+}
+
+/** Percent-decoding that never throws on a malformed address. */
+function safeDecode(value: string): string | null {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return null;
+  }
 }
 
 export interface ResolvedRoute {
