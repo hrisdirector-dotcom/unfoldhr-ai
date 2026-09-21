@@ -533,8 +533,8 @@ function ResultCard({ result, agentName, agentId, inputs, onTryAnother, onScroll
       agent_type: agentId,
       agent_name: agentName,
       title,
-      inputs: inputs as any,
-      result: result as any,
+      inputs,
+      result,
     });
     setSaving(false);
     if (error) {
@@ -791,9 +791,9 @@ export default function InteractiveAgentSection({ setPage }: InteractiveAgentSec
       if (fnError) throw fnError;
       if (data?.error) throw new Error(data.error);
       setResult(data as SnapshotResult);
-    } catch (e: any) {
+    } catch (e) {
       console.error("Agent run failed:", e);
-      const msg = e?.message || "Something went wrong — please try again.";
+      const msg = (e instanceof Error && e.message) ? e.message : "Something went wrong — please try again.";
       setError(msg);
       toast.error(msg);
     } finally {
