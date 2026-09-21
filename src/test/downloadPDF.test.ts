@@ -1,15 +1,15 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import jsPDF from "jspdf";
 import { downloadPDF } from "@/lib/downloadResult";
 
 /**
  * PDF regression tests.
  *
- * These are NOT stubbed renderers: the real jsPDF document is built by the real
- * downloadPDF code path. Only the final `save()` (a browser file write) is
+ * These are NOT stubbed renderers: the real jsPDF document is produced by the
+ * real downloadPDF code path. Only the final `save()` (a browser file write) is
  * intercepted, so the genuine document is captured and inspected — real page
- * count, real serialized PDF bytes (checked for the %PDF- signature and %%EOF
- * trailer) and the real text strings handed to the renderer.
+ * count and the real serialized PDF bytes, checked for the %PDF- signature, the
+ * %%EOF trailer, page objects and the rendered text (jsPDF writes uncompressed
+ * content streams, so the drawn strings are readable in the output).
  *
  * All fixtures below are synthetic. No customer data, no network, no database.
  */
@@ -18,37 +18,31 @@ interface Capture {
   filename: string;
   pages: number;
   bytes: Uint8Array;
-  texts: string[];
+  body: string;
 }
 
 let capture: Capture | null = null;
-let texts: string[] = [];
+
+vi.mock("jspdf", async () => {
+  const actual = await vi.importActual<typeof import("jspdf")>("jspdf");
+  const Real = actual.default;
+  class TestPDF extends Real {
+    save(filename?: string) {
+      const bytes = new Uint8Array(this.output("arraybuffer"));
+      capture = {
+        filename: filename ?? "",
+        pages: this.getNumberOfPages(),
+        bytes,
+        body: new TextDecoder("latin1").decode(bytes),
+      };
+      return this;
+    }
+  }
+  return { ...actual, default: TestPDF };
+});
 
 beforeEach(() => {
   capture = null;
-  texts = [];
-
-  const realText = jsPDF.prototype.text;
-  vi.spyOn(jsPDF.prototype, "text").mockImplementation(function (
-    this: jsPDF,
-    ...args: Parameters<typeof realText>
-  ) {
-    const value = args[0];
-    if (typeof value === "string") texts.push(value);
-    else if (Array.isArray(value)) texts.push(...value.map(String));
-    return realText.apply(this, args);
-  });
-
-  vi.spyOn(jsPDF.prototype, "save").mockImplementation(function (this: jsPDF, filename?: string) {
-    const raw = this.output("arraybuffer");
-    capture = {
-      filename: filename ?? "",
-      pages: this.getNumberOfPages(),
-      bytes: new Uint8Array(raw),
-      texts: [...texts],
-    };
-    return this;
-  });
 });
 
 afterEach(() => {
@@ -60,17 +54,11 @@ function captured(): Capture {
   return capture;
 }
 
-function asText(bytes: Uint8Array): string {
-  return new TextDecoder("latin1").decode(bytes);
-}
-
 function expectValidPdf(c: Capture) {
   expect(c.bytes.length).toBeGreaterThan(1000);
-  const body = asText(c.bytes);
-  expect(body.startsWith("%PDF-")).toBe(true);
-  expect(body.trimEnd().endsWith("%%EOF")).toBe(true);
-  // One /Type /Page object per rendered page.
-  expect(body.split("/Type /Page\n").length - 1).toBe(c.pages);
+  expect(c.body.startsWith("%PDF-")).toBe(true);
+  expect(c.body.trimEnd().endsWith("%%EOF")).toBe(true);
+  expect(c.body.split("/Type /Page\n").length - 1).toBe(c.pages);
 }
 
 const FULL_RESULT = {
@@ -103,20 +91,20 @@ describe("downloadPDF — real jsPDF output", () => {
     const c = captured();
     expectValidPdf(c);
     expect(c.pages).toBeGreaterThanOrEqual(2); // cover + content
-    expect(c.texts).toContain("Decision Intelligence Report");
-    expect(c.texts).toContain("EXECUTIVE SUMMARY");
-    expect(c.texts).toContain("FINDINGS");
-    expect(c.texts).toContain("RECOMMENDATIONS");
-    expect(c.texts).toContain("IMPLEMENTATION PHASES");
-    expect(c.texts).toContain("RISKS & OBSERVATIONS");
-    expect(c.texts).toContain("•  Sales coverage gap");
-    expect(c.texts).toContain("Phase 1");
-    expect(c.texts.join("\n")).toContain("Budget approval slips");
+    expect(c.body).toContain("Decision Intelligence Report");
+    expect(c.body).toContain("EXECUTIVE SUMMARY");
+    expect(c.body).toContain("FINDINGS");
+    expect(c.body).toContain("RECOMMENDATIONS");
+    expect(c.body).toContain("IMPLEMENTATION PHASES");
+    expect(c.body).toContain("RISKS & OBSERVATIONS");
+    expect(c.body).toContain("•  Sales coverage gap");
+    expect(c.body).toContain("Phase 1");
+    expect(c.body).toContain("Budget approval slips");
   });
 
   it("surfaces confidence qualitatively, never as a numeric score", () => {
     downloadPDF("Workforce Planning", FULL_RESULT);
-    const joined = captured().texts.join("\n");
+    const joined = captured().body;
     expect(joined).toContain("High Confidence");
     expect(joined).not.toContain("80");
     expect(joined).not.toContain("80%");
@@ -167,7 +155,7 @@ describe("downloadPDF — real jsPDF output", () => {
     expectValidPdf(c);
     expect(c.pages).toBeGreaterThan(4);
     // Footer numbering covers every content page (cover excluded).
-    expect(c.texts).toContain(`Page ${c.pages - 1} of ${c.pages - 1}`);
+    expect(c.body).toContain(`Page ${c.pages - 1} of ${c.pages - 1}`);
   });
 
   it("handles quotes, ampersands and accented characters", () => {
@@ -180,7 +168,7 @@ describe("downloadPDF — real jsPDF output", () => {
     ).not.toThrow();
     const c = captured();
     expectValidPdf(c);
-    expect(c.texts.join("\n")).toContain("Résumé review");
+    expect(c.body).toContain("Résumé review");
   });
 
   it("derives the filename from the agent name", () => {
