@@ -84,8 +84,72 @@ function getContrastText(hex: string) {
   return (r * 299 + g * 587 + b * 114) / 1000 > 128 ? "#1a1a2e" : "#ffffff";
 }
 
+/* ─── Local shape of the free-form saved-run result rendered by this deck ─── */
+
+interface DeckItem { label?: string; detail?: string; tag?: string }
+interface DeckSection { title?: string; items?: DeckItem[] }
+interface DeckPhase { phase?: string; focus?: string; pct?: number }
+interface DeckConfidence { level?: string; score?: number; reason?: string }
+interface DeckResult {
+  contextLine?: string;
+  summary?: string;
+  sections?: DeckSection[];
+  timeline?: DeckPhase[];
+  risks?: string[];
+  confidence?: DeckConfidence;
+  [key: string]: unknown;
+}
+
+const isRecord = (v: unknown): v is Record<string, unknown> =>
+  typeof v === "object" && v !== null && !Array.isArray(v);
+const asText = (v: unknown): string | undefined => (typeof v === "string" ? v : undefined);
+
+/** Narrow the stored jsonb result to the shape this page renders, keeping every other key intact. */
+export function toDeckResult(value: unknown): DeckResult {
+  if (!isRecord(value)) return {};
+  const out: DeckResult = { ...value };
+
+  out.contextLine = asText(value.contextLine);
+  out.summary = asText(value.summary);
+
+  out.sections = Array.isArray(value.sections)
+    ? value.sections.filter(isRecord).map((sec) => ({
+        title: asText(sec.title),
+        items: Array.isArray(sec.items)
+          ? sec.items.filter(isRecord).map((it) => ({
+              label: asText(it.label),
+              detail: asText(it.detail),
+              tag: asText(it.tag),
+            }))
+          : undefined,
+      }))
+    : undefined;
+
+  out.timeline = Array.isArray(value.timeline)
+    ? value.timeline.filter(isRecord).map((t) => ({
+        phase: asText(t.phase),
+        focus: asText(t.focus),
+        pct: typeof t.pct === "number" ? t.pct : undefined,
+      }))
+    : undefined;
+
+  out.risks = Array.isArray(value.risks)
+    ? value.risks.filter((r): r is string => typeof r === "string")
+    : undefined;
+
+  out.confidence = isRecord(value.confidence)
+    ? {
+        level: asText(value.confidence.level),
+        score: typeof value.confidence.score === "number" ? value.confidence.score : undefined,
+        reason: asText(value.confidence.reason),
+      }
+    : undefined;
+
+  return out;
+}
+
 export default function ExecutiveDeckPage({ run, branding, onBack }: ExecutiveDeckPageProps) {
-  const res = sanitizeResult(run.result as any, run.inputs);
+  const res = sanitizeResult(toDeckResult(run.result), run.inputs);
   const dateStr = new Date(run.created_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
   const pc = branding.primaryColor;
   const ac = branding.accentColor;
