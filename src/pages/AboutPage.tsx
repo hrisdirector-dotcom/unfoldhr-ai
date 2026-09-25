@@ -224,11 +224,11 @@ export default function AboutPage() {
           <RevealDiv delay={0.2}>
             <div className="flex flex-col sm:flex-row gap-3">
               <a
-                href="#"
+                href="/contact"
                 onClick={(e) => {
+                  if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
                   e.preventDefault();
-                  window.history.pushState({ page: "contact" }, "");
-                  window.dispatchEvent(new PopStateEvent("popstate", { state: { page: "contact" } }));
+                  navigate("/contact");
                 }}
                 className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-foreground text-background font-semibold text-sm border-none cursor-pointer hover:bg-primary transition-all duration-200 no-underline"
               >
