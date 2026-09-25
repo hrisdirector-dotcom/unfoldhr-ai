@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
 import ExecutiveDeckPage from "@/pages/ExecutiveDeckPage";
 import type { SavedRun } from "@/hooks/useSavedRuns";
 import type { Json } from "@/integrations/supabase/types";
@@ -45,7 +46,7 @@ const VALID_RESULT = {
 
 describe("ExecutiveDeckPage — valid saved run", () => {
   it("renders summary, metrics, recommendations, timeline and qualitative confidence", () => {
-    render(<ExecutiveDeckPage run={makeRun(VALID_RESULT)} branding={branding} onBack={() => {}} />);
+    render(<MemoryRouter><ExecutiveDeckPage run={makeRun(VALID_RESULT)} branding={branding} onBack={() => {}} /></MemoryRouter>);
 
     expect(screen.getByText(VALID_RESULT.summary)).toBeInTheDocument();
     expect(screen.getByText(VALID_RESULT.contextLine)).toBeInTheDocument();
@@ -85,7 +86,7 @@ describe("ExecutiveDeckPage — malformed saved JSON", () => {
       confidence: "not-an-object",
     };
 
-    render(<ExecutiveDeckPage run={makeRun(malformed)} branding={branding} onBack={() => {}} />);
+    render(<MemoryRouter><ExecutiveDeckPage run={makeRun(malformed)} branding={branding} onBack={() => {}} /></MemoryRouter>);
 
     expect(screen.getByText("Partial result from a malformed record.")).toBeInTheDocument();
     expect(screen.getAllByText("Valid item").length).toBeGreaterThan(0);
@@ -101,13 +102,13 @@ describe("ExecutiveDeckPage — malformed saved JSON", () => {
   });
 
   it("renders an empty result without crashing", () => {
-    render(<ExecutiveDeckPage run={makeRun({})} branding={branding} onBack={() => {}} />);
+    render(<MemoryRouter><ExecutiveDeckPage run={makeRun({})} branding={branding} onBack={() => {}} /></MemoryRouter>);
     expect(screen.getByText(/Executive Recommendation/)).toBeInTheDocument();
     expect(screen.getByText("Executive Summary")).toBeInTheDocument();
   });
 
   it("renders when the stored result is not an object at all", () => {
-    render(<ExecutiveDeckPage run={makeRun(null)} branding={branding} onBack={() => {}} />);
+    render(<MemoryRouter><ExecutiveDeckPage run={makeRun(null)} branding={branding} onBack={() => {}} /></MemoryRouter>);
     expect(screen.getByText("Key Metrics at a Glance")).toBeInTheDocument();
   });
 });
