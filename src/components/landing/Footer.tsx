@@ -23,7 +23,7 @@ export default function Footer({ setPage }: FooterProps) {
         <p className="text-sm text-muted-foreground">
           © {year} UnfoldHR. HR workflow redesign and applied AI.
         </p>
-        <div className="flex items-center gap-6 text-sm text-muted-foreground">
+        <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground">
           {setPage && (
             <>
               <a {...linkProps("services")} className="hover:text-foreground transition-colors">
