@@ -77,12 +77,9 @@ const founders = [
 ];
 
 export default function AboutPage() {
-  const scrollToGallery = () => {
-    // Navigate to home and scroll to gallery
-    window.history.pushState({ page: "home" }, "");
-    window.dispatchEvent(new PopStateEvent("popstate", { state: { page: "home" } }));
-    setTimeout(() => document.getElementById("agent-gallery")?.scrollIntoView({ behavior: "smooth" }), 300);
-  };
+  const navigate = useNavigate();
+  // Navigate to the homepage agent gallery; Index scrolls to the hash target once it renders.
+  const scrollToGallery = () => navigate({ pathname: "/", hash: "#agent-gallery" });
 
   return (
     <div className="bg-background pt-32 pb-0">
