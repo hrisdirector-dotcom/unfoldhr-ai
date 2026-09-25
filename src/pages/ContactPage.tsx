@@ -8,7 +8,7 @@ const AI_JOURNEY_OPTIONS = [
   "I get AI — show me what's next",
 ];
 
-export default function RequestBuildPanel() {
+export default function RequestBuildPanel({ agentName }: { agentName?: string | null }) {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -58,6 +58,11 @@ export default function RequestBuildPanel() {
         Tell us where the work is breaking down. We will use the initial conversation to determine
         the most appropriate next step.
       </p>
+      {agentName && (
+        <p className="mt-4 inline-block text-sm font-medium text-primary bg-primary/10 rounded-full px-4 py-1.5">
+          You're asking about building: {agentName}
+        </p>
+      )}
     </header>
   );
 
