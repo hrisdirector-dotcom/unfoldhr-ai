@@ -3,7 +3,7 @@ import { UnfoldMark } from "./UnfoldMark";
 import { Menu, X } from "lucide-react";
 import { pathForPage } from "@/lib/routes";
 
-const DARK_HERO_PAGES = new Set(["home", "global-lifecycle-agent", "agents", "workflows"]);
+const DARK_HERO_PAGES = new Set(["home", "global-lifecycle-agent", "leave-control-agent", "compensation-change-agent", "agents", "workflows"]);
 
 interface NavProps {
   page: string;
