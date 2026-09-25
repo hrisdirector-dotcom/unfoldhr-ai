@@ -15,7 +15,8 @@ import {
   type Workflow,
   type WorkflowStep,
 } from "@/data/workflows";
-import ClassificationBadge, { classificationStyles } from "./ClassificationBadge";
+import ClassificationBadge from "./ClassificationBadge";
+import { classificationStyles } from "./classificationStyles";
 
 interface Props {
   workflow: Workflow;
