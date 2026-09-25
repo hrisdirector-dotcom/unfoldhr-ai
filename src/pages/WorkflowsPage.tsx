@@ -235,7 +235,7 @@ export default function WorkflowsPage({ setPage, initialWorkflowId, onSelectWork
               <div className="relative grid lg:grid-cols-[1.2fr_1fr] gap-10 items-center">
                 <div>
                   <p className="text-[11px] font-mono uppercase tracking-[0.22em] text-blue-200/80 mb-4">
-                     Representative example · Workflow {String(flagship.number).padStart(2, "0")}
+                    Representative example · Workflow {String(flagship.number).padStart(2, "0")}
                   </p>
                   <h2 className="font-display text-3xl md:text-5xl leading-tight">
                     {flagship.name}
