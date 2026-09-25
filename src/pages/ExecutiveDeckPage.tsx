@@ -150,6 +150,7 @@ function toDeckResult(value: unknown): DeckResult {
 }
 
 export default function ExecutiveDeckPage({ run, branding, onBack }: ExecutiveDeckPageProps) {
+  const navigate = useNavigate();
   const res = sanitizeResult(toDeckResult(run.result), run.inputs);
   const dateStr = new Date(run.created_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
   const pc = branding.primaryColor;
