@@ -8,6 +8,7 @@ import HomePage from "@/pages/HomePage";
 import AboutPage from "@/pages/AboutPage";
 import IntegrationsPage from "@/pages/IntegrationsPage";
 import ContactPage from "@/pages/ContactPage";
+import { getAgentById } from "@/data/agents";
 import AuthPage from "@/pages/AuthPage";
 import DashboardPage from "@/pages/DashboardPage";
 import AdminDashboard from "@/pages/AdminDashboard";
@@ -68,6 +69,8 @@ const Index = () => {
   const canonicalPath = useMemo(() => canonicalPathFor(route), [route]);
 
   const inquiryState = (location.state as { inquiry?: InquiryPreset } | null)?.inquiry ?? null;
+  const buildAgentId = (location.state as { agentId?: string } | null)?.agentId ?? null;
+  const buildAgentName = buildAgentId ? getAgentById(buildAgentId)?.name ?? null : null;
 
   const currentUser = user ? { email: user.email || "", role: isAdmin ? "admin" : "user" } : null;
 
@@ -231,7 +234,7 @@ const Index = () => {
       {page === "pricing" && <PricingPage setPage={navigateTo} />}
       {page === "about" && <AboutPage />}
       {page === "integrations" && <IntegrationsPage />}
-      {page === "contact" && <ContactPage />}
+      {page === "contact" && <ContactPage agentName={buildAgentName} />}
       {page === "login" && <AuthPage onLogin={handleLogin} setPage={navigateTo} />}
       {page === "dashboard" && currentUser && (
         <DashboardPage
