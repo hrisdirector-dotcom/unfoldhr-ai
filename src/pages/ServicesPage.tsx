@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { ArrowRight, CalendarCheck2 } from "lucide-react";
 import { RevealDiv } from "@/components/RevealDiv";
-import { DELIVERABLES } from "@/components/landing/SprintOfferSection";
+import { DELIVERABLES } from "@/components/landing/sprintOfferData";
 import { BOOKING_URL } from "@/lib/booking";
 
 interface ServicesPageProps {
