@@ -8,6 +8,7 @@ import HomePage from "@/pages/HomePage";
 import AboutPage from "@/pages/AboutPage";
 import IntegrationsPage from "@/pages/IntegrationsPage";
 import ContactPage from "@/pages/ContactPage";
+import { getAgentById } from "@/data/agents";
 import AuthPage from "@/pages/AuthPage";
 import DashboardPage from "@/pages/DashboardPage";
 import AdminDashboard from "@/pages/AdminDashboard";
@@ -233,7 +234,7 @@ const Index = () => {
       {page === "pricing" && <PricingPage setPage={navigateTo} />}
       {page === "about" && <AboutPage />}
       {page === "integrations" && <IntegrationsPage />}
-      {page === "contact" && <ContactPage />}
+      {page === "contact" && <ContactPage agentName={buildAgentName} />}
       {page === "login" && <AuthPage onLogin={handleLogin} setPage={navigateTo} />}
       {page === "dashboard" && currentUser && (
         <DashboardPage
