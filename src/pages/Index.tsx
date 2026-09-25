@@ -68,6 +68,8 @@ const Index = () => {
   const canonicalPath = useMemo(() => canonicalPathFor(route), [route]);
 
   const inquiryState = (location.state as { inquiry?: InquiryPreset } | null)?.inquiry ?? null;
+  const buildAgentId = (location.state as { agentId?: string } | null)?.agentId ?? null;
+  const buildAgentName = buildAgentId ? getAgentById(buildAgentId)?.name ?? null : null;
 
   const currentUser = user ? { email: user.email || "", role: isAdmin ? "admin" : "user" } : null;
 
