@@ -1,5 +1,6 @@
 import { RevealDiv } from "@/components/RevealDiv";
 import { Linkedin, ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const founders = [
   {
