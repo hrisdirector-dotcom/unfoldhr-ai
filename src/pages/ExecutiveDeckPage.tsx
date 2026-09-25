@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Share2, TrendingUp, TrendingDown, Minus, Shield, Target, AlertTriangle, CheckCircle, Clock, Users, BarChart3, Zap, DollarSign, Star, Activity } from "lucide-react";
 import type { SavedRun } from "@/hooks/useSavedRuns";
 import { sanitizeResult, qualitativeConfidence } from "@/lib/sanitizeAgentOutput";
@@ -363,11 +364,14 @@ export default function ExecutiveDeckPage({ run, branding, onBack }: ExecutiveDe
           <div className="mt-6 rounded-2xl p-8 text-center" style={{ backgroundColor: `${pc}08`, border: `1px solid ${pc}20` }}>
             <p className="text-lg font-semibold text-foreground mb-2">Ready to move from recommendation to execution?</p>
             <p className="text-sm text-muted-foreground max-w-xl mx-auto mb-6">
-              Deploy live agents connected to your tools to turn this qualitative recommendation into continuously refreshed, action-ready guidance.
+              This deck is based on a prepared demonstration scenario. Turning it into action starts with a scoped workflow redesign engagement — implementation is designed and enabled separately, around your real workflows and systems.
             </p>
             <div className="flex justify-center gap-3">
-              <button className="px-6 py-3 rounded-xl text-sm font-semibold transition-colors cursor-pointer" style={{ backgroundColor: pc, color: getContrastText(pc) }}>
-                Upgrade to Deploy
+              <button
+                onClick={() => navigate({ pathname: "/", hash: "#final-cta" }, { state: { inquiry: { type: "Workflow Redesign Sprint", n: Date.now() } } })}
+                className="px-6 py-3 rounded-xl text-sm font-semibold transition-colors cursor-pointer" style={{ backgroundColor: pc, color: getContrastText(pc) }}
+              >
+                Discuss a Workflow
               </button>
               <button onClick={onBack} className="px-6 py-3 rounded-xl border border-border text-sm font-medium hover:bg-muted transition-colors cursor-pointer">
                 Back to Dashboard
