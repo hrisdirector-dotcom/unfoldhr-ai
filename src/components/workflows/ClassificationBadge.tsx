@@ -12,7 +12,7 @@ interface Props {
 
 export default function ClassificationBadge({ classification, size = "sm", className = "", id }: Props) {
   const meta = CLASSIFICATION_MAP[classification];
-  const s = STYLES[classification];
+  const s = CLASSIFICATION_STYLES[classification];
   return (
     <span
       id={id}
