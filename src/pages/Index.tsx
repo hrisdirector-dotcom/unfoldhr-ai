@@ -10,7 +10,6 @@ import IntegrationsPage from "@/pages/IntegrationsPage";
 import ContactPage from "@/pages/ContactPage";
 import { getAgentById } from "@/data/agents";
 import AuthPage from "@/pages/AuthPage";
-import ResetPasswordPage from "@/pages/ResetPasswordPage";
 import DashboardPage from "@/pages/DashboardPage";
 import AdminDashboard from "@/pages/AdminDashboard";
 import TryListeningAgentPage from "@/pages/TryListeningAgentPage";
@@ -237,7 +236,6 @@ const Index = () => {
       {page === "integrations" && <IntegrationsPage />}
       {page === "contact" && <ContactPage agentName={buildAgentName} />}
       {page === "login" && <AuthPage onLogin={handleLogin} setPage={navigateTo} />}
-      {page === "reset-password" && <ResetPasswordPage setPage={navigateTo} />}
       {page === "dashboard" && currentUser && (
         <DashboardPage
           currentUser={currentUser}
