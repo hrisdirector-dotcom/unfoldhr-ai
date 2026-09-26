@@ -66,17 +66,5 @@ export function useAuth() {
     await supabase.auth.signOut();
   };
 
-  const resetPassword = async (email: string) => {
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`,
-    });
-    return { error };
-  };
-
-  const updatePassword = async (password: string) => {
-    const { error } = await supabase.auth.updateUser({ password });
-    return { error };
-  };
-
-  return { user, session, isAdmin, loading, signIn, signUp, signOut, resetPassword, updatePassword };
+  return { user, session, isAdmin, loading, signIn, signUp, signOut };
 }
