@@ -131,17 +131,17 @@ export function UnfoldNav({ page, setPage, currentUser, onDiscussWorkflow }: Nav
           </a>
 
 
-          {/* Tertiary - Dashboard (if logged in) */}
-          {currentUser && (
+          {/* Tertiary - private workspace */}
+          {(
             <a
-              {...linkProps("dashboard")}
+              {...linkProps(currentUser ? "dashboard" : "login")}
               className={`px-4 py-2 text-sm font-medium rounded-lg cursor-pointer bg-transparent border transition-colors no-underline ${
                 overDark
                   ? "text-white/80 border-white/20 hover:text-white hover:border-white/40"
                   : "text-muted-foreground border-border hover:text-foreground hover:border-foreground"
               }`}
             >
-              My Dashboard
+              {currentUser ? "My Dashboard" : "Client Workspace"}
             </a>
           )}
         </div>
@@ -195,13 +195,13 @@ export function UnfoldNav({ page, setPage, currentUser, onDiscussWorkflow }: Nav
             </a>
 
 
-            {/* Tertiary - Dashboard (if logged in) */}
-            {currentUser && (
+            {/* Tertiary - private workspace */}
+            {(
               <a
-                {...linkProps("dashboard")}
+                {...linkProps(currentUser ? "dashboard" : "login")}
                 className="w-full px-4 py-3.5 text-base font-medium rounded-lg cursor-pointer bg-transparent text-muted-foreground border border-border transition-colors no-underline"
               >
-                My Dashboard
+                {currentUser ? "My Dashboard" : "Client Workspace"}
               </a>
             )}
           </div>
