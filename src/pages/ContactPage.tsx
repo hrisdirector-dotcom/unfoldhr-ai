@@ -165,6 +165,9 @@ export default function RequestBuildPanel({ agentName }: { agentName?: string | 
       >
         {submitting ? "Sending..." : "Get in Touch →"}
       </button>
+      <p className="text-center text-sm text-muted-foreground">
+        Read our <a href="/privacy" className="text-primary underline underline-offset-2 hover:text-foreground">Privacy Policy</a>.
+      </p>
         </form>
       </div>
     </div>
