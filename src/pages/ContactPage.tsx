@@ -90,8 +90,9 @@ export default function RequestBuildPanel({ agentName }: { agentName?: string | 
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-xs font-bold text-muted-foreground mb-1.5 uppercase tracking-wider">Name</label>
+          <label htmlFor="contact-name" className="block text-xs font-bold text-muted-foreground mb-1.5 uppercase tracking-wider">Name</label>
           <input
+            id="contact-name"
             name="name"
             required
             className="w-full bg-card border border-border rounded-lg px-4 py-3 text-sm text-foreground outline-none focus:border-primary transition-colors"
@@ -99,8 +100,9 @@ export default function RequestBuildPanel({ agentName }: { agentName?: string | 
         </div>
 
         <div>
-          <label className="block text-xs font-bold text-muted-foreground mb-1.5 uppercase tracking-wider">Email</label>
+          <label htmlFor="contact-email" className="block text-xs font-bold text-muted-foreground mb-1.5 uppercase tracking-wider">Email</label>
           <input
+            id="contact-email"
             name="email"
             type="email"
             required
@@ -110,8 +112,9 @@ export default function RequestBuildPanel({ agentName }: { agentName?: string | 
       </div>
 
       <div>
-        <label className="block text-xs font-bold text-muted-foreground mb-1.5 uppercase tracking-wider">Company</label>
+        <label htmlFor="contact-company" className="block text-xs font-bold text-muted-foreground mb-1.5 uppercase tracking-wider">Company</label>
         <input
+          id="contact-company"
           name="company"
           className="w-full bg-card border border-border rounded-lg px-4 py-3 text-sm text-foreground outline-none focus:border-primary transition-colors"
         />
@@ -140,10 +143,11 @@ export default function RequestBuildPanel({ agentName }: { agentName?: string | 
       </div>
 
       <div>
-        <label className="block text-xs font-bold text-muted-foreground mb-1.5 uppercase tracking-wider">
+        <label htmlFor="contact-message" className="block text-xs font-bold text-muted-foreground mb-1.5 uppercase tracking-wider">
           Challenges you're trying to solve?
         </label>
         <textarea
+          id="contact-message"
           name="message"
           rows={4}
           required
